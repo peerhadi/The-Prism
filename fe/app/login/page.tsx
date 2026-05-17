@@ -1,16 +1,40 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
-import GoogleIcon from "@mui/icons-material/Google"
-import GitHubIcon from "@mui/icons-material/GitHub"
-
+import * as React from "react";
+import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import GoogleIcon from "@mui/icons-material/Google";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 export default function SignInPage() {
+  const loginWithGithub = () => {
+    window.location.assign(
+      "https://github.com/login/oauth/authorize?client_id=Ov23lirTZyPbyJiA3yZu",
+    );
+  };
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      console.log(tokenResponse);
+
+      // Example: fetch user info
+      const userInfo = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenResponse.access_token}`,
+          },
+        },
+      ).then((res) => res.json());
+
+      console.log(userInfo);
+    },
+    onError: () => console.log("Login Failed"),
+  });
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#040816] px-4 selection:bg-cyan-500/30">
       {/* RADIANT BACKGROUND EFFECT */}
@@ -106,14 +130,17 @@ export default function SignInPage() {
             <Button
               type="button"
               variant="outline"
+              onClick={() => login()}
               className="h-[45px] gap-2 rounded-sm border border-white/10 bg-transparent text-[13px] tracking-widest text-cyan-400 uppercase transition-all hover:bg-white/5 hover:text-white"
             >
-              <GoogleIcon sx={{ fontSize: 18 }} /> Sign Up With Google
+              <GoogleIcon sx={{ fontSize: 18 }} />
+              Sign Up With Google
             </Button>
 
             <Button
               type="button"
               variant="outline"
+              onClick={() => loginWithGithub()}
               className="h-[45px] gap-2 rounded-sm border border-white/10 bg-transparent text-[13px] tracking-widest text-cyan-400 uppercase transition-all hover:bg-white/5 hover:text-white"
             >
               <GitHubIcon sx={{ fontSize: 18 }} /> Sign Up With GitHub
@@ -136,5 +163,5 @@ export default function SignInPage() {
         <div className="absolute bottom-0 left-0 h-[1px] w-full bg-cyan-400/30" />
       </Card>
     </div>
-  )
+  );
 }
