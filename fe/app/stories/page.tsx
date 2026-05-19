@@ -223,15 +223,15 @@ export default function StoryIntelligencePage() {
           {/* LEFT PANEL */}
           <aside className="col-span-12 space-y-8 xl:col-span-3">
             {/* LIVE SIGNAL */}
-            <div className="rounded-[36px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
+            <div className="rounded-[36px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl flex justify-center flex-col items-center">
               <div className="mb-8 flex items-center justify-between">
-                <h3 className="text-[11px] font-black tracking-[0.35em] text-cyan-400 uppercase">
+                <h3 className="text-[20px] font-black tracking-[0.35em] text-cyan-400 uppercase">
                   SIGNAL INTEL
                 </h3>
                 <BrainCircuit className="h-5 w-5 animate-pulse text-cyan-400" />
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-6 grid xl:grid-cols-1! justify-center xl:grid-cols-1 sm:grid-cols-2 min-[1000px]:grid-cols-3!">
                 <StickyInsight
                   variant="cyan"
                   title="AI Drift Detected"

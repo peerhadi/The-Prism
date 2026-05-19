@@ -27,7 +27,7 @@ export default function GenericCompactListCard<T extends CompactListCardProps>({
     <div className="w-full py-3">
       <Card
         onClick={onActionClick}
-        className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-white/10 bg-[#0A162C] shadow-[0_0_50px_rgba(0,255,255,0.05)] transition-all duration-500 hover:scale-[1.02] hover:rotate-1 hover:shadow-[0_0_60px_rgba(0,255,255,0.2)]"
+        className="group relative cursor-pointer overflow-hidden rounded-[24px] border border-white/10 bg-[#000000] shadow-[0_0_50px_rgba(0,255,255,0.05)] transition-all duration-500 hover:scale-[1.02] hover:rotate-1 hover:shadow-[0_0_60px_rgba(0,255,255,0.2)]"
       >
         <div className="flex flex-col-reverse gap-5 p-6 md:flex-row md:items-center">
           {/* LEFT SIDE: TEXT CONTENT */}
