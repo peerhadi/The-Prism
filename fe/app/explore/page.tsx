@@ -89,7 +89,7 @@ const HEADLINES = [
 
 export default function ExploreForensics() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#02050a] font-sans text-white selection:bg-cyan-500/30">
+    <div className="relative min-h-screen overflow-hidden font-sans text-white selection:bg-cyan-500/30">
       {/* GLOBAL CYBER BACKGROUND */}
       <div className="pointer-events-none absolute inset-0">
         {/* GRID */}
@@ -105,7 +105,7 @@ export default function ExploreForensics() {
         <div className="absolute inset-0 bg-[linear-gradient(transparent_95%,rgba(255,255,255,0.03)_100%)] bg-[size:100%_6px]" />
       </div>
 
-      <main className="relative z-10 mx-auto max-w-[1920px] px-6 py-10">
+      <main className="relative z-10 mx-auto max-w-[1920px] px-23 py-12">
         {/* ================= HERO ================= */}
         <section className="relative overflow-hidden rounded-[50px] border border-white/10 bg-white/[0.03] p-10 backdrop-blur-2xl">
           {/* Animated Glow */}
@@ -211,16 +211,16 @@ export default function ExploreForensics() {
           {/* LEFT SIDEBAR */}
           <aside className="col-span-12 space-y-8 xl:col-span-3">
             {/* LIVE FEED */}
-            <div className="rounded-[36px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
+            <div className="rounded-[36px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl  flex justify-center flex-col items-center">
               <div className="mb-8 flex items-center justify-between">
-                <h3 className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
+                <h3 className="text-[20px] font-black tracking-[0.35em] text-cyan-400 uppercase">
                   SIGNAL FEED
                 </h3>
 
                 <BrainCircuit className="h-5 w-5 animate-pulse text-cyan-400" />
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-6 grid xl:grid-cols-1! justify-center xl:grid-cols-1 sm:grid-cols-2 min-[1000px]:grid-cols-3!">
                 <StickyInsight
                   variant="cyan"
                   title="Neural Drift"

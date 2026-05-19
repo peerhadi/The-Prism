@@ -28,7 +28,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
     <div className="w-full">
       <Card
         onClick={onActionClick}
-        className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] border border-white/5 bg-[#08111F] shadow-[0_0_50px_rgba(0,255,255,0.1)] transition-all duration-500 hover:rotate-1 hover:scale-[1.03]"
+        className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] border border-white/5 transition-all duration-500 hover:rotate-1 hover:scale-[1.03]"
       >
         {/* BACKGROUND IMAGE */}
         <img
@@ -38,7 +38,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
         />
 
         {/* CYBER BLUISH GRADIENT OVERLAY */}
-        <div className="absolute inset-0 bg-gradient-to-tl from-cyan-500/20 via-blue-500/10 to-indigo-500/20 opacity-80 animate-gradient-xy pointer-events-none" />
+        <div className="absolute inset-0 animate-gradient-xy pointer-events-none" />
 
         {/* CONTENT OVERLAY */}
         <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
@@ -46,7 +46,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
           <div className="mb-3 flex items-center justify-between">
             <Badge
               variant="outline"
-              className="border-cyan-500/40 bg-cyan-500/10 px-2 py-0 text-[9px] font-black tracking-[0.2em] text-cyan-400 uppercase shadow-[0_0_10px_cyan] animate-pulse"
+              className="px-2 py-0 text-[9px] font-black tracking-[0.2em] uppercase shadow-[0_0_10px_cyan] animate-pulse"
             >
               {badge}
             </Badge>
@@ -56,7 +56,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
           </div>
 
           {/* HEADLINE */}
-          <h3 className="text-[20px] leading-tight font-bold text-white transition-colors group-hover:text-blue-300">
+          <h3 className="text-[20px] leading-tight font-bold text-white transition-colors ">
             {headline}
           </h3>
 
