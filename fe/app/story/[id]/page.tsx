@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
+import * as React from "react";
+import Link from "next/link";
 import {
   ArrowRight,
   Terminal,
@@ -16,7 +16,7 @@ import {
   Box,
   Layers,
   Search,
-} from "lucide-react"
+} from "lucide-react";
 
 export default function ForensicSpecimenPage() {
   return (
@@ -261,14 +261,7 @@ export default function ForensicSpecimenPage() {
         </div>
       </main>
 
-      <footer className="border-t border-white/5 bg-black px-6 py-12 text-center">
-        <p className="text-[10px] font-black tracking-[0.5em] text-white/20 uppercase">
-          © 2026 The Prism // Forensic Narrative Ingestion Active // Finality
-          Confirmed
-        </p>
-      </footer>
-
       <div className="fixed bottom-0 left-0 z-50 h-[2px] w-full bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
     </div>
-  )
+  );
 }

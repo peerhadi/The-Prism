@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { Globe, Scale, Users, ArrowRight, Quote } from "lucide-react"
+import Image from "next/image";
+import { Globe, Scale, Users, ArrowRight, Quote } from "lucide-react";
 
 export default function AboutPage() {
   return (
@@ -101,7 +101,7 @@ export default function AboutPage() {
           <div className="flex flex-col items-center lg:items-start">
             <div className="relative h-44 w-44 overflow-hidden rounded-2xl border border-white/10 bg-white/5">
               <Image
-                src="/avatar.png"
+                src="/logo.png"
                 alt="Developer"
                 fill
                 className="object-cover"
@@ -109,7 +109,7 @@ export default function AboutPage() {
             </div>
 
             <div className="mt-6 text-center lg:text-left">
-              <h3 className="text-2xl font-semibold">Your Name</h3>
+              <h3 className="text-2xl font-semibold">Peer Hadi Taha</h3>
               <p className="mt-1 text-sm text-cyan-400">Founder & Developer</p>
             </div>
           </div>
@@ -146,17 +146,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-10 text-sm text-white/35 sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 The Prism</p>
-
-        <div className="flex items-center gap-6">
-          <span>Privacy</span>
-          <span>Terms</span>
-          <span>Contact</span>
-        </div>
-      </footer>
     </div>
-  )
+  );
 }

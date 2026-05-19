@@ -421,21 +421,6 @@ export default function ArchivePage() {
         </section>
       </main>
 
-      {/* FOOTER */}
-      <footer className="mt-20 border-t border-white/5 bg-black/60 px-6 py-10 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-[1900px] flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3 text-[10px] font-black tracking-[0.4em] text-white/30 uppercase">
-            <Globe className="h-4 w-4" />
-            THE PRISM // ARCHIVE NETWORK
-          </div>
-
-          <div className="flex items-center gap-3 text-[10px] font-black tracking-[0.4em] text-white/20 uppercase">
-            <Calendar className="h-4 w-4" />
-            TIMELINE PRESERVATION ACTIVE
-          </div>
-        </div>
-      </footer>
-
       {/* BOTTOM LINE */}
       <div className="fixed bottom-0 left-0 z-50 h-[2px] w-full bg-cyan-400 shadow-[0_0_20px_#22d3ee]" />
     </div>

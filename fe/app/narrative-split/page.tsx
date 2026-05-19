@@ -110,15 +110,15 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
               </span>
             </div>
 
-            <h2 className="max-w-2xl text-5xl leading-[0.95] font-black tracking-tighter uppercase md:text-7xl">
+            <h2 className="max-w-2xl text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[0.95] font-black tracking-tighter uppercase">
               {event.left.headline}
             </h2>
 
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-white/50">
+            <p className="mt-8 max-w-xl text-base sm:text-lg leading-relaxed text-white/50 break-words">
               {event.left.description}
             </p>
 
-            <div className="mt-12 flex items-center gap-5">
+            <div className="mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-5">
               <button className="group/button flex items-center gap-3 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-7 py-4 text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase transition-all hover:scale-105 hover:bg-cyan-500/20">
                 VIEW OFFICIAL FEED
                 <ArrowRight className="h-4 w-4 transition-transform group-hover/button:translate-x-1" />
@@ -162,7 +162,7 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
               {event.right.headline}
             </h2>
 
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-white/50">
+            <p className="mt-8 max-w-xl text-base sm:text-lg leading-relaxed text-white/50 break-words">
               {event.right.description}
             </p>
 
@@ -200,7 +200,7 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
 
 export default function NarrativeSplitPage() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black text-white">
+    <div className="relative min-h-screen overflow-x-hidden bg-black text-white">
       {/* GLOBAL BG */}
       <div className="pointer-events-none fixed inset-0">
         {/* CYAN */}
@@ -229,9 +229,9 @@ export default function NarrativeSplitPage() {
         </div>
 
         {/* CONTENT */}
-        <div className="relative z-20 mx-auto grid w-full max-w-[1800px] grid-cols-1 lg:grid-cols-2">
+        <div className="relative z-20 mx-auto grid w-full max-w-[1800px] grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
           {/* LEFT */}
-          <div className="flex flex-col justify-center px-8 py-20 md:px-20">
+          <div className="flex flex-col justify-center px-6 py-16 sm:px-10 md:px-16 lg:px-20">
             <div className="mb-6 flex items-center gap-3">
               <Radar className="h-5 w-5 text-cyan-400" />
 
@@ -240,7 +240,7 @@ export default function NarrativeSplitPage() {
               </span>
             </div>
 
-            <h1 className="text-6xl leading-[0.85] font-black tracking-tighter uppercase md:text-[10rem]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-8xl xl:text-[9rem] leading-[0.9] font-black tracking-tight uppercase break-words">
               CONTROL
             </h1>
 
@@ -251,7 +251,7 @@ export default function NarrativeSplitPage() {
           </div>
 
           {/* RIGHT */}
-          <div className="flex flex-col items-start justify-center px-8 py-20 text-left lg:items-end lg:text-right md:px-20">
+          <div className="flex flex-col items-start justify-center px-6 py-16 sm:px-10 md:px-16 lg:px-20 text-left lg:items-end lg:text-right">
             <div className="mb-6 flex items-center gap-3">
               <ShieldAlert className="h-5 w-5 text-red-400" />
 
@@ -260,7 +260,7 @@ export default function NarrativeSplitPage() {
               </span>
             </div>
 
-            <h1 className="text-6xl leading-[0.85] font-black tracking-tighter uppercase md:text-[10rem]">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[9rem] leading-[0.9] font-black tracking-tight uppercase break-words">
               CHAOS
             </h1>
 
@@ -268,19 +268,6 @@ export default function NarrativeSplitPage() {
               Independent leaks expose fragmented truths hidden beneath
               synchronized institutional consensus systems.
             </p>
-          </div>
-        </div>
-
-        {/* CENTER TEXT */}
-        <div className="absolute left-1/2 top-1/2 z-30 hidden -translate-x-1/2 -translate-y-1/2 lg:flex">
-          <div className="flex h-44 w-44 flex-col items-center justify-center rounded-full border border-white/10 bg-black/60 backdrop-blur-2xl">
-            <Split className="h-10 w-10 animate-pulse text-cyan-400" />
-
-            <span className="mt-5 text-center text-[10px] font-black tracking-[0.4em] text-white uppercase">
-              REALITY
-              <br />
-              FRACTURE
-            </span>
           </div>
         </div>
 
@@ -315,7 +302,7 @@ export default function NarrativeSplitPage() {
             <AudioWaveform className="h-8 w-8 text-red-400" />
           </div>
 
-          <h2 className="text-6xl leading-[0.9] font-black tracking-tighter uppercase md:text-[9rem]">
+          <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-[10rem] leading-[0.9] font-black tracking-tighter uppercase md:text-[9rem]">
             WHICH
             <br />
             REALITY
@@ -335,21 +322,6 @@ export default function NarrativeSplitPage() {
           </button>
         </div>
       </section>
-
-      {/* FOOTER */}
-      <footer className="border-t border-white/5 bg-black/70 px-8 py-8 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-6 md:flex-row">
-          <div className="flex items-center gap-3 text-[10px] font-black tracking-[0.4em] text-white/30 uppercase">
-            <Globe className="h-4 w-4" />
-            Narrative Split Engine
-          </div>
-
-          <div className="flex items-center gap-3 text-[10px] font-black tracking-[0.4em] text-white/20 uppercase">
-            <Flame className="h-4 w-4" />
-            REALITY OFFSET ACTIVE
-          </div>
-        </div>
-      </footer>
 
       {/* BOTTOM BEAM */}
       <div className="fixed bottom-0 left-0 z-50 h-[2px] w-1/2 bg-cyan-400 shadow-[0_0_20px_#22d3ee]" />
