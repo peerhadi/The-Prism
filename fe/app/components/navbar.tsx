@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Menu, X, ChevronRight } from "lucide-react"
+import * as React from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Menu, X, ChevronRight } from "lucide-react";
 
 export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
     { name: "All Stories", href: "/stories", desc: "Live stories and news" },
@@ -17,16 +17,27 @@ export function Navbar() {
       desc: "Analysis about news bias",
     },
     {
+      name: "Archive",
+      href: "/archive",
+      desc: "View the archive of our previous stories!",
+    },
+    ,
+    {
+      name: "Ai Chat",
+      href: "/ai-chat",
+      desc: "Chat with our own personal AI",
+    },
+    {
+      name: "Narrative Split",
+      href: "/narrative-split",
+      desc: "Check out the narratives around the world",
+    },
+    {
       name: "About",
       href: "/about",
       desc: "Learn how we interpret information",
     },
-    {
-      name: "Bias Map",
-      href: "/bias-map",
-      desc: "Map of the bias in websites around the world",
-    },
-  ]
+  ];
 
   return (
     <>
@@ -146,5 +157,5 @@ export function Navbar() {
         />
       )}
     </>
-  )
+  );
 }

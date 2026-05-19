@@ -1,110 +1,104 @@
-import { Card } from "@/components/ui/card"
-import { LucideIcon, Zap, Info, AlertTriangle, Fingerprint } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { Card } from "@/components/ui/card";
+import {
+  LucideIcon,
+  Zap,
+  Info,
+  AlertTriangle,
+  Fingerprint,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
-type InsightVariant = "cyan" | "amber" | "purple" | "red"
+type InsightVariant = "cyan" | "amber" | "purple" | "red";
 
 interface StickyInsightProps {
-  title: string
-  content: string
-  variant?: InsightVariant
-  icon?: LucideIcon
+  title: string;
+  content: string;
+  variant?: InsightVariant;
+  icon?: LucideIcon;
 }
 
 const variants = {
   cyan: {
-    bg: "bg-cyan-500/10",
-    border: "border-cyan-500/20",
+    gradient: "from-cyan-400 to-blue-500",
     text: "text-cyan-400",
-    glow: "bg-cyan-500/20",
     icon: Info,
   },
   amber: {
-    bg: "bg-amber-500/10",
-    border: "border-amber-500/20",
+    gradient: "from-amber-400 to-orange-500",
     text: "text-amber-400",
-    glow: "bg-amber-500/20",
     icon: Zap,
   },
   purple: {
-    bg: "bg-purple-500/10",
-    border: "border-purple-500/20",
+    gradient: "from-purple-400 to-pink-500",
     text: "text-purple-400",
-    glow: "bg-purple-500/20",
     icon: Fingerprint,
   },
   red: {
-    bg: "bg-red-500/10",
-    border: "border-red-500/20",
+    gradient: "from-red-400 to-pink-600",
     text: "text-red-400",
-    glow: "bg-red-500/20",
     icon: AlertTriangle,
   },
-}
+};
 
 export default function StickyInsight({
   title = "Analysis Note",
   content = "AI detected a 40% shift in emotional language within this narrative cluster.",
   variant = "cyan",
 }: StickyInsightProps) {
-  const style = variants[variant]
-  const Icon = style.icon
+  const style = variants[variant];
+  const Icon = style.icon;
 
   return (
     <Card
       className={cn(
-        "relative flex min-h-[280px] w-[280px] flex-col justify-between overflow-hidden p-5 transition-all hover:scale-105 hover:rotate-0",
-        "rounded-[16px] border shadow-2xl backdrop-blur-xl",
-        style.bg,
-        style.border
+        "relative min-h-[280px] w-[280px] p-6 overflow-hidden rounded-[24px]",
+        "bg-black/70 border border-white/5 shadow-2xl",
+        "transition-transform duration-500 hover:rotate-3 hover:scale-105",
       )}
     >
-      {/* GLOW DECOR */}
+      {/* NEON BACKGROUND GRADIENTS */}
       <div
         className={cn(
-          "absolute -top-10 -right-10 h-32 w-32 rounded-full blur-[60px]",
-          style.glow
+          "absolute inset-0 -z-10 rounded-[24px] bg-gradient-to-br",
+          style.gradient,
+          "opacity-20 blur-[50px] animate-pulse-slow",
         )}
       />
 
-      <div className="relative z-10 space-y-3">
+      {/* ROTATED GLOW LAYERS */}
+      <div className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-gradient-to-tr from-white/30 to-transparent blur-[100px] rotate-[15deg]" />
+      <div className="absolute -bottom-12 -right-12 h-36 w-36 rounded-full bg-gradient-to-bl from-pink-500/30 to-transparent blur-[80px] rotate-[-20deg]" />
+
+      <div className="relative z-10 flex flex-col justify-between h-full">
+        {/* ICON */}
         <div
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-xl border bg-black/20",
-            style.border
+            "flex items-center justify-center h-12 w-12 rounded-xl border-2 border-white/10 bg-black/40 shadow-md",
+            style.text,
           )}
         >
-          <Icon className={cn("h-4 w-4", style.text)} />
+          <Icon className="h-6 w-6 animate-spin-slow" />
         </div>
 
-        <h3
-          className={cn(
-            "text-xl leading-tight font-medium tracking-tight",
-            style.text
-          )}
-        >
+        {/* TITLE */}
+        <h3 className={cn("mt-4 text-xl font-bold tracking-tight", style.text)}>
           {title}
         </h3>
 
-        <p className="text-[16px] leading-snug font-normal tracking-tight text-white/80">
-          {content}
-        </p>
-      </div>
+        {/* CONTENT */}
+        <p className="mt-2 text-sm leading-snug text-white/70">{content}</p>
 
-      <div className="relative z-10 flex items-center justify-between border-t border-white/5 pt-3">
-        <span className="text-[10px] font-bold tracking-[0.2em] text-white/30 uppercase">
-          System Log
-        </span>
-        <div
-          className={cn(
-            "h-1.5 w-1.5 animate-pulse rounded-full",
-            style.bg.replace("/10", "")
-          )}
-        />
+        {/* FOOTER */}
+        <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-2">
+          <span className="text-[10px] font-bold tracking-widest text-white/30 uppercase">
+            System Log
+          </span>
+          <div className="h-2 w-2 animate-ping rounded-full bg-white/50" />
+        </div>
       </div>
 
       {/* TEXTURE OVERLAY */}
-      <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.03]" />
+      <div className="pointer-events-none absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-10 mix-blend-overlay" />
     </Card>
-  )
+  );
 }
