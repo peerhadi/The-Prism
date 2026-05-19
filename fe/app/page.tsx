@@ -79,12 +79,14 @@ export default function HomePage() {
         {/* HERO */}
         {/* ================================================= */}
 
-        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 pt-32 text-center">
+        <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 sm:px-6 pt-24 sm:pt-28 md:pt-32 text-center">
           {/* Radar Rings */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-[900px] w-[900px] rounded-full border border-cyan-400/5" />
-            <div className="absolute h-[650px] w-[650px] rounded-full border border-cyan-400/10" />
-            <div className="absolute h-[400px] w-[400px] rounded-full border border-cyan-400/10" />
+            <div className="h-[400px] w-[400px] sm:h-[700px] md:h-[800px] lg:h-[900px] rounded-full border border-cyan-400/5" />
+
+            <div className="absolute h-[260px] w-[260px] sm:h-[500px] md:h-[600px] lg:h-[650px] rounded-full border border-cyan-400/10" />
+
+            <div className="absolute h-[160px] w-[160px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-full border border-cyan-400/10" />
           </div>
 
           {/* Side labels */}
@@ -111,7 +113,7 @@ export default function HomePage() {
             transition={{ duration: 1 }}
             className="relative"
           >
-            <h1 className="text-7xl leading-[0.78] font-black tracking-[-0.08em] sm:text-9xl md:text-[150px] lg:text-[210px]">
+            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[210px] leading-[0.9] sm:leading-[0.78] font-black tracking-[-0.06em] sm:tracking-[-0.08em]">
               REFRACT
               <br />
               <span className="bg-gradient-to-b from-cyan-100 via-cyan-400 to-cyan-700 bg-clip-text text-transparent italic">
@@ -128,7 +130,7 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="mt-14 max-w-4xl text-lg leading-relaxed font-light tracking-wide text-cyan-100/60 md:text-2xl"
+            className="mt-10 sm:mt-14 px-2 max-w-4xl text-base sm:text-lg md:text-2xl leading-relaxed font-light tracking-wide text-cyan-100/60 md:text-2xl"
           >
             Information enters distorted. The Prism isolates the hidden spectrum
             beneath global information systems, exposing framing, emotional
@@ -136,9 +138,9 @@ export default function HomePage() {
           </motion.p>
 
           {/* CTA */}
-          <div className="mt-16 flex flex-wrap justify-center gap-6">
+          <div className="mt-12 sm:mt-16 flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
             <Link href="/signup">
-              <Button className="group relative h-[80px] overflow-hidden rounded-none border border-cyan-400 bg-cyan-400 px-16 text-[15px] font-black tracking-[0.5em] text-black uppercase shadow-[0_0_60px_rgba(34,211,238,0.45)] transition-all hover:scale-[1.03] hover:bg-white">
+              <Button className="group w-full sm:w-auto relative h-[80px] overflow-hidden rounded-none border border-cyan-400 bg-cyan-400 px-16 text-[15px] font-black tracking-[0.5em] text-black uppercase shadow-[0_0_60px_rgba(34,211,238,0.45)] transition-all hover:scale-[1.03] hover:bg-white">
                 <span className="relative z-10">ENTER THE PRISM</span>
               </Button>
             </Link>
@@ -146,7 +148,7 @@ export default function HomePage() {
             <Link href="/stories">
               <Button
                 variant="outline"
-                className="group h-[80px] rounded-none border border-white/10 bg-white/[0.02] px-16 text-[14px] font-black tracking-[0.45em] uppercase backdrop-blur-xl transition-all hover:border-cyan-400 hover:bg-cyan-400/5 hover:text-cyan-300"
+                className="group h-[80px] w-full sm:w-auto rounded-none border border-white/10 bg-white/[0.02] px-16 text-[14px] font-black tracking-[0.45em] uppercase backdrop-blur-xl transition-all hover:border-cyan-400 hover:bg-cyan-400/5 hover:text-cyan-300"
               >
                 <span>Active Signals</span>
                 <ChevronRight className="ml-3 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -155,7 +157,7 @@ export default function HomePage() {
           </div>
 
           {/* Floating Stats */}
-          <div className="mt-24 grid w-full max-w-6xl grid-cols-2 gap-6 lg:grid-cols-4">
+          <div className="mt-16 sm:mt-24 grid w-full max-w-6xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {[
               {
                 label: "Signal Distortions",
@@ -180,7 +182,7 @@ export default function HomePage() {
             ].map((item, i) => (
               <div
                 key={i}
-                className="group relative overflow-hidden border border-cyan-500/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all hover:border-cyan-400/30 hover:bg-cyan-400/[0.03]"
+                className="group relative overflow-hidden border border-cyan-500/10 bg-white/[0.02] p-6 sm:p-8 backdrop-blur-xl transition-all hover:border-cyan-400/30 hover:bg-cyan-400/[0.03]"
               >
                 <div className="mb-4 flex items-center gap-3 text-cyan-400">
                   {item.icon}
@@ -203,7 +205,7 @@ export default function HomePage() {
         {/* MODULES */}
         {/* ================================================= */}
 
-        <section className="relative border-y border-cyan-500/10 bg-black/40 px-6 py-40">
+        <section className="relative border-y border-cyan-500/10 bg-black/40 px-4 sm:px-6 py-24 sm:py-40">
           <div className="mx-auto max-w-7xl">
             <div className="mb-24 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
               <div>
@@ -223,7 +225,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
               {[
                 {
                   icon: <Cpu />,
@@ -292,7 +294,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.08),transparent_60%)]" />
 
           <div className="relative z-10 mx-auto max-w-6xl">
-            <p className="text-4xl leading-[0.95] font-black tracking-tight md:text-7xl lg:text-[110px]">
+            <p className="text-3xl sm:text-5xl md:text-7xl lg:text-[110px] leading-tight font-black tracking-tight">
               EVERY SIGNAL
               <br />
               <span className="text-white/15">CARRIES DISTORTION.</span>
@@ -313,7 +315,7 @@ export default function HomePage() {
         {/* FINAL CTA */}
         {/* ================================================= */}
 
-        <section className="relative overflow-hidden px-6 py-60 text-center">
+        <section className="relative overflow-hidden px-4 sm:px-6 py-40 sm:py-60 text-center">
           <div className="absolute top-1/2 left-1/2 h-[900px] w-[900px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400/10" />
 
           <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-400/10 blur-[140px]" />
@@ -331,7 +333,7 @@ export default function HomePage() {
 
             <div className="mt-16 flex justify-center">
               <Link href="/signup">
-                <Button className="group relative h-[100px] overflow-hidden rounded-none border border-cyan-400 bg-transparent px-20 text-[18px] font-black tracking-[0.55em] text-cyan-400 uppercase transition-all hover:text-black">
+                <Button className="group relative h-[70px] sm:h-[100px] overflow-hidden rounded-none border border-cyan-400 bg-transparent px-12 sm:px-20 text-sm sm:text-lg font-black tracking-[0.55em] text-cyan-400 uppercase transition-all hover:text-black">
                   <span className="relative z-10">BEGIN REFRACTION</span>
 
                   <div className="absolute inset-0 translate-y-full bg-cyan-400 transition-transform duration-300 group-hover:translate-y-0" />
