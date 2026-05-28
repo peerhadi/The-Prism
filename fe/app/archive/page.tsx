@@ -316,31 +316,6 @@ export default function ArchivePage() {
             {/* MASSIVE TERMINAL */}
             <div className="relative overflow-hidden rounded-[40px] border border-white/10 bg-black/40 p-10">
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-indigo-500/10" />
-
-              <div className="relative z-10">
-                <div className="mb-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
-                      CORE TERMINAL
-                    </p>
-
-                    <h2 className="mt-3 text-4xl font-black uppercase">
-                      Deep Reconstruction
-                    </h2>
-                  </div>
-
-                  <Binary className="h-8 w-8 text-cyan-400" />
-                </div>
-
-                <div className="space-y-4 font-mono text-sm text-cyan-400/70">
-                  <p> loading archived memory structures...</p>
-                  <p> reconstructing suppressed media fragments...</p>
-                  <p> emotional influence signatures detected...</p>
-                  <p> timeline synchronization mismatch...</p>
-                  <p> cross-reference conflict found...</p>
-                  <p className="text-white">ACCESS GRANTED //</p>
-                </div>
-              </div>
             </div>
           </section>
 
