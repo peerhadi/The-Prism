@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -18,8 +17,16 @@ import {
   ScanLine,
   Waves,
 } from "lucide-react";
+import { redirect, useRouter } from "next/navigation";
 
 export default function HomePage() {
+  const router = useRouter();
+
+  React.useEffect(() => {
+    if (localStorage.getItem("token")) {
+      router.replace("/stories");
+    }
+  }, [router]);
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#02050a] font-sans text-white selection:bg-cyan-500/30">
       {/* ================================================= */}

@@ -1,344 +1,325 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
+  Activity,
   Bell,
-  Moon,
+  BrainCircuit,
+  Globe,
   Palette,
+  Radar,
   Shield,
-  User,
-  Newspaper,
   Sparkles,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Card } from "@/components/ui/card"
-import { Switch } from "@/components/ui/switch"
-import { Button } from "@/components/ui/button"
-import { Slider } from "@/components/ui/slider"
-import { Input } from "@/components/ui/input"
-import { THEMES } from "../themes"
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-const sidebarItems = [
-  {
-    label: "Profile",
-    icon: User,
-  },
-  {
-    label: "Appearance",
-    icon: Palette,
-  },
-  {
-    label: "Content",
-    icon: Newspaper,
-  },
-  {
-    label: "Bias Settings",
-    icon: Shield,
-  },
-  {
-    label: "Notifications",
-    icon: Bell,
-  },
-]
+function CyberCard({
+  title,
+  icon: Icon,
+  children,
+}: {
+  title: string;
+  icon: React.ElementType;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
+      <div className="mb-8 flex items-center gap-4">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-500/30 bg-cyan-500/10">
+          <Icon className="h-5 w-5 text-cyan-400" />
+        </div>
 
-const topics = [
-  "Politics",
-  "Technology",
-  "World",
-  "Business",
-  "Science",
-  "Culture",
-]
+        <div>
+          <p className="text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+            Configuration Module
+          </p>
+
+          <h2 className="mt-1 text-2xl font-black tracking-tight">{title}</h2>
+        </div>
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
+function SettingRow({
+  title,
+  description,
+  defaultChecked = true,
+}: {
+  title: string;
+  description: string;
+  defaultChecked?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/30 p-5 transition-all duration-300 hover:border-cyan-500/20">
+      <div>
+        <p className="font-semibold">{title}</p>
+
+        <p className="mt-1 text-sm text-white/40">{description}</p>
+      </div>
+
+      <Switch defaultChecked={defaultChecked} />
+    </div>
+  );
+}
 
 export default function SettingsPage() {
-  const [selected, setSelected] = useState("Appearance")
-  const [selectedTopics, setSelectedTopics] = useState(["Technology", "World"])
+  const [topics, setTopics] = useState(["Technology", "AI", "Cybersecurity"]);
+
+  const availableTopics = [
+    "Technology",
+    "AI",
+    "Cybersecurity",
+    "Politics",
+    "Business",
+    "World",
+    "Science",
+    "Culture",
+  ];
 
   const toggleTopic = (topic: string) => {
-    if (selectedTopics.includes(topic)) {
-      setSelectedTopics(selectedTopics.filter((t) => t !== topic))
-    } else {
-      setSelectedTopics([...selectedTopics, topic])
-    }
-  }
+    setTopics((prev) =>
+      prev.includes(topic) ? prev.filter((t) => t !== topic) : [...prev, topic],
+    );
+  };
 
   return (
-    <div
-      className="min-h-screen w-full text-white"
-      style={{ background: THEMES.background }}
-    >
+    <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
+      {/* BACKGROUND */}
 
-      {/* Main */}
-      <main className="w-full p-6 md:p-10 overflow-y-auto">
-        <div className="max-w-[950px] mx-auto flex flex-col gap-6">
-          {/* Header */}
-          <div>
-            <h2 className="text-4xl font-semibold tracking-tight">
-              Settings
-            </h2>
-            <p className="text-gray-400 mt-2">
-              Customize how you explore narratives and perspectives.
-            </p>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.12),transparent_35%)]" />
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_30%)]" />
+
+      <div className="pointer-events-none absolute inset-0 opacity-[0.06]">
+        <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:80px_80px]" />
+      </div>
+
+      <div className="absolute top-0 left-1/3 h-[500px] w-[500px] rounded-full bg-cyan-500/20 blur-[140px]" />
+
+      <div className="absolute bottom-0 right-0 h-[600px] w-[600px] rounded-full bg-purple-500/20 blur-[160px]" />
+
+      <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
+        {/* HEADER */}
+
+        <section className="relative overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.03] p-10 backdrop-blur-2xl">
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-0 h-[250px] w-[250px] rounded-full bg-cyan-500/20 blur-[100px]" />
+
+            <div className="absolute bottom-0 right-0 h-[250px] w-[250px] rounded-full bg-purple-500/20 blur-[100px]" />
           </div>
 
-          {/* Profile */}
-          <Card
-            className="p-6 rounded-[20px]"
-            style={{
-              background: "rgb(19,27,46)",
-              borderColor: THEMES.border,
-            }}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-xl">Profile</h3>
-                <p className="text-sm text-gray-400 mt-1">
-                  Manage your public information.
-                </p>
-              </div>
-
-              <Button className="rounded-xl">Save</Button>
+          <div className="relative z-10">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+              <Activity className="h-3 w-3 animate-pulse" />
+              System Configuration
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm mb-2 text-gray-400">Username</p>
-                <Input
-                  defaultValue="prism_user"
-                  className="h-12 rounded-xl bg-[rgb(15,23,42)] border-[rgb(32,43,62)]"
-                />
-              </div>
+            <h1 className="text-5xl font-black tracking-tighter uppercase md:text-7xl">
+              <span className="bg-gradient-to-b from-white via-cyan-200 to-cyan-800 bg-clip-text text-transparent">
+                Settings
+              </span>
+            </h1>
 
-              <div>
-                <p className="text-sm mb-2 text-gray-400">Email</p>
-                <Input
-                  defaultValue="user@prism.app"
-                  className="h-12 rounded-xl bg-[rgb(15,23,42)] border-[rgb(32,43,62)]"
-                />
+            <p className="mt-6 max-w-3xl text-white/50">
+              Configure visual systems, narrative balancing, intelligence feeds,
+              alerts, and experimental analysis engines.
+            </p>
+          </div>
+        </section>
+
+        {/* CONTENT */}
+
+        <div className="mt-10 space-y-8">
+          {/* VISUAL */}
+
+          <CyberCard title="Visual Engine" icon={Palette}>
+            <div className="space-y-4">
+              <SettingRow
+                title="Deep View"
+                description="Enable immersive Prism interface."
+              />
+
+              <SettingRow
+                title="Motion Effects"
+                description="Allow transitions and animations."
+              />
+
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="font-semibold">Glow Intensity</p>
+
+                  <span className="text-sm text-cyan-400">75%</span>
+                </div>
+
+                <Slider defaultValue={[75]} max={100} step={1} />
               </div>
             </div>
-          </Card>
+          </CyberCard>
 
-          {/* Appearance */}
-          <Card
-            className="p-6 rounded-[20px]"
-            style={{
-              background: "rgb(19,27,46)",
-              borderColor: THEMES.border,
-            }}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <Moon size={18} />
-              <div>
-                <h3 className="text-xl">Appearance</h3>
-                <p className="text-sm text-gray-400 mt-1">
-                  Control the visual experience.
-                </p>
-              </div>
-            </div>
+          {/* NARRATIVE */}
 
-            <div className="flex items-center justify-between p-4 rounded-2xl border border-[rgb(32,43,62)] bg-[rgb(15,23,42)]">
-              <div>
-                <p>Deep View</p>
-                <p className="text-sm text-gray-400 mt-1">
-                  Use the immersive dark theme.
-                </p>
+          <CyberCard title="Narrative Matrix" icon={Shield}>
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
+                <div className="mb-4 flex items-center justify-between text-xs font-black tracking-[0.2em] uppercase">
+                  <span className="text-cyan-400">Balanced</span>
+
+                  <span className="text-purple-400">Strong Contrasts</span>
+                </div>
+
+                <Slider defaultValue={[65]} max={100} step={1} />
               </div>
 
-              <Switch defaultChecked />
-            </div>
-          </Card>
+              <SettingRow
+                title="Highlight Conflicts"
+                description="Surface competing narratives and framing differences."
+              />
 
-          {/* Topics */}
-          <Card
-            className="p-6 rounded-[20px]"
-            style={{
-              background: "rgb(19,27,46)",
-              borderColor: THEMES.border,
-            }}
-          >
-            <div className="mb-6">
-              <h3 className="text-xl">Content Preferences</h3>
-              <p className="text-sm text-gray-400 mt-1">
-                Choose the stories you care about most.
-              </p>
-            </div>
+              <SettingRow
+                title="Detect Bias Patterns"
+                description="Identify source-level bias trends."
+              />
 
+              <SettingRow
+                title="Perspective Equalization"
+                description="Avoid over-weighting dominant narratives."
+              />
+            </div>
+          </CyberCard>
+
+          {/* TOPICS */}
+
+          <CyberCard title="Intelligence Interests" icon={Globe}>
             <div className="flex flex-wrap gap-3">
-              {topics.map((topic) => {
-                const active = selectedTopics.includes(topic)
+              {availableTopics.map((topic) => {
+                const active = topics.includes(topic);
 
                 return (
                   <button
                     key={topic}
                     onClick={() => toggleTopic(topic)}
-                    className="px-4 py-2 rounded-xl border text-sm transition-all duration-200"
-                    style={{
-                      background: active
-                        ? "rgb(37,99,235)"
-                        : "rgb(15,23,42)",
-                      borderColor: active
-                        ? "rgb(59,130,246)"
-                        : THEMES.border,
-                    }}
+                    className={`rounded-full border px-5 py-3 text-[11px] font-black tracking-[0.2em] uppercase transition-all duration-300 ${
+                      active
+                        ? "border-cyan-500/40 bg-cyan-500/10 text-cyan-400 shadow-[0_0_30px_rgba(0,255,255,0.15)]"
+                        : "border-white/10 bg-black/20 text-white/50 hover:border-white/20"
+                    }`}
                   >
                     {topic}
                   </button>
-                )
+                );
               })}
             </div>
-          </Card>
+          </CyberCard>
 
-          {/* Bias Settings */}
-          <Card
-            className="p-6 rounded-[20px]"
-            style={{
-              background: "rgb(19,27,46)",
-              borderColor: THEMES.border,
-            }}
-          >
-            <div className="mb-6">
-              <h3 className="text-xl">Bias Settings</h3>
-              <p className="text-sm text-gray-400 mt-1">
-                Adjust how perspectives are balanced and surfaced.
-              </p>
-            </div>
+          {/* SOURCES */}
 
-            <div className="mb-8">
-              <div className="flex justify-between mb-4 text-sm text-gray-400">
-                <span>Balanced</span>
-                <span>Strong Contrasts</span>
-              </div>
+          <CyberCard title="Intelligence Feeds" icon={BrainCircuit}>
+            <div className="mb-6 flex gap-3">
+              <Input
+                placeholder="https://source-domain.com"
+                className="h-12 rounded-xl border-white/10 bg-black/30"
+              />
 
-              <Slider defaultValue={[65]} max={100} step={1} />
+              <Button className="h-12 rounded-xl bg-cyan-500 text-black hover:bg-cyan-400">
+                Add
+              </Button>
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-2xl border border-[rgb(32,43,62)] bg-[rgb(15,23,42)]">
-                <div>
-                  <p>Show all perspectives equally</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Avoid emphasizing one narrative too strongly.
-                  </p>
-                </div>
+              <SettingRow
+                title="Reuters"
+                description="Global intelligence reporting."
+              />
 
-                <Switch defaultChecked />
-              </div>
+              <SettingRow title="BBC" description="International coverage." />
 
-              <div className="flex items-center justify-between p-4 rounded-2xl border border-[rgb(32,43,62)] bg-[rgb(15,23,42)]">
-                <div>
-                  <p>Highlight framing conflicts</p>
-                  <p className="text-sm text-gray-400 mt-1">
-                    Surface stories with the strongest narrative differences.
-                  </p>
-                </div>
+              <SettingRow
+                title="Associated Press"
+                description="Wire reporting network."
+              />
 
-                <Switch defaultChecked />
-              </div>
+              <SettingRow
+                title="Al Jazeera"
+                description="Alternative geopolitical perspectives."
+              />
             </div>
-          </Card>
+          </CyberCard>
 
-          {/* Source Preferences */}
-          <Card
-            className="p-6 rounded-[20px]"
-            style={{
-              background: "rgb(19,27,46)",
-              borderColor: THEMES.border,
-            }}
-          >
-            <div className="mb-6">
-              <h3 className="text-xl">Source Preferences</h3>
-              <p className="text-sm text-gray-400 mt-1">
-                Control which websites and source domains Prism pulls news from.
-              </p>
-            </div>
+          {/* ALERTS */}
 
-            <div className="mb-5 p-4 rounded-2xl border border-[rgb(32,43,62)] bg-[rgb(15,23,42)]">
-              <p className="text-sm mb-3 text-gray-400">
-                Add custom source website
-              </p>
-
-              <div className="flex gap-3">
-                <Input
-                  placeholder="https://example-news-site.com"
-                  className="h-11 rounded-xl bg-[rgb(11,19,38)] border-[rgb(32,43,62)]"
-                />
-
-                <Button className="rounded-xl px-5">
-                  Add
-                </Button>
-              </div>
-            </div>
-
+          <CyberCard title="Alert Systems" icon={Bell}>
             <div className="space-y-4">
-              {[
-                {
-                  name: "reuters.com",
-                  desc: "Global wire reporting",
-                },
-                {
-                  name: "bbc.com",
-                  desc: "International coverage",
-                },
-                {
-                  name: "aljazeera.com",
-                  desc: "Alternative geopolitical perspectives",
-                },
-                {
-                  name: "nytimes.com",
-                  desc: "Long-form western analysis",
-                },
-              ].map((source) => (
-                <div
-                  key={source.name}
-                  className="flex items-center justify-between p-4 rounded-2xl border border-[rgb(32,43,62)] bg-[rgb(15,23,42)]"
-                >
-                  <div>
-                    <p>{source.name}</p>
-                    <p className="text-sm text-gray-400 mt-1">
-                      {source.desc}
-                    </p>
-                  </div>
+              <SettingRow
+                title="Breaking Stories"
+                description="Immediate notification for major events."
+              />
 
-                  <Switch defaultChecked />
-                </div>
-              ))}
+              <SettingRow
+                title="Daily Digest"
+                description="Receive daily intelligence summaries."
+              />
+
+              <SettingRow
+                title="Weekly Report"
+                description="Comprehensive weekly narrative overview."
+              />
+
+              <SettingRow
+                title="Narrative Divergence Alerts"
+                description="Notify when sources strongly disagree."
+              />
             </div>
-          </Card>
+          </CyberCard>
 
-          {/* Notifications */}
-          <Card
-            className="p-6 rounded-[20px]"
-            style={{
-              background: "rgb(19,27,46)",
-              borderColor: THEMES.border,
-            }}
-          >
-            <div className="mb-6">
-              <h3 className="text-xl">Notifications</h3>
-              <p className="text-sm text-gray-400 mt-1">
-                Stay updated with breaking stories and summaries.
+          {/* EXPERIMENTAL */}
+
+          <CyberCard title="Experimental Systems" icon={Radar}>
+            <div className="space-y-4">
+              <SettingRow
+                title="AI Summaries"
+                description="Generate autonomous article summaries."
+              />
+
+              <SettingRow
+                title="Narrative Clustering"
+                description="Group stories by framing similarity."
+              />
+
+              <SettingRow
+                title="Deep Analysis"
+                description="Run advanced contextual comparisons."
+              />
+
+              <SettingRow
+                title="Emerging Signal Detection"
+                description="Detect unusual patterns before they trend."
+              />
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+              <div className="flex items-center gap-3">
+                <Sparkles className="h-5 w-5 text-cyan-400" />
+
+                <p className="font-semibold text-cyan-400">
+                  Experimental Features Enabled
+                </p>
+              </div>
+
+              <p className="mt-2 text-sm text-white/50">
+                These systems may produce incomplete or evolving results as
+                Prism continues learning.
               </p>
             </div>
-
-            <div className="space-y-4">
-              {[
-                "Breaking stories",
-                "Daily digest",
-                "Perspective alerts",
-              ].map((item) => (
-                <div
-                  key={item}
-                  className="flex items-center justify-between p-4 rounded-2xl border border-[rgb(32,43,62)] bg-[rgb(15,23,42)]"
-                >
-                  <p>{item}</p>
-                  <Switch defaultChecked />
-                </div>
-              ))}
-            </div>
-          </Card>
+          </CyberCard>
         </div>
       </main>
     </div>
-  )
+  );
 }

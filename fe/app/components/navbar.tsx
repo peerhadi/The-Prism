@@ -1,12 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Menu, X, ChevronRight, Activity, Fingerprint } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChevronRight,
+  User,
+  Settings,
+  LogOut,
+  ChevronDown,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
+  const router = useRouter();
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setAuthenticated(!!localStorage.getItem("token"));
+    const update = () => {
+      setAuthenticated(!!localStorage.getItem("token"));
+    };
+
+    window.addEventListener("auth-changed", update);
+
+    return () => window.removeEventListener("auth-changed", update);
+  }, []);
+  const logout = () => {
+    localStorage.removeItem("token");
+    router.push("/login");
+    window.location.reload();
+  };
   const links = [
     {
       name: "Stories",
@@ -39,7 +68,9 @@ export function Navbar() {
       desc: "Inside the intelligence framework",
     },
   ];
-
+  if (authenticated === null) {
+    return;
+  }
   return (
     <>
       {/* NAVBAR */}
@@ -54,10 +85,16 @@ export function Navbar() {
               onClick={() => setOpen(true)}
               className="group flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] transition-all hover:border-cyan-500/30 hover:bg-cyan-500/10"
             >
-              <Menu className="h-5 w-5 text-cyan-400 transition-transform group-hover:scale-110" />
+              <Menu
+                suppressHydrationWarning
+                className="h-5 w-5 text-cyan-400 transition-transform group-hover:scale-110"
+              />
             </button>
 
-            <Link href="/" className="flex items-center gap-3">
+            <Link
+              href={authenticated ? "/stories" : "/"}
+              className="flex items-center gap-3"
+            >
               <img
                 src="/logo.png"
                 alt="The Prism"
@@ -87,7 +124,7 @@ export function Navbar() {
               <Link
                 key={name}
                 href={href}
-                className="relative text-[11px] font-black tracking-[0.25em] text-white/50 uppercase transition-colors hover:text-cyan-400"
+                className="relative text-[13px] font-black tracking-[0.25em] text-white/50 uppercase transition-colors hover:text-cyan-400"
               >
                 {name}
               </Link>
@@ -95,20 +132,94 @@ export function Navbar() {
           </nav>
 
           {/* RIGHT */}
+          {/* RIGHT */}
           <div className="flex items-center gap-3">
-            <Link
-              href="/login"
-              className="hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-[11px] font-black tracking-[0.25em] text-white/60 uppercase transition-all hover:border-white/20 hover:bg-white/10 md:block"
-            >
-              Log In
-            </Link>
+            {!authenticated ? (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-[11px] font-black tracking-[0.25em] text-white/60 uppercase transition-all hover:border-white/20 hover:bg-white/10 md:block"
+                >
+                  Log In
+                </Link>
 
-            <Link
-              href="/signup"
-              className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-[11px] font-black tracking-[0.25em] text-cyan-400 uppercase transition-all hover:scale-[1.03] hover:bg-cyan-500/20"
-            >
-              Sign Up
-            </Link>
+                <Link
+                  href="/signup"
+                  className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-[11px] font-black tracking-[0.25em] text-cyan-400 uppercase transition-all hover:scale-[1.03] hover:bg-cyan-500/20"
+                >
+                  Sign Up
+                </Link>
+              </>
+            ) : (
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="
+          group
+          flex
+          items-center
+          gap-3
+          rounded-2xl
+          border border-cyan-500/20
+          bg-cyan-500/[0.04]
+          px-2 py-2
+          transition-all
+          hover:border-cyan-500/40
+          hover:bg-cyan-500/[0.08]
+        "
+                >
+                  <User className="h-8 w-8 text-cyan-400" />
+                </button>
+
+                {profileOpen && (
+                  <div
+                    className="
+            absolute right-0 top-[calc(100%+12px)]
+            w-64 overflow-hidden rounded-3xl
+            border border-cyan-500/20
+            bg-[#050816]/95
+            backdrop-blur-2xl
+            shadow-[0_0_40px_rgba(34,211,238,0.12)]
+          "
+                  >
+                    <div className="h-px w-full bg-cyan-500/20" />
+
+                    <Link
+                      href="/profile"
+                      className="flex items-center gap-4 px-5 py-4 transition-all hover:bg-cyan-500/[0.05]"
+                    >
+                      <User className="h-5 w-5 text-cyan-400" />
+
+                      <span className="text-[11px] font-black tracking-[0.2em] uppercase">
+                        Profile
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/settings"
+                      className="flex items-center gap-4 px-5 py-4 transition-all hover:bg-cyan-500/[0.05]"
+                    >
+                      <Settings className="h-5 w-5 text-cyan-400" />
+
+                      <span className="text-[11px] font-black tracking-[0.2em] uppercase">
+                        Settings
+                      </span>
+                    </Link>
+
+                    <button
+                      onClick={logout}
+                      className="flex w-full items-center gap-4 px-5 py-4 text-left transition-all hover:bg-red-500/10"
+                    >
+                      <LogOut className="h-5 w-5 text-red-400" />
+
+                      <span className="text-[11px] font-black tracking-[0.2em] text-red-400 uppercase">
+                        Logout
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </header>

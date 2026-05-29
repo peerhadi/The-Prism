@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Activity,
   ArrowRight,
@@ -41,7 +41,6 @@ export default function StoryIntelligencePage() {
       color: "border-pink-500/50 text-pink-400",
     },
   ];
-
   const primaryHeadlines = [
     {
       tag: "FLASH",
