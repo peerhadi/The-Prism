@@ -11,7 +11,7 @@ export async function categoryRoutes(app: FastifyInstance) {
 
   app.post("/", controller.create);
 
-  app.patch("/:id", controller.update);
+  app.put("/:id", controller.update);
 
   app.delete("/:id", controller.delete);
 }
