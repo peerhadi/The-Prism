@@ -28,60 +28,39 @@ import GenericCompactListCard from "../components/ListCard";
 import StickyInsight from "../components/TickerCard";
 import { HeadlineCard } from "../components/HeadlineCard";
 import GenericObsidianStoryCard from "../components/HeroCard";
-
-const timeline = [
-  "Energy Collapse",
-  "Neural Consensus",
-  "Biometric Surveillance",
-  "Synthetic Media",
-  "Quantum Drift",
-  "Memory Corruption",
-];
-
-const headlineData = [
-  {
-    tag: "ARCHIVE",
-    time: "1997",
-    title: "Recovered media fragments reveal early sentiment-engine testing.",
-    variant: "cyan" as const,
-  },
-  {
-    tag: "RESTRICTED",
-    time: "2008",
-    title:
-      "Behavioral influence systems quietly integrated into recommendation engines.",
-    variant: "purple" as const,
-  },
-  {
-    tag: "SEALED",
-    time: "2026",
-    title: "Cross-border narrative synchronization reaches critical scale.",
-    variant: "red" as const,
-  },
-];
-
-const archiveStories = [
-  {
-    badge: "Recovered",
-    id: "ARC-01",
-    headline: "The First Emotional Recommendation Engine",
-    description:
-      "Internal documents suggest algorithmic emotional steering existed years before public deployment.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?q=80&w=1200",
-  },
-  {
-    badge: "Classified",
-    id: "ARC-02",
-    headline: "Neural Advertising Networks Mapped Public Anxiety Cycles",
-    description:
-      "Archived media datasets reveal synchronized fear amplification patterns during economic events.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200",
-  },
-];
+import { getBiasColor } from "@/app/utils/getbiascolor";
+import { PrismLoader } from "@/app/components/loadingScreen";
 
 export default function ArchivePage() {
+  const [articles, setArticles] = React.useState<any[]>([]);
+  const [categories, setCategories] = React.useState<any[]>([]);
+  const [heroStory, setHeroStory] = React.useState<any>(null);
+  const [featured, setFeatured] = React.useState<any[]>([]);
+  const [stream, setStream] = React.useState<any[]>([]);
+  const [headlines, setHeadlines] = React.useState<any[]>([]);
+  React.useEffect(() => {
+    fetch("http://localhost:8080/api/categories")
+      .then((res) => res.json())
+      .then(setCategories);
+    fetch("http://localhost:8080/api/articles")
+      .then((res) => res.json())
+
+      .then((fetched) => {
+        setHeroStory(fetched[0]);
+
+        setFeatured(fetched.slice(1, 3));
+
+        setStream(fetched.slice(3, 5));
+
+        setHeadlines(fetched.slice(5, 8));
+
+        setArticles(fetched);
+      });
+  }, []);
+  if (!heroStory || featured.length < 2 || stream.length < 2) {
+    return <PrismLoader />;
+  }
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#03060d] text-white">
       {/* GLOBAL BACKGROUND */}
@@ -141,14 +120,14 @@ export default function ArchivePage() {
 
               {/* TIMELINE */}
               <div className="mt-14 flex flex-wrap gap-3">
-                {timeline.map((item, idx) => (
+                {categories.map((item, idx) => (
                   <button
                     key={idx}
-                    className="group flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-5 py-3 text-[10px] font-black tracking-[0.3em] text-white/40 uppercase transition-all hover:scale-105 hover:border-cyan-500/30 hover:text-cyan-400"
+                    className={`group flex items-center gap-3 rounded-full ${getBiasColor(item.averageBias)} bg-black/30 px-5 py-3 text-[10px] font-black tracking-[0.3em] uppercase transition-all hover:scale-105 `}
                   >
                     <div className="h-1.5 w-1.5 rounded-full bg-current" />
 
-                    {item}
+                    {item.name}
                   </button>
                 ))}
               </div>
@@ -219,10 +198,9 @@ export default function ArchivePage() {
         </section>
 
         {/* MAIN GRID */}
-        <section className="mt-16 grid grid-cols-12 gap-10">
-          {/* LEFT SIDEBAR */}
-          <aside className="col-span-12 space-y-8 xl:col-span-3">
-            {/* LOGS */}
+        <section className="mt-16 hidden xl:grid grid-cols-12 gap-10">
+          {/* LEFT */}
+          <aside className="col-span-3 space-y-8">
             <div className="rounded-[40px] border border-white/10 bg-black/30 p-8">
               <div className="mb-8 flex items-center justify-between">
                 <h3 className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
@@ -233,166 +211,288 @@ export default function ArchivePage() {
               </div>
 
               <div className="space-y-6">
-                {[
-                  "Recovered analog footage from pre-network era.",
-                  "Memory corruption detected in political archives.",
-                  "Synthetic reconstruction pipeline initialized.",
-                  "Timeline drift detected in media cluster.",
-                ].map((item, idx) => (
+                {articles.slice(0, 4).map((article) => (
                   <div
-                    key={idx}
+                    key={article.id}
                     className="flex gap-4 border-b border-white/5 pb-5"
                   >
                     <Clock3 className="mt-1 h-4 w-4 text-cyan-400" />
 
                     <p className="text-sm leading-relaxed text-white/50">
-                      {item}
+                      {article.summary}
                     </p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* STICKY INSIGHTS */}
             <StickyInsight
               variant="cyan"
-              title="Recovered Fragment"
-              content="AI restoration enhanced degraded narrative footage from archive cluster 09."
+              title={articles[0]?.title}
+              content={articles[0]?.summary}
             />
 
             <StickyInsight
               variant="purple"
-              title="Timeline Drift"
-              content="Contradictory versions of historical broadcasts detected across mirrored nodes."
+              title={articles[1]?.title}
+              content={articles[1]?.summary}
+            />
+            <StickyInsight
+              variant="purple"
+              title={articles[2]?.title}
+              content={articles[2]?.summary}
             />
           </aside>
 
           {/* CENTER */}
-          <section className="col-span-12 space-y-10 xl:col-span-6">
-            {/* HERO CARD */}
+          <section className="col-span-6 space-y-10">
             <GenericObsidianStoryCard
-              genre="Recovered Intelligence"
-              date="May 18, 2026"
-              headline="THE MEMORY WAR: HOW MEDIA SYSTEMS REWROTE PUBLIC REALITY"
-              description="A classified reconstruction of coordinated emotional influence systems operating beneath modern recommendation architectures."
-              sourceCount={28}
+              type={heroStory.type}
+              createdAt={new Date(heroStory.createdAt).toLocaleDateString()}
+              title={heroStory.title}
+              description={heroStory.summary}
+              sources={heroStory.sources}
               status="Restricted"
-              imageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000"
+              imageUrl={heroStory.imageUrl}
             />
 
-            {/* SHORT STORIES */}
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              {archiveStories.map((story) => (
+            <div className="grid grid-cols-2 gap-8">
+              {featured.map((story) => (
                 <GenericShortStoryCard
                   key={story.id}
-                  badge={story.badge}
+                  badge={story.type}
                   id={story.id}
-                  headline={story.headline}
+                  headline={story.title}
                   description={story.description}
                   imageUrl={story.imageUrl}
                 />
               ))}
             </div>
 
-            {/* LIST STORIES */}
             <div className="space-y-8">
               <GenericCompactListCard
-                category="Historical Reconstruction"
-                sourceCount={14}
-                headline="Leaked Research Shows Emotional AI Training Began Decades Earlier Than Publicly Claimed"
-                description="Recovered datasets suggest behavioral reinforcement systems were integrated into commercial platforms long before regulation."
-                imageUrl="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600"
+                category={stream[0]?.type}
+                sourceCount={stream[0]?.sources?.length ?? 0}
+                headline={stream[0]?.title}
+                description={stream[0]?.description}
+                imageUrl={stream[0]?.imageUrl}
               />
 
               <GenericCompactListCard
-                category="Neural Archives"
-                sourceCount={22}
-                headline="Cross-Platform Memory Synchronization Triggered Identical Public Reactions"
-                description="Archived recommendation maps reveal synchronized emotional amplification cycles."
-                imageUrl="https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=1600"
+                category={stream[1]?.type}
+                sourceCount={stream[1]?.sources?.length ?? 0}
+                headline={stream[1]?.title}
+                description={stream[1]?.description}
+                imageUrl={stream[1]?.imageUrl}
               />
-            </div>
-
-            {/* MASSIVE TERMINAL */}
-            <div className="relative overflow-hidden rounded-[40px] border border-white/10 bg-black/40 p-10">
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-indigo-500/10" />
             </div>
           </section>
 
           {/* RIGHT */}
-          <aside className="col-span-12 space-y-8 xl:col-span-3">
-            {/* HEADLINES */}
+          <aside className="col-span-3 space-y-8">
             <HeadlineCard
               title="Recovered Headlines"
-              data={headlineData}
+              data={headlines.map((article) => ({
+                tag: "ARCHIVE",
+                time: new Date(article.createdAt).getFullYear().toString(),
+                title: article.title,
+                variant: "cyan",
+              }))}
               onActionClick={() => console.log("archive")}
             />
 
-            {/* FILE STACK */}
             <div className="rounded-[40px] border border-white/10 bg-black/30 p-8">
               <div className="mb-8 flex items-center gap-4">
-                <FileStack className="h-6 w-6 text-cyan-400" />
+                <Database className="h-6 w-6 text-cyan-400" />
 
                 <div>
                   <p className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
-                    FILE STACK
+                    CATEGORY INDEX
                   </p>
 
                   <h4 className="mt-2 text-3xl font-black uppercase">
-                    Active Vaults
+                    Archive Nodes
                   </h4>
                 </div>
               </div>
 
               <div className="space-y-5">
-                {[
-                  "Synthetic Consensus Files",
-                  "Emotional Mapping Reports",
-                  "Quantum Drift Archives",
-                  "Suppressed Broadcast Fragments",
-                  "AI Influence Research",
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="group flex items-center justify-between border-b border-white/5 pb-4"
-                  >
-                    <span className="text-sm text-white/50 transition-colors group-hover:text-white">
-                      {item}
-                    </span>
+                {categories.map((category) => {
+                  const count = articles.filter(
+                    (article) => article.category?.id === category.id,
+                  ).length;
 
-                    <ChevronRight className="h-4 w-4 text-white/20 transition-all group-hover:translate-x-1 group-hover:text-cyan-400" />
-                  </div>
-                ))}
+                  return (
+                    <div
+                      key={category.id}
+                      className="group border-b border-white/5 pb-4"
+                    >
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="font-medium text-white/70 transition-colors group-hover:text-white">
+                          {category.name}
+                        </span>
+
+                        <span className="text-sm font-black text-cyan-400">
+                          {count}
+                        </span>
+                      </div>
+
+                      <div className="h-1 overflow-hidden rounded-full bg-white/10">
+                        <div
+                          className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500"
+                          style={{
+                            width: `${Math.max(
+                              10,
+                              (count / articles.length) * 100,
+                            )}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
-
-            {/* SECURITY */}
-            <div className="rounded-[40px] border border-cyan-500/20 bg-cyan-500/5 p-8">
-              <div className="mb-6 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
-                    SECURITY LAYER
-                  </p>
-
-                  <h3 className="mt-3 text-3xl font-black uppercase">
-                    Identity Shield
-                  </h3>
-                </div>
-
-                <Shield className="h-7 w-7 text-cyan-400" />
-              </div>
-
-              <p className="text-sm leading-relaxed text-white/50">
-                Accessing restricted archive zones triggers autonomous masking
-                protocols and identity fragmentation systems.
-              </p>
-
-              <button className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-cyan-500/30 bg-black/30 py-4 text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase transition-all hover:bg-cyan-500/10">
-                Initialize Masking
-                <Sparkles className="h-4 w-4" />
-              </button>
             </div>
           </aside>
+        </section>
+
+        {/* MOBILE / TABLET */}
+        <section className="mt-16 space-y-8 xl:hidden">
+          {/* HERO */}
+
+          <div className="w-full flex flex-col justify-center items-center mt-5 gap-10">
+            <GenericObsidianStoryCard
+              type={heroStory.type}
+              createdAt={new Date(heroStory.createdAt).toLocaleDateString()}
+              title={heroStory.title}
+              description={heroStory.summary}
+              sources={heroStory.sources}
+              status="Restricted"
+              imageUrl={heroStory.imageUrl}
+            />
+
+            <div className="w-[80%] flex justify-center items-center flex-col">
+              {/* LIST CARDS */}
+              <GenericCompactListCard
+                category={stream[0]?.type}
+                sourceCount={stream[0]?.sources?.length ?? 0}
+                headline={stream[0]?.title}
+                description={stream[0]?.description}
+                imageUrl={stream[0]?.imageUrl}
+              />
+
+              <GenericCompactListCard
+                category={stream[1]?.type}
+                sourceCount={stream[1]?.sources?.length ?? 0}
+                headline={stream[1]?.title}
+                description={stream[1]?.description}
+                imageUrl={stream[1]?.imageUrl}
+              />
+            </div>
+            <div className="w-[80%] flex justify-center items-center flex-col gap-10">
+              {/* SMALL CARDS */}
+              {featured.map((story) => (
+                <GenericShortStoryCard
+                  key={story.id}
+                  badge={story.type}
+                  id={story.id}
+                  headline={story.title}
+                  description={story.description}
+                  imageUrl={story.imageUrl}
+                />
+              ))}
+            </div>
+            <div className="w-[80%] flex justify-center items-center flex-col">
+              {/* HEADLINES */}
+              <HeadlineCard
+                title="Recovered Headlines"
+                data={headlines.map((article) => ({
+                  tag: "ARCHIVE",
+                  time: new Date(article.createdAt).getFullYear().toString(),
+                  title: article.title,
+                  variant: "cyan",
+                }))}
+                onActionClick={() => console.log("archive")}
+              />
+            </div>
+            <div className="w-[80%] flex justify-center items-center flex-col">
+              {/* CATEGORY INDEX */}
+              <div className="rounded-[40px] border border-white/10 bg-black/30 p-8 w-full">
+                <div className="mb-8 flex items-center gap-4">
+                  <Database className="h-6 w-6 text-cyan-400" />
+
+                  <div>
+                    <p className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
+                      CATEGORY INDEX
+                    </p>
+
+                    <h4 className="mt-2 text-3xl font-black uppercase">
+                      Archive Nodes
+                    </h4>
+                  </div>
+                </div>
+
+                <div className="space-y-5">
+                  {categories.map((category) => {
+                    const count = articles.filter(
+                      (article) => article.category?.id === category.id,
+                    ).length;
+
+                    return (
+                      <div
+                        key={category.id}
+                        className="group border-b border-white/5 pb-4"
+                      >
+                        <div className="mb-2 flex items-center justify-between">
+                          <span className="font-medium text-white/70 transition-colors group-hover:text-white">
+                            {category.name}
+                          </span>
+
+                          <span className="text-sm font-black text-cyan-400">
+                            {count}
+                          </span>
+                        </div>
+
+                        <div className="h-1 overflow-hidden rounded-full bg-white/10">
+                          <div
+                            className="h-full bg-gradient-to-r from-cyan-400 to-indigo-500"
+                            style={{
+                              width: `${Math.max(
+                                10,
+                                (count / articles.length) * 100,
+                              )}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-[80%] flex justify-center items-center flex-col mt-5">
+              {/* STICKY INSIGHTS */}
+              <div className="space-y-6 grid grid-cols-3 gap-5 w-full">
+                <StickyInsight
+                  variant="cyan"
+                  title={articles[0]?.title}
+                  content={articles[0]?.summary}
+                />
+
+                <StickyInsight
+                  variant="purple"
+                  title={articles[2]?.title}
+                  content={articles[2]?.summary}
+                />
+                <StickyInsight
+                  variant="purple"
+                  title={articles[1]?.title}
+                  content={articles[1]?.summary}
+                />
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 

@@ -28,7 +28,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
     <div className="w-full">
       <Card
         onClick={onActionClick}
-        className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] border border-white/5 transition-all duration-500 hover:rotate-1 hover:scale-[1.03]"
+        className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] border border-white/5 transition-all duration-500 hover:rotate-1 hover:scale-[1.03] py-0"
       >
         {/* BACKGROUND IMAGE */}
         <img
@@ -76,11 +76,6 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
 
         {/* NEON ROTATING BORDER */}
         <div className="pointer-events-none absolute inset-0 rounded-[24px] border-2 border-cyan-400/30 animate-spin-slow blur-md opacity-50" />
-
-        {/* INTERACTIVE HOVER LAYER */}
-        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          <div className="absolute -inset-[150%] rotate-12 bg-gradient-to-tr from-cyan-500/20 via-blue-500/10 to-indigo-500/20 animate-rotate-slow" />
-        </div>
       </Card>
     </div>
   );

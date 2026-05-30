@@ -46,7 +46,7 @@ export default function AddArticle() {
       body: JSON.stringify(form),
     });
     setToast(true);
-    redirect("/articles");
+    redirect("/dashboard/articles");
   };
 
   return (

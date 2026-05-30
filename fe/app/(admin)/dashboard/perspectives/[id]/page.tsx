@@ -39,7 +39,7 @@ export default function EditPerspective() {
     });
 
     setToast(true);
-    redirect("/perspectives");
+    redirect("/dashboard/perspectives");
   };
 
   if (!form)

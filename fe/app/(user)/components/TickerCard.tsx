@@ -51,7 +51,7 @@ export default function StickyInsight({
   return (
     <Card
       className={cn(
-        "relative min-h-[280px] w-[280px] p-6 overflow-hidden rounded-[24px]",
+        "relative min-h-[280px] w-[400px] p-6 overflow-hidden rounded-[24px]",
         "bg-black/70 border border-white/5 shadow-2xl",
         "transition-transform duration-500 hover:rotate-3 hover:scale-105",
         "max-w-[100%]",

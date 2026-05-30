@@ -79,7 +79,7 @@ export default function AddPerspective() {
     });
 
     setToast(true);
-    redirect("/perspectives");
+    redirect("/dashboard/perspectives");
   };
 
   return (

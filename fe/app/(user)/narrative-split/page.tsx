@@ -16,57 +16,17 @@ import {
   Split,
   Waves,
 } from "lucide-react";
+import { PrismLoader } from "@/app/components/loadingScreen";
+const IMAGES = [
+  "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600",
 
-const EVENTS = [
-  {
-    id: "EVENT-01",
-    title: "GLOBAL ENERGY BLACKOUT",
-    location: "Eastern Grid Sector",
-    left: {
-      label: "Institutional Feed",
-      headline: "Controlled Maintenance Event",
-      description:
-        "Authorities describe the outage as a calculated stabilization maneuver to protect infrastructure integrity.",
-      color: "cyan",
-      image:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1600",
-    },
-    right: {
-      label: "Underground Feed",
-      headline: "Intentional Resource Suppression",
-      description:
-        "Independent networks claim industrial sectors received protected routing while residential zones collapsed.",
-      color: "red",
-      image:
-        "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600",
-    },
-  },
-  {
-    id: "EVENT-02",
-    title: "NEURAL ID EXPANSION",
-    location: "Continental Bio Grid",
-    left: {
-      label: "Security Narrative",
-      headline: "Identity Protection Layer",
-      description:
-        "Government systems frame biometric integration as the final solution to identity fraud.",
-      color: "cyan",
-      image:
-        "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?q=80&w=1600",
-    },
-    right: {
-      label: "Resistance Narrative",
-      headline: "Genetic Surveillance Infrastructure",
-      description:
-        "Activist leaks reveal familial pattern tracking and predictive social scoring models.",
-      color: "red",
-      image:
-        "https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=1600",
-    },
-  },
+  "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600",
+
+  "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?q=80&w=1600",
+
+  "https://images.unsplash.com/photo-1507413245164-6160d8298b31?q=80&w=1600",
 ];
-
-function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
+function SplitSection({ event }: { event: any }) {
   return (
     <section className="relative min-h-screen overflow-hidden border-y border-white/5">
       {/* CENTER DIVIDER */}
@@ -90,8 +50,8 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
         <div className="group relative flex min-h-screen items-end overflow-hidden bg-[#020812]">
           {/* IMAGE */}
           <img
-            src={event.left.image}
-            alt={event.left.headline}
+            src={event.imageUrl}
+            alt={event.neutral.title}
             className="absolute inset-0 h-full w-full object-cover opacity-30 transition-all duration-1000 group-hover:scale-105 group-hover:opacity-60"
           />
 
@@ -106,16 +66,16 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
               <div className="h-2 w-2 animate-pulse rounded-full bg-cyan-400" />
 
               <span className="text-[10px] font-black tracking-[0.4em] text-cyan-400 uppercase">
-                {event.left.label}
+                VERIFIED NARRATIVE
               </span>
             </div>
 
             <h2 className="max-w-2xl text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[0.95] font-black tracking-tighter uppercase">
-              {event.left.headline}
+              {event.neutral.title}
             </h2>
 
             <p className="mt-8 max-w-xl text-base sm:text-lg leading-relaxed text-white/50 break-words">
-              {event.left.description}
+              {event.neutral.description}
             </p>
 
             <div className="mt-12 flex flex-col sm:flex-row items-start sm:items-center gap-5">
@@ -135,8 +95,8 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
         <div className="group relative flex min-h-screen items-end overflow-hidden bg-[#090202]">
           {/* IMAGE */}
           <img
-            src={event.right.image}
-            alt={event.right.headline}
+            src={event.imageUrl}
+            alt={event.extreme.title}
             className="absolute inset-0 h-full w-full object-cover opacity-30 grayscale transition-all duration-1000 group-hover:scale-105 group-hover:opacity-70 group-hover:grayscale-0"
           />
 
@@ -152,18 +112,17 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
           <div className="relative z-20 w-full p-10 md:p-20">
             <div className="mb-8 flex items-center gap-3">
               <div className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-
               <span className="text-[10px] font-black tracking-[0.4em] text-red-400 uppercase">
-                {event.right.label}
+                EXTREME NARRATIVE
               </span>
             </div>
 
             <h2 className="max-w-2xl text-5xl leading-[0.95] font-black tracking-tighter uppercase md:text-7xl">
-              {event.right.headline}
+              {event.extreme.title}{" "}
             </h2>
 
             <p className="mt-8 max-w-xl text-base sm:text-lg leading-relaxed text-white/50 break-words">
-              {event.right.description}
+              {event.extreme.description}
             </p>
 
             <div className="mt-12 flex items-center gap-5">
@@ -191,7 +150,7 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
         </div>
 
         <div className="text-[10px] font-black tracking-[0.35em] text-white/30 uppercase">
-          {event.title} // {event.location}
+          {event.title}
         </div>
       </div>
     </section>
@@ -199,6 +158,23 @@ function SplitSection({ event }: { event: (typeof EVENTS)[0] }) {
 }
 
 export default function NarrativeSplitPage() {
+  const [events, setEvents] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    fetch("http://localhost:8080/api/perspectives")
+      .then((res) => res.json())
+
+      .then((data) =>
+        setEvents(
+          data.map((event: any, index: number) => ({
+            ...event,
+
+            imageUrl: IMAGES[index % IMAGES.length],
+          })),
+        ),
+      );
+  }, []);
+  if (!events.length) return <PrismLoader />;
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-black text-white">
       {/* GLOBAL BG */}
@@ -282,7 +258,7 @@ export default function NarrativeSplitPage() {
       </section>
 
       {/* SPLIT EVENTS */}
-      {EVENTS.map((event) => (
+      {events.map((event) => (
         <SplitSection key={event.id} event={event} />
       ))}
 
