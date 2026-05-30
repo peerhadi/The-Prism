@@ -43,7 +43,7 @@ export default function EditUser() {
       body: JSON.stringify(form),
     });
     setToast(true);
-    redirect("/users");
+    redirect("/dashboard/users");
   };
 
   if (!form)

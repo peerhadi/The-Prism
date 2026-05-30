@@ -4,23 +4,22 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, ArrowUpRight } from "lucide-react";
 
 interface ObsidianStoryCardProps {
-  genre: string;
-  date: string;
-  headline: string;
+  type: string;
+  createdAt: string;
+  title: string;
   description: string;
-  sourceCount: number;
+  sources: Array<any>;
   status: string;
   imageUrl: string;
   onActionClick?: () => void;
 }
 
 export default function GenericObsidianStoryCard({
-  genre,
-  date,
-  headline,
+  type,
+  createdAt,
+  title,
   description,
-  sourceCount,
-  status,
+  sources,
   imageUrl,
   onActionClick,
 }: ObsidianStoryCardProps) {
@@ -29,7 +28,7 @@ export default function GenericObsidianStoryCard({
       {/* Background Image */}
       <img
         src={imageUrl}
-        alt={headline}
+        alt={title}
         className="h-full w-full object-cover opacity-70 transition-transform duration-500 hover:scale-105"
       />
 
@@ -38,17 +37,17 @@ export default function GenericObsidianStoryCard({
         {/* Top Row: Genre + Date */}
         <div className="mb-6 flex items-center justify-between">
           <Badge className="border-none bg-cyan-500/20 px-3 py-1 text-[10px] tracking-widest text-cyan-300 uppercase">
-            {genre}
+            {type}
           </Badge>
           <div className="flex items-center gap-2 text-[10px] tracking-widest text-white/40 uppercase">
             <Calendar className="h-3 w-3" />
-            <span>{date}</span>
+            <span>{createdAt}</span>
           </div>
         </div>
 
         {/* Headline */}
         <h2 className="mb-4 text-3xl font-light leading-tight text-white drop-shadow-[0_0_10px_rgba(0,255,255,0.3)]">
-          {headline}
+          {title}
         </h2>
 
         {/* Description */}
@@ -66,7 +65,7 @@ export default function GenericObsidianStoryCard({
               />
             ))}
             <span className="pl-4 text-[10px] tracking-widest text-white/30 uppercase">
-              +{sourceCount} Sources
+              +{sources.length} Sources
             </span>
           </div>
 
@@ -80,14 +79,6 @@ export default function GenericObsidianStoryCard({
 
         {/* Neon Glow Accent */}
         <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-cyan-500/10 blur-[80px]" />
-      </div>
-
-      {/* Corner Status */}
-      <div className="absolute top-6 right-6 flex items-center gap-3 rounded-full border border-white/10 bg-black/20 px-4 py-2 backdrop-blur-md">
-        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-        <span className="text-[10px] font-medium tracking-tighter text-white/60 uppercase">
-          {status}
-        </span>
       </div>
     </Card>
   );

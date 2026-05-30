@@ -46,7 +46,7 @@ export default function AddCategory() {
     });
 
     setToast(true);
-    redirect("/categories");
+    redirect("/dashboard/categories");
   };
 
   return (

@@ -53,7 +53,7 @@ export default function EditCategory() {
     });
 
     setToast(true);
-    redirect("/categories");
+    redirect("/dashboard/categories");
   };
 
   if (!form)

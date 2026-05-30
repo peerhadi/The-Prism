@@ -47,7 +47,7 @@ export default function AddUser() {
     });
 
     setToast(true);
-    redirect("/users");
+    redirect("/dashboard/users");
   };
 
   return (

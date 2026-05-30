@@ -26,65 +26,48 @@ import { HeadlineCard } from "../components/HeadlineCard";
 import { NarrativeSplitCard } from "../components/NarrativeSplitCard";
 import { AnomalyCard } from "../components/AnomalyCard";
 
+import { getBiasColor } from "@/app/utils/getbiascolor";
+import { PrismLoader } from "@/app/components/loadingScreen";
 export default function StoryIntelligencePage() {
-  const topics = [
-    { label: "All Streams", color: "border-white/20 text-white bg-white/10" },
-    { label: "Cyber Warfare", color: "border-cyan-500/50 text-cyan-400" },
-    { label: "AI Divergence", color: "border-purple-500/50 text-purple-400" },
-    { label: "Market Chaos", color: "border-red-500/50 text-red-400" },
-    {
-      label: "Deepfake Systems",
-      color: "border-emerald-500/50 text-emerald-400",
-    },
-    {
-      label: "Quantum Intel",
-      color: "border-pink-500/50 text-pink-400",
-    },
-  ];
-  const primaryHeadlines = [
-    {
-      tag: "FLASH",
-      time: "02m ago",
-      title:
-        "Autonomous sentiment clusters detected manipulating geopolitical narratives.",
-      variant: "cyan" as const,
-    },
-    {
-      tag: "CRITICAL",
-      time: "14m ago",
-      title:
-        "Neural recommendation engines begin synchronized emotional steering.",
-      variant: "purple" as const,
-    },
-    {
-      tag: "ALERT",
-      time: "31m ago",
-      title:
-        "Synthetic market amplification spreads through decentralized AI nodes.",
-      variant: "red" as const,
-    },
-    {
-      tag: "LIVE",
-      time: "48m ago",
-      title:
-        "Dark web intelligence streams reveal coordinated deepfake deployment.",
-      variant: "emerald" as const,
-    },
-  ];
+  const [topics, setCategories] = React.useState([]);
+  const [articles, setArticles] = React.useState([]);
+  const [heroStory, setHeroStory] = React.useState({});
+  const [perspectives, setPerspectives] = React.useState([]);
+  const [stream, setStream] = React.useState([]);
+  const [featured, setFeatured] = React.useState([]);
+  const [primaryHeadlines, setPrimaryHeadlines] = React.useState([]);
+  const [anomaly, setAnomaly] = React.useState({});
+  useEffect(() => {
+    fetch("http://localhost:8080/api/categories")
+      .then((res) => res.json())
+      .then((res) =>
+        setCategories(
+          res.map((category: any) => {
+            return {
+              label: category.name,
+              color: getBiasColor(category.averageBias),
+            };
+          }),
+        ),
+      );
 
-  const heroStory = {
-    genre: "Neural Intelligence",
-    date: "May 19, 2026",
-    headline:
-      "GLOBAL AI NARRATIVE COLLISION: INSIDE THE SYNTHETIC INFORMATION WAR",
-    description:
-      "Autonomous systems are reshaping public perception in real-time. Intelligence clusters reveal emotional manipulation, narrative injection, and algorithmic polarization spreading across geopolitical ecosystems.",
-    sourceCount: 48,
-    status: "High Threat Signal",
-    imageUrl:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2000&auto=format&fit=crop",
-  };
+    fetch("http://localhost:8080/api/perspectives")
+      .then((res) => res.json())
+      .then((fetched) => setPerspectives(fetched));
+    fetch("http://localhost:8080/api/articles")
+      .then((res) => res.json())
+      .then((fetched) => {
+        setHeroStory(fetched[0]);
 
+        setFeatured(fetched.slice(1, 3));
+        setStream(fetched.slice(3, 7));
+
+        setPrimaryHeadlines(fetched.slice(7, 11));
+        setAnomaly(fetched[11]);
+        setArticles(fetched);
+      });
+  }, []);
+  console.log(topics, articles);
   const timeline = [
     {
       time: "00:14",
@@ -107,7 +90,7 @@ export default function StoryIntelligencePage() {
       desc: "AI moderation systems begin counter-narrative deployment.",
     },
   ];
-
+  if (!articles.length || !perspectives.length) return <PrismLoader />;
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
       {/* GLOBAL BACKGROUND */}
@@ -218,209 +201,247 @@ export default function StoryIntelligencePage() {
         </section>
 
         {/* MAIN GRID */}
-        <section className="mt-16 grid grid-cols-12 gap-10">
-          {/* LEFT PANEL */}
-          <aside className="col-span-12 space-y-8 xl:col-span-3">
-            {/* LIVE SIGNAL */}
-            <div className="rounded-[36px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl flex justify-center flex-col items-center">
-              <div className="mb-8 flex items-center justify-between">
-                <h3 className="text-[20px] font-black tracking-[0.35em] text-cyan-400 uppercase">
-                  SIGNAL INTEL
-                </h3>
-                <BrainCircuit className="h-5 w-5 animate-pulse text-cyan-400" />
+        <div className="hidden xl:grid ">
+          <section className="mt-16 grid grid-cols-12 gap-10">
+            {/* LEFT PANEL */}
+            <aside className="col-span-12 space-y-8 xl:col-span-3">
+              {/* LIVE SIGNAL */}
+              <div className="rounded-[36px] p-8 backdrop-blur-xl flex justify-center flex-col items-center">
+                <div className="space-y-6 grid xl:grid-cols-1! justify-center xl:grid-cols-1 sm:grid-cols-2 min-[1000px]:grid-cols-3!">
+                  <StickyInsight
+                    variant="cyan"
+                    title={articles[0]?.title}
+                    content={articles[0]?.summary}
+                  />
+
+                  <StickyInsight
+                    variant="cyan"
+                    title={articles[2]?.title}
+                    content={articles[2]?.summary}
+                  />
+
+                  <StickyInsight
+                    variant="purple"
+                    title={articles[1]?.title}
+                    content={articles[1]?.summary}
+                  />
+                </div>
               </div>
 
-              <div className="space-y-6 grid xl:grid-cols-1! justify-center xl:grid-cols-1 sm:grid-cols-2 min-[1000px]:grid-cols-3!">
-                <StickyInsight
-                  variant="cyan"
-                  title="AI Drift Detected"
-                  content="Language models exhibit synchronized framing shifts across European media channels."
+              {/* TIMELINE */}
+            </aside>
+
+            {/* CENTER */}
+            <section className="col-span-12 space-y-12 xl:col-span-6">
+              {/* HERO STORY */}
+              <GenericObsidianStoryCard
+                {...heroStory}
+                onActionClick={() => console.log("Open")}
+              />
+
+              {/* SPLIT CARD */}
+              <NarrativeSplitCard
+                seedId="NODE-X44"
+                topic="Narrative Divergence"
+                versionA={{
+                  label: "Verified Narrative",
+                  title: perspectives[0].neutral.title,
+                  description: perspectives[0].neutral.description,
+                }}
+                versionB={{
+                  label: "Shadow Narrative",
+                  title: perspectives[0].extreme.title,
+                  description: perspectives[0].extreme.description,
+                }}
+              />
+
+              {/* LIVE STREAM */}
+              <div className="space-y-10">
+                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                  <h2 className="text-[11px] font-black tracking-[0.35em] text-white/40 uppercase">
+                    LIVE STORY STREAM
+                  </h2>
+
+                  <button className="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] text-cyan-400 uppercase">
+                    Explore Archive
+                    <ArrowRight className="h-3 w-3" />
+                  </button>
+                </div>
+
+                {/* STORY GRID */}
+                <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                  <GenericShortStoryCard
+                    badge="Signal"
+                    id={featured[0].id}
+                    headline={featured[0].title}
+                    description={featured[0].description}
+                    imageUrl={featured[0].imageUrl}
+                  />
+
+                  <GenericShortStoryCard
+                    badge="Threat"
+                    id={featured[1].id}
+                    headline={featured[1].title}
+                    description={featured[1].description}
+                    imageUrl={featured[1].imageUrl}
+                  />
+                </div>
+
+                {/* LIST CARDS */}
+                <GenericCompactListCard
+                  category="Geopolitics"
+                  sourceCount={stream[0].sources.length}
+                  headline={stream[0].headline}
+                  description={stream[0].description}
+                  imageUrl={stream[0].imageUrl}
                 />
 
-                <StickyInsight
-                  variant="purple"
-                  title="Neural Echo Pattern"
-                  content="Recommendation systems amplify emotional volatility within political clusters."
-                />
-
-                <StickyInsight
-                  variant="red"
-                  title="Threat Escalation"
-                  content="Synthetic propaganda density exceeds baseline anomaly thresholds."
+                <GenericCompactListCard
+                  category="Geopolitics"
+                  sourceCount={stream[1].sources.length}
+                  headline={stream[1].headline}
+                  description={stream[1].description}
+                  imageUrl={stream[1].imageUrl}
                 />
               </div>
-            </div>
+            </section>
 
-            {/* TIMELINE */}
-            <div className="rounded-[36px] border border-white/10 bg-black/30 p-8">
-              <div className="mb-8 flex items-center gap-3">
-                <Zap className="h-5 w-5 text-purple-400" />
-                <h3 className="text-[11px] font-black tracking-[0.3em] text-white uppercase">
-                  Event Timeline
-                </h3>
-              </div>
+            {/* RIGHT */}
+            <aside className="col-span-12 space-y-10 xl:col-span-3">
+              {/* HEADLINES */}
+              <HeadlineCard
+                title="LIVE HEADLINES"
+                data={primaryHeadlines}
+                onActionClick={() => console.log("Open headlines")}
+              />
 
-              <div className="space-y-8">
-                {timeline.map((item, idx) => (
-                  <div key={idx} className="relative pl-8">
-                    <div className="absolute top-1 left-0 h-full w-px bg-white/10" />
-                    <div className="absolute top-1 left-[-4px] h-3 w-3 rounded-full bg-cyan-400 shadow-[0_0_20px_cyan]" />
+              {/* ANOMALY */}
+              <AnomalyCard
+                id={anomaly.id}
+                title={anomaly.title}
+                desc={anomaly.description}
+                tag="Critical"
+                intensity={anomaly.biasLevel + "%"}
+                color="border-cyan-500"
+                img={anomaly.imageUrl}
+              />
+            </aside>
+          </section>
+        </div>
 
-                    <div className="text-[10px] font-black tracking-[0.2em] text-cyan-400 uppercase">
-                      {item.time}
-                    </div>
+        <div className="xl:hidden space-y-10">
+          {/* HERO */}
 
-                    <h4 className="mt-2 text-sm font-bold text-white">
-                      {item.title}
-                    </h4>
-
-                    <p className="mt-2 text-xs leading-relaxed text-white/40">
-                      {item.desc}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </aside>
-
-          {/* CENTER */}
-          <section className="col-span-12 space-y-12 xl:col-span-6">
-            {/* HERO STORY */}
+          <div className="w-full flex flex-col justify-center items-center mt-5 gap-10">
             <GenericObsidianStoryCard
               {...heroStory}
               onActionClick={() => console.log("Open")}
             />
 
-            {/* SPLIT CARD */}
-            <NarrativeSplitCard
-              seedId="NODE-X44"
-              topic="Narrative Divergence"
-              versionA={{
-                label: "Verified Narrative",
-                title: "Controlled Stability",
-                description:
-                  "Institutional media frames the event as coordinated stabilization efforts.",
-              }}
-              versionB={{
-                label: "Shadow Narrative",
-                title: "Synthetic Influence",
-                description:
-                  "Independent intelligence clusters detect hidden algorithmic manipulation and emotional steering.",
-              }}
-            />
+            <div className="w-[90%] flex justify-center items-center flex-col">
+              {/* LIST CARDS */}
+              <GenericCompactListCard
+                category="Geopolitics"
+                sourceCount={stream[0].sources.length}
+                headline={stream[0].headline}
+                description={stream[0].description}
+                imageUrl={stream[0].imageUrl}
+              />
 
-            {/* LIVE STREAM */}
-            <div className="space-y-10">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <h2 className="text-[11px] font-black tracking-[0.35em] text-white/40 uppercase">
-                  LIVE STORY STREAM
-                </h2>
+              <GenericCompactListCard
+                category="Geopolitics"
+                sourceCount={stream[1].sources.length}
+                headline={stream[1].headline}
+                description={stream[1].description}
+                imageUrl={stream[1].imageUrl}
+              />
+            </div>
 
-                <button className="flex items-center gap-2 text-[10px] font-black tracking-[0.25em] text-cyan-400 uppercase">
-                  Explore Archive
-                  <ArrowRight className="h-3 w-3" />
-                </button>
-              </div>
+            <div className="w-[90%] flex justify-center items-center flex-col">
+              {/* SPLIT */}
+              <NarrativeSplitCard
+                seedId="NODE-X44"
+                topic="Narrative Divergence"
+                versionA={{
+                  label: "Verified Narrative",
+                  title: perspectives[0].neutral.title,
+                  description: perspectives[0].neutral.description,
+                }}
+                versionB={{
+                  label: "Shadow Narrative",
+                  title: perspectives[0].extreme.title,
+                  description: perspectives[0].extreme.description,
+                }}
+              />
+            </div>
 
-              {/* STORY GRID */}
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="w-[90%] flex justify-center items-center flex-col">
+              {/* SMALL CARDS */}
+              <div className="grid gap-6">
                 <GenericShortStoryCard
                   badge="Signal"
-                  id="NODE-09"
-                  headline="Quantum Encryption Systems Trigger Global Security Debate"
-                  description="Autonomous intelligence networks detect conflict between military encryption protocols and decentralized AI frameworks."
-                  imageUrl="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80"
+                  id={featured[0].id}
+                  headline={featured[0].title}
+                  description={featured[0].description}
+                  imageUrl={featured[0].imageUrl}
                 />
 
                 <GenericShortStoryCard
                   badge="Threat"
-                  id="ANM-44"
-                  headline="Synthetic Deepfake Clusters Begin Cross-Platform Propagation"
-                  description="AI moderation systems struggle to contain rapidly evolving identity manipulation networks."
-                  imageUrl="https://images.unsplash.com/photo-1526378722484-bd91ca387e72?q=80"
+                  id={featured[1].id}
+                  headline={featured[1].title}
+                  description={featured[1].description}
+                  imageUrl={featured[1].imageUrl}
                 />
               </div>
+            </div>
 
-              {/* LIST CARDS */}
-              <GenericCompactListCard
-                category="Geopolitics"
-                sourceCount={18}
-                headline="AI Intelligence Models Reveal Coordinated Market Sentiment Manipulation"
-                description="Large-scale narrative synchronization emerges across economic reporting ecosystems and automated recommendation layers."
-                imageUrl="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80"
-              />
+            {/* INSIGHTS */}
+            <div className="w-[90%] flex justify-center items-center flex-col">
+              <div className="space-y-6 grid grid-cols-2 gap-10">
+                <StickyInsight
+                  variant="cyan"
+                  title={articles[0]?.title}
+                  content={articles[0]?.summary}
+                />
 
-              <GenericCompactListCard
-                category="Cyber Intelligence"
-                sourceCount={12}
-                headline="Neural Data Centers Experience Resource Fragmentation Across Continents"
-                description="High-density compute systems struggle under escalating autonomous training demands and decentralized processing conflicts."
-                imageUrl="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80"
+                <StickyInsight
+                  variant="cyan"
+                  title={articles[2]?.title}
+                  content={articles[2]?.summary}
+                />
+
+                <StickyInsight
+                  variant="purple"
+                  title={articles[1]?.title}
+                  content={articles[1]?.summary}
+                />
+              </div>
+            </div>
+
+            <div className="w-[90%] flex justify-center items-center flex-col">
+              {/* HEADLINES */}
+              <HeadlineCard
+                title="LIVE HEADLINES"
+                data={primaryHeadlines}
+                onActionClick={() => console.log("Open headlines")}
               />
             </div>
-          </section>
 
-          {/* RIGHT */}
-          <aside className="col-span-12 space-y-10 xl:col-span-3">
-            {/* HEADLINES */}
-            <HeadlineCard
-              title="LIVE HEADLINES"
-              data={primaryHeadlines}
-              onActionClick={() => console.log("Open headlines")}
-            />
-
-            {/* ANOMALY */}
-            <AnomalyCard
-              id="ANOM-77"
-              title="Neural Breach"
-              desc="Autonomous AI systems display coordinated behavioral drift across geopolitical clusters."
-              tag="Critical"
-              intensity="98%"
-              color="border-cyan-500"
-              img="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80"
-            />
-
-            {/* RISK PANEL */}
-            <div className="rounded-[36px] border border-white/10 bg-black/30 p-8">
-              <div className="mb-8 flex items-center justify-between">
-                <div>
-                  <p className="text-[10px] font-black tracking-[0.25em] text-red-400 uppercase">
-                    Threat Matrix
-                  </p>
-
-                  <h3 className="mt-2 text-3xl font-black">HIGH VOLATILITY</h3>
-                </div>
-
-                <Shield className="h-8 w-8 text-red-400" />
-              </div>
-
-              <div className="space-y-6">
-                {[
-                  "Synthetic narrative escalation detected",
-                  "Cross-platform emotional drift accelerating",
-                  "Deepfake propagation exceeds threshold",
-                  "AI sentiment clusters diverging globally",
-                ].map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-4 border-b border-white/5 pb-4"
-                  >
-                    <TrendingUp className="mt-1 h-4 w-4 text-red-400" />
-
-                    <p className="text-sm leading-relaxed text-white/50">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <button className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 py-4 text-[11px] font-black tracking-[0.3em] text-red-400 uppercase transition-all hover:scale-[1.02] hover:bg-red-500/20">
-                Initialize Deep Scan
-                <ChevronRight className="h-4 w-4" />
-              </button>
+            <div className="w-[90%] flex justify-center items-center flex-col">
+              {/* ANOMALY */}
+              <AnomalyCard
+                id={anomaly.id}
+                title={anomaly.title}
+                desc={anomaly.description}
+                tag="Critical"
+                intensity={anomaly.biasLevel + "%"}
+                color="border-cyan-500"
+                img={anomaly.imageUrl}
+              />
             </div>
-          </aside>
-        </section>
+          </div>
+        </div>
       </main>
     </div>
   );

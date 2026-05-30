@@ -45,7 +45,7 @@ export default function EditArticle() {
       body: JSON.stringify(form),
     });
     setToast(true);
-    redirect("/articles");
+    redirect("/dashboard/articles");
   };
 
   if (!form)
