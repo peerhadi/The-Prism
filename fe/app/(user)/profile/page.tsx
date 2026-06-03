@@ -53,6 +53,8 @@ export default function ProfilePage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+
+          Authorization: "Bearer " + window.localStorage.getItem("token"),
         },
         body: JSON.stringify(values),
       });
@@ -63,11 +65,14 @@ export default function ProfilePage() {
       }).then((r) => r.json());
 
       setUser(updated);
+      window.location.reload();
     },
   });
   React.useEffect(() => {
     const t = window.localStorage.getItem("token") || "";
-    setToken(t);
+    if (t) {
+      setToken(t);
+    }
 
     fetch("http://localhost:8080/api/auth/me", {
       headers: { Authorization: `Bearer ${t}` },

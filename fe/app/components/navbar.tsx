@@ -19,6 +19,7 @@ export function Navbar() {
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [token, setToken] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const [userImage, setUserImage] = useState("");
   useEffect(() => {
     const t = window.localStorage.getItem("token");
@@ -33,6 +34,7 @@ export function Navbar() {
         .then((res) => res.json())
         .then((res) => {
           setUserImage(res.profileImageUrl);
+          setIsAdmin(res.role === "ADMIN");
         });
     }
   }, []);
@@ -105,12 +107,15 @@ export function Navbar() {
       href: "/about",
       desc: "Inside the intelligence framework",
     },
-    {
+  ];
+  if (isAdmin) {
+    links.push({
       name: "Dashboard",
       href: "/dashboard",
       desc: "The admin dashboard",
-    },
-  ];
+    });
+  }
+
   if (authenticated === null) {
     return;
   }
@@ -199,7 +204,7 @@ export function Navbar() {
                   onClick={() => setProfileOpen(!profileOpen)}
                   className={`group flex items-center gap-3 ${userImage ? "" : "border border-cyan-500/20 bg-cyan-500/[0.04]"} p-2 transition-all hover:border-cyan-500/40 hover:bg-cyan-500/[0.08] overflow-hidden rounded-4xl`}
                 >
-                  {userImage.length ? (
+                  {userImage?.length ? (
                     <img
                       src={userImage}
                       alt="User Profile"

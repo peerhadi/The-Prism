@@ -378,7 +378,7 @@ export default function SignUpPage() {
             <button
               onClick={() => {
                 setIsPopupVisible(false);
-                router.push("/");
+                router.push("/login");
               }}
               className="mt-4 w-full bg-green-500/20 text-green-300 py-2 rounded"
             >

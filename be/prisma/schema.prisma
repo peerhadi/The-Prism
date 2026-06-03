@@ -14,6 +14,11 @@ enum ArticleType {
   LIST
 }
 
+enum Role {
+  ADMIN
+  USER
+}
+
 model User {
   id              String   @id @default(cuid())
   username        String   @unique
@@ -24,6 +29,7 @@ model User {
   bio             String?
   bannerUrl       String?
   createdAt       DateTime @default(now())
+  role            Role     @default(USER)
 }
 
 model Article {

@@ -37,7 +37,10 @@ export default function EditPerspective() {
   const save = async () => {
     await fetch(`http://localhost:8080/api/perspectives/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+      },
       body: JSON.stringify(form),
     });
 

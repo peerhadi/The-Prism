@@ -39,7 +39,10 @@ export default function EditUser() {
   const save = async () => {
     await fetch(`http://localhost:8080/api/users/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+      },
       body: JSON.stringify(form),
     });
     setToast(true);
@@ -75,31 +78,31 @@ export default function EditUser() {
         <div className="space-y-5">
           <Field
             label="Username"
-            value={form.username}
+            value={form.username ?? ""}
             onChange={(e: any) => update("username", e.target.value)}
           />
 
           <Field
             label="Email"
-            value={form.email}
+            value={form.email ?? ""}
             onChange={(e: any) => update("email", e.target.value)}
           />
 
           <Field
             label="Bio"
-            value={form.bio}
+            value={form.bio ?? ""}
             onChange={(e: any) => update("bio", e.target.value)}
           />
 
           <Field
             label="Profile Image URL"
-            value={form.profileImageUrl}
+            value={form.profileImageUrl ?? ""}
             onChange={(e: any) => update("profileImageUrl", e.target.value)}
           />
 
           <Field
             label="Banner URL"
-            value={form.bannerUrl}
+            value={form.bannerUrl ?? ""}
             onChange={(e: any) => update("bannerUrl", e.target.value)}
           />
 
