@@ -21,6 +21,7 @@ import fastifyStatic from "@fastify/static";
 import path from "path";
 
 import fp from "fastify-plugin";
+import { aiRoutes } from "./modules/aiRoutes/aiRoutes.routes.js";
 const app = Fastify();
 await app.register(multipart);
 app.decorate("authenticate", async (request, reply) => {
@@ -64,6 +65,9 @@ await app.register(userRoutes, {
   prefix: "/api/users",
 });
 
+await app.register(aiRoutes, {
+  prefix: "/api/aiRoutes",
+});
 await app.register(articleRoutes, {
   prefix: "/api/articles",
 });

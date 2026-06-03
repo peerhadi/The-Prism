@@ -57,6 +57,16 @@ export default function StoryIntelligencePage() {
     fetch("http://localhost:8080/api/articles")
       .then((res) => res.json())
       .then((fetched) => {
+        fetched = fetched.filter((x) => {
+          return (
+            !!x.title &&
+            !!x.description &&
+            !!x.imageUrl &&
+            !!x.id &&
+            !!x.sources.length &&
+            !!x.type
+          );
+        });
         fetched = fetched
           .reverse()
           .slice(Math.max(0, fetched.length - 28), fetched.length);
