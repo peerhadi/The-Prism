@@ -12,12 +12,30 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
-
+  const [token, setToken] = useState("");
+  const [userImage, setUserImage] = useState("");
+  useEffect(() => {
+    const t = window.localStorage.getItem("token");
+    if (t) {
+      setToken(t);
+      fetch(`http://localhost:8080/api/auth/me`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${t}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setUserImage(res.profileImageUrl);
+        });
+    }
+  }, []);
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -63,9 +81,9 @@ export function Navbar() {
       desc: "Narrative and bias analysis",
     },
     {
-      name: "Archive",
-      href: "/archive",
-      desc: "Historical signal database",
+      name: "Narrative Split",
+      href: "/narrative-split",
+      desc: "Compare global narratives",
     },
     {
       name: "AI Chat",
@@ -73,19 +91,24 @@ export function Navbar() {
       desc: "Interact with Prism AI",
     },
     {
-      name: "Narrative Split",
-      href: "/narrative-split",
-      desc: "Compare global narratives",
+      name: "Archive",
+      href: "/archive",
+      desc: "Historical signal database",
     },
     {
-      name: "Dashboard",
-      href: "/dashboard",
-      desc: "The admin dashboard",
+      name: "Bias",
+      href: "/bias",
+      desc: "Learn how we calculate bias",
     },
     {
       name: "About",
       href: "/about",
       desc: "Inside the intelligence framework",
+    },
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      desc: "The admin dashboard",
     },
   ];
   if (authenticated === null) {
@@ -174,23 +197,18 @@ export function Navbar() {
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="
-          group
-          flex
-          items-center
-          gap-3
-          rounded-2xl
-          border border-cyan-500/20
-          bg-cyan-500/[0.04]
-          px-2 py-2
-          transition-all
-          hover:border-cyan-500/40
-          hover:bg-cyan-500/[0.08]
-        "
+                  className={`group flex items-center gap-3 ${userImage ? "" : "border border-cyan-500/20 bg-cyan-500/[0.04]"} p-2 transition-all hover:border-cyan-500/40 hover:bg-cyan-500/[0.08] overflow-hidden rounded-4xl`}
                 >
-                  <User className="h-8 w-8 text-cyan-400" />
+                  {userImage.length ? (
+                    <img
+                      src={userImage}
+                      alt="User Profile"
+                      className="h-11 w-12 rounded-4xl object-cover"
+                    />
+                  ) : (
+                    <User className="h-8 w-8 text-cyan-400" />
+                  )}
                 </button>
-
                 <div
                   className={`
     absolute right-0 top-[calc(100%+12px)]
