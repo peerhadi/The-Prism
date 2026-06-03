@@ -39,9 +39,20 @@ export default function ExplorePage() {
           color: getBiasColor(category.averageBias),
         })),
       );
-      const fetched = arts
+      let fetched = arts.filter((x) => {
+        return (
+          !!x.title &&
+          !!x.description &&
+          !!x.imageUrl &&
+          !!x.id &&
+          !!x.sources.length &&
+          !!x.type
+        );
+      });
+      fetched = fetched
         .reverse()
-        .slice(Math.max(0, arts.length - 28), arts.length);
+        .slice(Math.max(0, fetched.length - 28), fetched.length);
+
       const heros = fetched.filter((x) => x.type === "HERO");
       const smalls = fetched.filter((x) => x.type === "SMALL");
       const lists = fetched.filter((x) => x.type === "LIST");
