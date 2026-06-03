@@ -28,7 +28,10 @@ export default function EditPerspective() {
   useEffect(() => {
     fetch(`http://localhost:8080/api/perspectives/${id}`)
       .then((r) => r.json())
-      .then(setForm);
+      .then((r) => {
+        console.log(r);
+        setForm(r);
+      });
   }, [id]);
 
   const save = async () => {

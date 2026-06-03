@@ -25,6 +25,9 @@ export default function ExplorePage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  const [heroStory, setHeroStory] = React.useState({});
+  const [list, setList] = React.useState([]);
+  const [small, setSmalls] = React.useState([]);
   useEffect(() => {
     Promise.all([
       fetch("http://localhost:8080/api/categories").then((r) => r.json()),
@@ -36,8 +39,17 @@ export default function ExplorePage() {
           color: getBiasColor(category.averageBias),
         })),
       );
+      const fetched = arts
+        .reverse()
+        .slice(Math.max(0, arts.length - 28), arts.length);
+      const heros = fetched.filter((x) => x.type === "HERO");
+      const smalls = fetched.filter((x) => x.type === "SMALL");
+      const lists = fetched.filter((x) => x.type === "LIST");
+      setHeroStory(heros[1]);
+      setSmalls(smalls.slice(1, 3));
+      setList(lists.slice(0, 5));
 
-      setArticles(arts);
+      setArticles(fetched);
     });
   }, []);
 
@@ -63,10 +75,6 @@ export default function ExplorePage() {
 
     return result;
   }, [articles, selectedCategory, search]);
-
-  const featuredStory = filteredArticles[0];
-
-  const spotlightStories = filteredArticles.slice(1, 5);
 
   if (!articles.length) {
     return <PrismLoader />;
@@ -146,7 +154,7 @@ export default function ExplorePage() {
                 {
                   icon: Sparkles,
                   label: "Discoveries",
-                  value: spotlightStories.length,
+                  value: small.length,
                 },
               ].map((item, idx) => (
                 <div
@@ -295,7 +303,7 @@ export default function ExplorePage() {
               </h3>
 
               <div className="space-y-4">
-                {filteredArticles.slice(0, 5).map((article: any) => (
+                {list.map((article: any) => (
                   <div
                     key={article.id}
                     className="
@@ -322,12 +330,7 @@ export default function ExplorePage() {
           {/* CENTER */}
           <section className="col-span-12 xl:col-span-6 space-y-10">
             {/* FEATURED STORY */}
-            {featuredStory && (
-              <GenericObsidianStoryCard
-                {...featuredStory}
-                onActionClick={() => {}}
-              />
-            )}
+            <GenericObsidianStoryCard {...heroStory} onActionClick={() => {}} />
 
             {/* DISCOVERY SPOTLIGHT */}
             <div>
@@ -343,16 +346,19 @@ export default function ExplorePage() {
               </div>
 
               <div className="grid md:grid-cols-2 gap-8">
-                {spotlightStories.map((article: any) => (
-                  <GenericShortStoryCard
-                    key={article.id}
-                    id={article.id}
-                    badge="Explore"
-                    headline={article.title}
-                    description={article.description}
-                    imageUrl={article.imageUrl}
-                  />
-                ))}
+                {small.map((article: any) => {
+                  console.log(small);
+                  return (
+                    <GenericShortStoryCard
+                      key={article.id}
+                      id={article.id}
+                      badge="Explore"
+                      headline={article.title}
+                      description={article.description}
+                      imageUrl={article.imageUrl}
+                    />
+                  );
+                })}
               </div>
             </div>
           </section>
@@ -370,7 +376,7 @@ export default function ExplorePage() {
               </div>
 
               <div className="space-y-4">
-                {filteredArticles.slice(0, 8).map((article: any, index) => (
+                {articles.slice(0, 8).map((article: any, index) => (
                   <div
                     key={article.id}
                     className="

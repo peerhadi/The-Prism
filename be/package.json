@@ -1,4 +1,3 @@
-
 {
   "name": "the-prism-backend",
   "private": true,
@@ -16,9 +15,11 @@
     "@fastify/sensible": "^6.0.3",
     "@prisma/client": "^6.8.2",
     "bcryptjs": "^3.0.2",
+    "cheerio": "^1.2.0",
     "dotenv": "^16.5.0",
     "fastify": "^5.3.2",
     "ioredis": "^5.6.1",
+    "jsonrepair": "^3.14.0",
     "node-cron": "^4.1.0",
     "rss-parser": "^3.13.0",
     "zod": "^3.25.42"

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { PrismLoader } from "@/app/components/loadingScreen";
 
 type Article = {
   id: string;
@@ -22,11 +23,11 @@ export default function ArticlesPage() {
     fetch("http://localhost:8080/api/articles")
       .then((r) => r.json())
       .then((data) => {
+        console.log(data);
         setArticles(data);
         setToast(true);
       });
   }, []);
-
   return (
     <div className="min-h-screen bg-[#02050a] text-white p-10">
       <Breadcrumbs items={[{ label: "Articles" }]} />

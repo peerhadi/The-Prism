@@ -51,7 +51,7 @@ function SplitSection({ event }: { event: any }) {
           {/* IMAGE */}
           <img
             src={event.imageUrl}
-            alt={event.neutral.title}
+            alt=""
             className="absolute inset-0 h-full w-full object-cover opacity-30 transition-all duration-1000 group-hover:scale-105 group-hover:opacity-60"
           />
 
@@ -138,21 +138,6 @@ function SplitSection({ event }: { event: any }) {
           </div>
         </div>
       </div>
-
-      {/* BOTTOM EVENT BAR */}
-      <div className="absolute bottom-0 left-0 z-40 flex w-full items-center justify-between border-t border-white/5 bg-black/40 px-8 py-4 backdrop-blur-xl">
-        <div className="flex items-center gap-4">
-          <Binary className="h-4 w-4 text-cyan-400" />
-
-          <span className="text-[10px] font-black tracking-[0.4em] text-white uppercase">
-            {event.id}
-          </span>
-        </div>
-
-        <div className="text-[10px] font-black tracking-[0.35em] text-white/30 uppercase">
-          {event.title}
-        </div>
-      </div>
     </section>
   );
 }
@@ -166,11 +151,13 @@ export default function NarrativeSplitPage() {
 
       .then((data) =>
         setEvents(
-          data.map((event: any, index: number) => ({
-            ...event,
-
-            imageUrl: IMAGES[index % IMAGES.length],
-          })),
+          data
+            .map((event: any, index: number) => ({
+              ...event,
+            }))
+            .filter((x) => !!x.neutral.title && !!x.extreme.title)
+            .reverse()
+            .slice(0, 4),
         ),
       );
   }, []);

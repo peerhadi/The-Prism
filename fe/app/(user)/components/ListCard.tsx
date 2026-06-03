@@ -23,6 +23,7 @@ export default function GenericCompactListCard<T extends CompactListCardProps>({
   actionLabel = "Analyze Framing",
   onActionClick,
 }: T) {
+  console.log(headline, description);
   return (
     <div className="w-full py-3">
       <Card

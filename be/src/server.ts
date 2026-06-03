@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import sensible from "@fastify/sensible";
 import fetch from "node-fetch";
+import { startRSSJob } from "./jobs/rss.jobs.js";
 
 import { env } from "./shared/env.js";
 
@@ -14,6 +15,8 @@ import { categoryRoutes } from "./modules/categories/category.routes.js";
 import { archivedRoutes } from "./modules/archived/archived.routes.js";
 
 const app = Fastify();
+
+startRSSJob();
 app.setErrorHandler((err, req, reply) => {
   console.error(err);
 

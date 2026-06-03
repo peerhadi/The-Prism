@@ -23,6 +23,7 @@ export default function GenericObsidianStoryCard({
   imageUrl,
   onActionClick,
 }: ObsidianStoryCardProps) {
+  console.log(imageUrl);
   return (
     <Card className="relative w-full max-w-[900px] overflow-hidden rounded-[32px]  max-h-[700px] border border-white/10 bg-black/30 backdrop-blur-xl shadow-[0_0_60px_rgba(0,255,255,0.2)] hover:shadow-[0_0_100px_rgba(0,255,255,0.4)] transition-all duration-500">
       {/* Background Image */}

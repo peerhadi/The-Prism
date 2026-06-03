@@ -4,22 +4,14 @@ import * as React from "react";
 import {
   Activity,
   ArrowRight,
-  Binary,
   Brain,
-  Calendar,
-  ChevronRight,
   Clock3,
   Database,
   Eye,
-  FileStack,
   Fingerprint,
-  Globe,
   Lock,
   Orbit,
   Radar,
-  Search,
-  Shield,
-  Sparkles,
   Waves,
 } from "lucide-react";
 
@@ -46,6 +38,10 @@ export default function ArchivePage() {
       .then((res) => res.json())
 
       .then((fetched) => {
+        fetched = fetched.slice(
+          Math.max(fetched.length - 56),
+          Math.max(28, fetched.length - 28),
+        );
         setHeroStory(fetched[0]);
 
         setFeatured(fetched.slice(1, 3));

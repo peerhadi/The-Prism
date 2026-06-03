@@ -31,12 +31,12 @@ import { PrismLoader } from "@/app/components/loadingScreen";
 export default function StoryIntelligencePage() {
   const [topics, setCategories] = React.useState([]);
   const [articles, setArticles] = React.useState([]);
-  const [heroStory, setHeroStory] = React.useState({});
   const [perspectives, setPerspectives] = React.useState([]);
-  const [stream, setStream] = React.useState([]);
-  const [featured, setFeatured] = React.useState([]);
-  const [primaryHeadlines, setPrimaryHeadlines] = React.useState([]);
+  const [heroStory, setHeroStory] = React.useState({});
+  const [list, setList] = React.useState([]);
+  const [small, setSmalls] = React.useState([]);
   const [anomaly, setAnomaly] = React.useState({});
+  const [primaryHeadlines, setPrimaryHeadlines] = React.useState([]);
   useEffect(() => {
     fetch("http://localhost:8080/api/categories")
       .then((res) => res.json())
@@ -57,39 +57,23 @@ export default function StoryIntelligencePage() {
     fetch("http://localhost:8080/api/articles")
       .then((res) => res.json())
       .then((fetched) => {
-        setHeroStory(fetched[0]);
+        fetched = fetched
+          .reverse()
+          .slice(Math.max(0, fetched.length - 28), fetched.length);
+        const heros = fetched.filter((x) => x.type === "HERO");
+        const smalls = fetched.filter((x) => x.type === "SMALL");
+        const lists = fetched.filter((x) => x.type === "SMALL");
+        console.log(heros[1], fetched.length);
+        setHeroStory(heros[0]);
+        setSmalls(smalls.slice(0, 2));
+        setList(lists.slice(0, 2));
 
-        setFeatured(fetched.slice(1, 3));
-        setStream(fetched.slice(3, 7));
-
-        setPrimaryHeadlines(fetched.slice(7, 11));
-        setAnomaly(fetched[11]);
+        setPrimaryHeadlines(fetched.slice(1, 6));
+        setAnomaly(smalls[2]);
         setArticles(fetched);
       });
   }, []);
   console.log(topics, articles);
-  const timeline = [
-    {
-      time: "00:14",
-      title: "Neural sentiment drift detected",
-      desc: "AI systems identify coordinated emotional spikes in media streams.",
-    },
-    {
-      time: "02:48",
-      title: "Synthetic engagement acceleration",
-      desc: "Bot amplification clusters trigger visibility escalation.",
-    },
-    {
-      time: "04:10",
-      title: "Narrative fracture confirmed",
-      desc: "Competing information ecosystems diverge beyond threshold.",
-    },
-    {
-      time: "06:23",
-      title: "Autonomous correction initiated",
-      desc: "AI moderation systems begin counter-narrative deployment.",
-    },
-  ];
   if (!articles.length || !perspectives.length) return <PrismLoader />;
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
@@ -245,13 +229,15 @@ export default function StoryIntelligencePage() {
                 topic="Narrative Divergence"
                 versionA={{
                   label: "Verified Narrative",
-                  title: perspectives[0].neutral.title,
-                  description: perspectives[0].neutral.description,
+                  title: perspectives[perspectives.length - 2].neutral.title,
+                  description:
+                    perspectives[perspectives.length - 2].neutral.description,
                 }}
                 versionB={{
                   label: "Shadow Narrative",
-                  title: perspectives[0].extreme.title,
-                  description: perspectives[0].extreme.description,
+                  title: perspectives[perspectives.length - 2].extreme.title,
+                  description:
+                    perspectives[perspectives.length - 2].extreme.description,
                 }}
               />
 
@@ -272,36 +258,36 @@ export default function StoryIntelligencePage() {
                 <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                   <GenericShortStoryCard
                     badge="Signal"
-                    id={featured[0].id}
-                    headline={featured[0].title}
-                    description={featured[0].description}
-                    imageUrl={featured[0].imageUrl}
+                    id={small[0].id}
+                    headline={small[0].title}
+                    description={small[0].description}
+                    imageUrl={small[0].imageUrl}
                   />
 
                   <GenericShortStoryCard
                     badge="Threat"
-                    id={featured[1].id}
-                    headline={featured[1].title}
-                    description={featured[1].description}
-                    imageUrl={featured[1].imageUrl}
+                    id={small[1].id}
+                    headline={small[1].title}
+                    description={small[1].description}
+                    imageUrl={small[1].imageUrl}
                   />
                 </div>
 
                 {/* LIST CARDS */}
                 <GenericCompactListCard
                   category="Geopolitics"
-                  sourceCount={stream[0].sources.length}
-                  headline={stream[0].headline}
-                  description={stream[0].description}
-                  imageUrl={stream[0].imageUrl}
+                  sourceCount={list[0].sources.length}
+                  headline={list[0].headline}
+                  description={list[0].description}
+                  imageUrl={list[0].imageUrl}
                 />
 
                 <GenericCompactListCard
                   category="Geopolitics"
-                  sourceCount={stream[1].sources.length}
-                  headline={stream[1].headline}
-                  description={stream[1].description}
-                  imageUrl={stream[1].imageUrl}
+                  sourceCount={list[1].sources.length}
+                  headline={list[1].headline}
+                  description={list[1].description}
+                  imageUrl={list[1].imageUrl}
                 />
               </div>
             </section>
@@ -342,18 +328,18 @@ export default function StoryIntelligencePage() {
               {/* LIST CARDS */}
               <GenericCompactListCard
                 category="Geopolitics"
-                sourceCount={stream[0].sources.length}
-                headline={stream[0].headline}
-                description={stream[0].description}
-                imageUrl={stream[0].imageUrl}
+                sourceCount={list[0].sources.length}
+                headline={list[0].headline}
+                description={list[0].description}
+                imageUrl={list[0].imageUrl}
               />
 
               <GenericCompactListCard
                 category="Geopolitics"
-                sourceCount={stream[1].sources.length}
-                headline={stream[1].headline}
-                description={stream[1].description}
-                imageUrl={stream[1].imageUrl}
+                sourceCount={list[1].sources.length}
+                headline={list[1].headline}
+                description={list[1].description}
+                imageUrl={list[1].imageUrl}
               />
             </div>
 
@@ -364,13 +350,15 @@ export default function StoryIntelligencePage() {
                 topic="Narrative Divergence"
                 versionA={{
                   label: "Verified Narrative",
-                  title: perspectives[0].neutral.title,
-                  description: perspectives[0].neutral.description,
+                  title: perspectives[perspectives.length - 2].neutral.title,
+                  description:
+                    perspectives[perspectives.length - 2].neutral.description,
                 }}
                 versionB={{
                   label: "Shadow Narrative",
-                  title: perspectives[0].extreme.title,
-                  description: perspectives[0].extreme.description,
+                  title: perspectives[perspectives.length - 2].extreme.title,
+                  description:
+                    perspectives[perspectives.length - 2].extreme.description,
                 }}
               />
             </div>
@@ -380,18 +368,18 @@ export default function StoryIntelligencePage() {
               <div className="grid gap-6">
                 <GenericShortStoryCard
                   badge="Signal"
-                  id={featured[0].id}
-                  headline={featured[0].title}
-                  description={featured[0].description}
-                  imageUrl={featured[0].imageUrl}
+                  id={small[0].id}
+                  headline={small[0].title}
+                  description={small[0].description}
+                  imageUrl={small[0].imageUrl}
                 />
 
                 <GenericShortStoryCard
                   badge="Threat"
-                  id={featured[1].id}
-                  headline={featured[1].title}
-                  description={featured[1].description}
-                  imageUrl={featured[1].imageUrl}
+                  id={small[1].id}
+                  headline={small[1].title}
+                  description={small[1].description}
+                  imageUrl={small[1].imageUrl}
                 />
               </div>
             </div>
