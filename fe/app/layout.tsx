@@ -1,5 +1,22 @@
 import { Geist, Geist_Mono } from "next/font/google";
+if (typeof window !== "undefined") {
+  const origError = console.error;
 
+  console.error = (...args) => {
+    const text = args.map(String).join(" ");
+
+    if (
+      text.includes("A tree hydrated but some attributes") ||
+      text.includes("Hydration failed") ||
+      text.includes("hydrated") ||
+      text.includes("didn't match the client properties")
+    ) {
+      return;
+    }
+
+    origError.apply(console, args);
+  };
+}
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
@@ -7,6 +24,7 @@ import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Metadata } from "next";
+import { DisableHydrationWarnings } from "./utils/disablehydrationwarnings";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -35,7 +53,7 @@ export default function RootLayout({
         geist.variable,
       )}
     >
-      <body>
+      <body suppressHydrationWarning>
         <ThemeProvider>
           <Navbar />
           <GoogleOAuthProvider clientId="326949971375-3qq23gr7vdd4tnubscvs7n5agk9hbbue.apps.googleusercontent.com">
@@ -43,6 +61,7 @@ export default function RootLayout({
           </GoogleOAuthProvider>
           <Footer />
         </ThemeProvider>
+        <DisableHydrationWarnings />
       </body>
     </html>
   );
