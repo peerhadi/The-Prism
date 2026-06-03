@@ -136,6 +136,7 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
 
     const uploadRes = await fetch("http://localhost:8080/api/upload", {
       method: "POST",
+      headers: { Authorization: window.localStorage.getItem("token") ?? "" },
       body: formData,
     });
 
@@ -145,6 +146,7 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: "Bearer " + window.localStorage.getItem("token"),
       },
       body: JSON.stringify({
         profileImageUrl: imageUrl,
@@ -152,6 +154,8 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
     });
     setAvatar(cropped);
     setModalOpen(false);
+
+    window.location.reload();
   };
 
   return (

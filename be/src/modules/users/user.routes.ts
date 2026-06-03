@@ -18,7 +18,7 @@ export async function userRoutes(app: FastifyInstance) {
       },
     });
   });
-  app.post("/:id/change-password", async (request, reply) => {
+  app.put("/:id/change-password", async (request, reply) => {
     const params = request.params as {
       id: string;
     };

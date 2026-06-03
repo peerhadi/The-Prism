@@ -138,7 +138,7 @@ export default function SettingsPage() {
     await fetch(
       `http://localhost:8080/api/users/${privacySettings.id}/change-password`,
       {
-        method: "POST",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

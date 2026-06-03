@@ -88,7 +88,6 @@ async function callGroq(prompt: string, data: any) {
       ],
     }),
   });
-
   const json = await res.json();
   return json?.choices[0]?.message?.content || "";
 }

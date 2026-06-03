@@ -42,7 +42,10 @@ export default function AddUser() {
   const submit = async () => {
     await fetch("http://localhost:8080/api/users", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+      },
       body: JSON.stringify(form),
     });
 

@@ -45,7 +45,10 @@ export default function EditCategory() {
   const submit = async () => {
     await fetch(`http://localhost:8080/api/categories/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+      },
       body: JSON.stringify({
         ...form,
         averageBias: parseInt(form.averageBias),

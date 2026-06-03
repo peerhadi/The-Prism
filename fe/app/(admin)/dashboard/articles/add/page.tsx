@@ -42,8 +42,11 @@ export default function AddArticle() {
   const submit = async () => {
     await fetch("http://localhost:8080/api/articles", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ ...form, biasLevel: parseInt(form.biasLevel) }),
     });
     setToast(true);
     redirect("/dashboard/articles");

@@ -41,8 +41,11 @@ export default function EditArticle() {
   const save = async () => {
     await fetch(`http://localhost:8080/api/articles/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({ ...form, biasLevel: parseInt(form.biasLevel) }),
     });
     setToast(true);
     redirect("/dashboard/articles");
