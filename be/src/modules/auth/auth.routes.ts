@@ -1,58 +1,92 @@
+import { FastifyInstance } from "fastify";
+import bcrypt from "bcryptjs";
 
-import { FastifyInstance } from "fastify"
-import bcrypt from "bcryptjs"
-
-import { prisma } from "../../shared/prisma.js"
+import { prisma } from "../../shared/prisma.js";
 
 export async function authRoutes(app: FastifyInstance) {
   app.post("/register", async (request, reply) => {
-    const body = request.body as any
+    const body = request.body as {
+      email: string;
+      password: string;
+      name?: string;
+    };
 
-    const hashed = await bcrypt.hash(body.password, 10)
+    const hashed = await bcrypt.hash(body.password, 10);
 
     const user = await prisma.user.create({
       data: {
         ...body,
-        password: hashed
-      }
-    })
+        password: hashed,
+      },
+    });
 
     const token = await reply.jwtSign({
-      sub: user.id
-    })
+      sub: user.id,
+    });
+
+    const { password, ...safeUser } = user;
 
     return {
-      user,
-      token
-    }
-  })
+      user: safeUser,
+      token,
+    };
+  });
 
   app.post("/login", async (request, reply) => {
-    const body = request.body as any
+    const body = request.body as {
+      email: string;
+      password: string;
+    };
 
     const user = await prisma.user.findUnique({
       where: {
-        email: body.email
-      }
-    })
+        email: body.email,
+      },
+    });
 
     if (!user) {
-      return reply.unauthorized()
+      return reply.unauthorized();
     }
 
-    const valid = await bcrypt.compare(body.password, user.password)
+    const valid = await bcrypt.compare(body.password, user.password);
 
     if (!valid) {
-      return reply.unauthorized()
+      return reply.unauthorized();
     }
 
     const token = await reply.jwtSign({
-      sub: user.id
-    })
+      sub: user.id,
+    });
+
+    const { password, ...safeUser } = user;
 
     return {
-      user,
-      token
-    }
-  })
+      user: safeUser,
+      token,
+    };
+  });
+
+  app.get(
+    "/me",
+    {
+      preHandler: [app.authenticate],
+    },
+    async (request) => {
+      const userId = (request.user as { sub: string }).sub;
+
+      const user = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!user) {
+        throw app.httpErrors.notFound();
+      }
+
+      const { password, ...safeUser } = user;
+
+      return safeUser;
+    },
+  );
 }

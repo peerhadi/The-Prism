@@ -7,15 +7,30 @@ import { startRSSJob } from "./jobs/rss.jobs.js";
 
 import { env } from "./shared/env.js";
 
+import fs from "fs/promises";
+import path from "path";
+import crypto from "crypto";
 import { authRoutes } from "./modules/auth/auth.routes.js";
 import { userRoutes } from "./modules/users/user.routes.js";
 import { articleRoutes } from "./modules/articles/article.routes.js";
 import { perspectiveRoutes } from "./modules/perspectives/perspective.routes.js";
 import { categoryRoutes } from "./modules/categories/category.routes.js";
 import { archivedRoutes } from "./modules/archived/archived.routes.js";
+import multipart from "@fastify/multipart";
+import fastifyStatic from "@fastify/static";
+import path from "path";
 
+import fp from "fastify-plugin";
 const app = Fastify();
-
+await app.register(multipart);
+app.decorate("authenticate", async (request, reply) => {
+  await request.jwtVerify();
+});
+export default fp(async (app) => {
+  app.decorate("authenticate", async (request: any, reply: any) => {
+    await request.jwtVerify();
+  });
+});
 startRSSJob();
 app.setErrorHandler((err, req, reply) => {
   console.error(err);
@@ -61,10 +76,42 @@ await app.register(categoryRoutes, {
   prefix: "/api/categories",
 });
 
+await app.register(fastifyStatic, {
+  root: path.join(process.cwd(), "uploads"),
+  prefix: "/uploads/",
+});
+
 await app.register(archivedRoutes, {
   prefix: "/api/archived",
 });
 
+app.post("/api/upload", async (request, reply) => {
+  const file = await request.file();
+
+  if (!file) {
+    return reply.code(400).send({
+      error: "No file uploaded",
+    });
+  }
+
+  const ext = path.extname(file.filename) || ".jpg";
+
+  const filename = crypto.randomUUID() + ext;
+
+  const uploadDir = path.join(process.cwd(), "uploads");
+
+  await fs.mkdir(uploadDir, {
+    recursive: true,
+  });
+
+  const filepath = path.join(uploadDir, filename);
+
+  await fs.writeFile(filepath, await file.toBuffer());
+
+  return {
+    imageUrl: `http://localhost:8080/uploads/${filename}`,
+  };
+});
 // ======================================================
 // ✅ GITHUB OAUTH CALLBACK (THIS IS WHAT YOU WERE MISSING)
 // ======================================================

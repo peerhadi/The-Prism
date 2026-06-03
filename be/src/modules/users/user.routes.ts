@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-
+import bcrypt from "bcryptjs";
 import { prisma } from "../../shared/prisma.js";
 
 export async function userRoutes(app: FastifyInstance) {
@@ -18,7 +18,54 @@ export async function userRoutes(app: FastifyInstance) {
       },
     });
   });
+  app.post("/:id/change-password", async (request, reply) => {
+    const params = request.params as {
+      id: string;
+    };
+    const body = request.body as {
+      currentPassword: string;
+      newPassword: string;
+    };
 
+    console.log(request.body, body);
+    const user = await prisma.user.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    if (!user) {
+      return reply.code(404).send({
+        error: "User not found",
+      });
+    }
+
+    const validPassword = await bcrypt.compare(
+      body.currentPassword,
+      user.password,
+    );
+
+    if (!validPassword) {
+      return reply.code(400).send({
+        error: "Incorrect password",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(body.newPassword, 10);
+
+    await prisma.user.update({
+      where: {
+        id: params.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return {
+      success: true,
+    };
+  });
   app.post("/", async (request) => {
     const body = request.body as any;
 
@@ -27,7 +74,7 @@ export async function userRoutes(app: FastifyInstance) {
     });
   });
 
-  app.patch("/:id", async (request) => {
+  app.put("/:id", async (request) => {
     const params = request.params as {
       id: string;
     };
