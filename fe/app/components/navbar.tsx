@@ -81,9 +81,9 @@ export function Navbar() {
       desc: "Narrative and bias analysis",
     },
     {
-      name: "Archive",
-      href: "/archive",
-      desc: "Historical signal database",
+      name: "Narrative Split",
+      href: "/narrative-split",
+      desc: "Compare global narratives",
     },
     {
       name: "AI Chat",
@@ -91,19 +91,24 @@ export function Navbar() {
       desc: "Interact with Prism AI",
     },
     {
-      name: "Narrative Split",
-      href: "/narrative-split",
-      desc: "Compare global narratives",
+      name: "Archive",
+      href: "/archive",
+      desc: "Historical signal database",
     },
     {
-      name: "Dashboard",
-      href: "/dashboard",
-      desc: "The admin dashboard",
+      name: "Bias",
+      href: "/bias",
+      desc: "Learn how we calculate bias",
     },
     {
       name: "About",
       href: "/about",
       desc: "Inside the intelligence framework",
+    },
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+      desc: "The admin dashboard",
     },
   ];
   if (authenticated === null) {
