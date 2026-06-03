@@ -1,23 +1,14 @@
 "use client";
 
-import {
-  Activity,
-  BarChart3,
-  BrainCircuit,
-  Edit3,
-  Fingerprint,
-  Globe,
-  Mail,
-  Radar,
-  Shield,
-  Sparkles,
-  User,
-} from "lucide-react";
+import { Activity, BarChart3, Edit3, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
+import React from "react";
+import ProfileImagePicker from "../components/ProfileImagePicker";
+import { PrismLoader } from "@/app/components/loadingScreen";
+import { useFormik } from "formik";
 function StatCard({
   title,
   value,
@@ -44,26 +35,50 @@ function StatCard({
   );
 }
 
-function FingerprintBar({ label, value }: { label: string; value: number }) {
-  return (
-    <div>
-      <div className="mb-3 flex items-center justify-between">
-        <span className="font-medium text-white/80">{label}</span>
-
-        <span className="text-cyan-400">{value}%</span>
-      </div>
-
-      <div className="h-3 overflow-hidden rounded-full bg-white/10">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-purple-500"
-          style={{ width: `${value}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
 export default function ProfilePage() {
+  const [token, setToken] = React.useState("");
+  const [user, setUser] = React.useState({});
+
+  const formik = useFormik({
+    enableReinitialize: true,
+
+    initialValues: {
+      username: user?.username ?? "",
+      email: user?.email ?? "",
+      bio: user?.bio ?? "",
+    },
+
+    onSubmit: async (values) => {
+      await fetch(`http://localhost:8080/api/users/${user.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      const updated = await fetch("http://localhost:8080/api/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).then((r) => r.json());
+
+      setUser(updated);
+    },
+  });
+  React.useEffect(() => {
+    const t = window.localStorage.getItem("token") || "";
+    setToken(t);
+
+    fetch("http://localhost:8080/api/auth/me", {
+      headers: { Authorization: `Bearer ${t}` },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setUser(res);
+      });
+  }, []);
+
+  if (!user.id) return <PrismLoader />;
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
       {/* BACKGROUND */}
@@ -129,30 +144,22 @@ export default function ProfilePage() {
           <div className="grid gap-8 lg:grid-cols-[250px_1fr]">
             {/* AVATAR */}
 
-            <div className="flex flex-col items-center">
-              <div className="relative">
-                <div className="flex h-52 w-52 items-center justify-center rounded-full border border-cyan-500/30 bg-gradient-to-br from-cyan-500/20 to-purple-500/20">
-                  <User className="h-24 w-24 text-cyan-400" />
-                </div>
-
-                <button className="absolute bottom-3 right-3 flex h-12 w-12 items-center justify-center rounded-full border border-cyan-500/30 bg-black/80">
-                  <Edit3 className="h-4 w-4 text-cyan-400" />
-                </button>
-              </div>
-
-              <p className="mt-6 text-sm text-white/40">Upload profile image</p>
-            </div>
-
+            <ProfileImagePicker
+              id={user.id}
+              profileImageUrl={user.profileImageUrl}
+            />
             {/* DETAILS */}
 
-            <div className="space-y-6">
+            <form onSubmit={formik.handleSubmit} className="space-y-6">
               <div>
                 <label className="mb-2 block text-xs font-black tracking-[0.2em] text-white/40 uppercase">
                   Username
                 </label>
 
                 <Input
-                  defaultValue="prism_user"
+                  name="username"
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
                   className="h-12 rounded-xl border-white/10 bg-black/30"
                 />
               </div>
@@ -163,7 +170,10 @@ export default function ProfilePage() {
                 </label>
 
                 <Input
-                  defaultValue="user@prism.app"
+                  name="email"
+                  type="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
                   className="h-12 rounded-xl border-white/10 bg-black/30"
                 />
               </div>
@@ -174,15 +184,22 @@ export default function ProfilePage() {
                 </label>
 
                 <Textarea
-                  defaultValue="Researching narratives, analyzing information ecosystems, and exploring how media framing shapes public perception."
+                  name="bio"
+                  value={formik.values.bio}
+                  onChange={formik.handleChange}
                   className="min-h-[120px] rounded-xl border-white/10 bg-black/30"
                 />
               </div>
 
-              <Button className="rounded-xl bg-cyan-500 text-black hover:bg-cyan-400">
-                Save Profile
-              </Button>
-            </div>
+              <div className="flex w-full justify-end">
+                <Button
+                  type="submit"
+                  className="w-[150px] rounded-xl bg-cyan-500 p-5 text-black hover:bg-cyan-400"
+                >
+                  Save Profile
+                </Button>
+              </div>
+            </form>
           </div>
         </section>
 
@@ -218,135 +235,6 @@ export default function ProfilePage() {
               title="Extremity"
               value="22%"
               subtitle="Low ideological skew"
-            />
-          </div>
-        </section>
-
-        {/* FINGERPRINT */}
-
-        <section className="mt-10 grid gap-8 xl:grid-cols-[1.5fr_1fr]">
-          <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
-            <div className="mb-8 flex items-center gap-4">
-              <Fingerprint className="h-6 w-6 text-cyan-400" />
-
-              <div>
-                <p className="text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
-                  Analysis Engine
-                </p>
-
-                <h2 className="mt-1 text-2xl font-black">
-                  Narrative Fingerprint
-                </h2>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <FingerprintBar label="Source Diversity" value={86} />
-
-              <FingerprintBar label="Narrative Balance" value={71} />
-
-              <FingerprintBar label="Source Distribution" value={78} />
-
-              <FingerprintBar label="Cross-Perspective Reading" value={83} />
-
-              <FingerprintBar label="Ideological Extremity" value={22} />
-            </div>
-          </div>
-
-          {/* QUICK ANALYSIS */}
-
-          <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
-            <div className="mb-8 flex items-center gap-4">
-              <BrainCircuit className="h-6 w-6 text-purple-400" />
-
-              <div>
-                <p className="text-[10px] font-black tracking-[0.3em] text-purple-400 uppercase">
-                  Intelligence Summary
-                </p>
-
-                <h2 className="mt-1 text-2xl font-black">Profile Analysis</h2>
-              </div>
-            </div>
-
-            <div className="space-y-5">
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-                <div className="flex items-center gap-3">
-                  <Shield className="h-4 w-4 text-cyan-400" />
-
-                  <span className="font-medium">Balanced Reader</span>
-                </div>
-
-                <p className="mt-2 text-sm text-white/50">
-                  Consumes perspectives from multiple ideological positions.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-                <div className="flex items-center gap-3">
-                  <Globe className="h-4 w-4 text-cyan-400" />
-
-                  <span className="font-medium">High Diversity</span>
-                </div>
-
-                <p className="mt-2 text-sm text-white/50">
-                  Sources span multiple countries and editorial traditions.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
-                <div className="flex items-center gap-3">
-                  <Radar className="h-4 w-4 text-cyan-400" />
-
-                  <span className="font-medium">Low Extremity Risk</span>
-                </div>
-
-                <p className="mt-2 text-sm text-white/50">
-                  Reading behavior shows strong exposure to competing
-                  viewpoints.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ACTIVITY */}
-
-        <section className="mt-10 rounded-[32px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl">
-          <div className="mb-8 flex items-center gap-4">
-            <Sparkles className="h-6 w-6 text-cyan-400" />
-
-            <div>
-              <p className="text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
-                Consumption Analytics
-              </p>
-
-              <h2 className="mt-1 text-2xl font-black">Activity Overview</h2>
-            </div>
-          </div>
-
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              title="Articles Read"
-              value="2.4K"
-              subtitle="Across all sources"
-            />
-
-            <StatCard
-              title="Comparisons"
-              value="481"
-              subtitle="Narratives analyzed"
-            />
-
-            <StatCard
-              title="Days Active"
-              value="287"
-              subtitle="Consistent engagement"
-            />
-
-            <StatCard
-              title="Top Topic"
-              value="AI"
-              subtitle="Most consumed category"
             />
           </div>
         </section>
