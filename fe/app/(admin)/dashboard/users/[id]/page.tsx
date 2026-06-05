@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { redirect, useParams } from "next/navigation";
 import Snackbar from "@/app/components/Snackbar";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { useToast } from "@/lib/toast/toastStore";
 
 function Field({ label, ...props }: any) {
   return (
@@ -45,7 +46,11 @@ export default function EditUser() {
       },
       body: JSON.stringify(form),
     });
-    setToast(true);
+    const { addToast } = useToast.getState();
+    addToast({
+      title: "Success",
+      description: "Successfully modified user",
+    });
     redirect("/dashboard/users");
   };
 

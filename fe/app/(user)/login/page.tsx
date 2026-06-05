@@ -16,7 +16,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { ClipboardCopy } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "@/lib/toast/toast";
+import { useToast } from "@/lib/toast/toastStore";
+
 export default function SignInPage() {
+  const { addToast } = useToast.getState();
   const [showPassword, setShowPassword] = React.useState(false);
   const router = useRouter();
   const [email, setEmail] = React.useState("");
@@ -314,6 +318,10 @@ export default function SignInPage() {
               onClick={() => {
                 setIsPopupVisible(false);
 
+                addToast({
+                  title: "Success",
+                  description: "Logged In Successfully",
+                });
                 router.refresh();
                 router.push("/");
               }}

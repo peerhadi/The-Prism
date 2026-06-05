@@ -5,6 +5,7 @@ import { redirect, useParams } from "next/navigation";
 import Snackbar from "@/app/components/Snackbar";
 import { Tags, Activity } from "lucide-react";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { useToast } from "@/lib/toast/toastStore";
 
 function Field({ label, icon: Icon, ...props }: any) {
   return (
@@ -55,7 +56,11 @@ export default function EditCategory() {
       }),
     });
 
-    setToast(true);
+    const { addToast } = useToast.getState();
+    addToast({
+      title: "Success",
+      description: "Successfully modified category",
+    });
     redirect("/dashboard/categories");
   };
 

@@ -25,6 +25,7 @@ import { Footer } from "./components/footer";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Metadata } from "next";
 import { DisableHydrationWarnings } from "./utils/disablehydrationwarnings";
+import ToastContainer from "@/lib/toast/ToastContainer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -58,6 +59,7 @@ export default function RootLayout({
           <Navbar />
           <GoogleOAuthProvider clientId="326949971375-3qq23gr7vdd4tnubscvs7n5agk9hbbue.apps.googleusercontent.com">
             {children}
+            <ToastContainer />
           </GoogleOAuthProvider>
           <Footer />
         </ThemeProvider>
