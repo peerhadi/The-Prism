@@ -17,6 +17,7 @@ import * as Yup from "yup";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Clipboard } from "lucide-react";
 import { navigate } from "next/dist/client/components/segment-cache/navigation";
+import { useToast } from "@/lib/toast/toastStore";
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = React.useState(false);
   const [oauthUsed, setOauthUsed] = React.useState(false);
@@ -72,6 +73,7 @@ export default function SignUpPage() {
     run();
   }, [searchParams]);
   const router = useRouter();
+  const { addToast } = useToast.getState();
   const loginWithGithub = () => {
     sessionStorage.setItem("oauth_intent", "signup");
 
@@ -378,6 +380,11 @@ export default function SignUpPage() {
             <button
               onClick={() => {
                 setIsPopupVisible(false);
+
+                addToast({
+                  title: "Success",
+                  description: "Signed Up Successfully",
+                });
                 router.push("/login");
               }}
               className="mt-4 w-full bg-green-500/20 text-green-300 py-2 rounded"

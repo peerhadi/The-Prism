@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useToast } from "@/lib/toast/toastStore";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,17 @@ export function Navbar() {
         .then((res) => {
           setUserImage(res.profileImageUrl);
           setIsAdmin(res.role === "ADMIN");
+          console.log(res.role === "ADMIN");
+          if (res.role === "ADMIN") {
+            setLinks([
+              ...links,
+              {
+                name: "Dashboard",
+                href: "/dashboard",
+                desc: "The admin dashboard",
+              },
+            ]);
+          }
         });
     }
   }, []);
@@ -68,10 +80,16 @@ export function Navbar() {
   }, []);
   const logout = () => {
     localStorage.removeItem("token");
+
+    const { addToast } = useToast.getState();
+    addToast({
+      title: "Success",
+      description: "Logged out Successfully",
+    });
     router.push("/login");
     window.location.reload();
   };
-  const links = [
+  const [links, setLinks] = useState([
     {
       name: "Stories",
       href: "/stories",
@@ -107,15 +125,7 @@ export function Navbar() {
       href: "/about",
       desc: "Inside the intelligence framework",
     },
-  ];
-  if (isAdmin) {
-    links.push({
-      name: "Dashboard",
-      href: "/dashboard",
-      desc: "The admin dashboard",
-    });
-  }
-
+  ]);
   if (authenticated === null) {
     return;
   }

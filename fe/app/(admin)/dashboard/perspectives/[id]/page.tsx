@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { redirect, useParams } from "next/navigation";
 import Snackbar from "@/app/components/Snackbar";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { useToast } from "@/lib/toast/toastStore";
 
 export default function EditPerspective() {
   const { id } = useParams();
@@ -44,7 +45,11 @@ export default function EditPerspective() {
       body: JSON.stringify(form),
     });
 
-    setToast(true);
+    const { addToast } = useToast.getState();
+    addToast({
+      title: "Success",
+      description: "Successfully modified perspective",
+    });
     redirect("/dashboard/perspectives");
   };
 
