@@ -1,48 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import Snackbar from "@/app/components/Snackbar";
+import { useRouter } from "next/navigation";
+
 import { Brain, FileText, AlignLeft } from "lucide-react";
-import { redirect } from "next/navigation";
+
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import FormCard from "@/app/components/dashboard/FormCard";
+import FieldInput from "@/app/components/dashboard/FieldInput";
+import FieldTextArea from "@/app/components/dashboard/FieldTextArea";
+
 import { useToast } from "@/lib/toast/toastStore";
 
-function Field({ label, icon: Icon, ...props }: any) {
-  return (
-    <div className="space-y-2">
-      <label className="flex items-center gap-2 text-cyan-300 text-xs tracking-[0.3em] uppercase">
-        {Icon && <Icon size={14} className="text-cyan-400" />}
-        {label}
-      </label>
-
-      <input
-        {...props}
-        className="w-full p-4 bg-black/40 border border-cyan-500/10
-        focus:border-cyan-400 outline-none rounded-lg"
-      />
-    </div>
-  );
-}
-
-function TextArea({ label, icon: Icon, ...props }: any) {
-  return (
-    <div className="space-y-2">
-      <label className="flex items-center gap-2 text-cyan-300 text-xs tracking-[0.3em] uppercase">
-        {Icon && <Icon size={14} className="text-cyan-400" />}
-        {label}
-      </label>
-
-      <textarea
-        {...props}
-        className="w-full p-4 bg-black/40 border border-cyan-500/10
-        focus:border-cyan-400 outline-none rounded-lg min-h-[120px]"
-      />
-    </div>
-  );
-}
-
 export default function AddPerspective() {
-  const [toast, setToast] = useState(false);
+  const router = useRouter();
 
   const [form, setForm] = useState({
     title: "",
@@ -57,7 +28,7 @@ export default function AddPerspective() {
   });
 
   const update = (k: string, v: any) => {
-    setForm({ ...form, [k]: v });
+    setForm((prev) => ({ ...prev, [k]: v }));
   };
 
   const submit = async () => {
@@ -82,40 +53,27 @@ export default function AddPerspective() {
       }),
     });
 
-    const { addToast } = useToast.getState();
-    addToast({
+    useToast.getState().addToast({
       title: "Success",
       description: "Successfully added perspective",
     });
-    redirect("/dashboard/perspectives");
+
+    router.push("/dashboard/perspectives");
   };
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex items-center justify-center p-10">
+    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center p-10">
       <Breadcrumbs
         items={[
           { label: "Perspectives", href: "/dashboard/perspectives" },
           { label: "Add" },
         ]}
       />
-      <Snackbar
-        open={toast}
-        message="Perspective emitted"
-        onClose={() => setToast(false)}
-      />
 
-      <div
-        className="w-full max-w-3xl p-10 rounded-2xl
-        border border-cyan-500/20 bg-white/[0.02]
-        backdrop-blur-xl shadow-[0_0_60px_rgba(34,211,238,0.08)]"
-      >
-        <h1 className="text-center text-3xl font-black text-cyan-400 mb-10">
-          CREATE PERSPECTIVE LENS
-        </h1>
-
-        <div className="space-y-10">
-          {/* PERSPECTIVE TITLE (FIXED) */}
-          <Field
+      <FormCard title="CREATE PERSPECTIVE LENS">
+        <div className="space-y-8">
+          {/* TITLE */}
+          <FieldInput
             label="Perspective Title"
             icon={Brain}
             value={form.title}
@@ -123,74 +81,70 @@ export default function AddPerspective() {
           />
 
           {/* NEUTRAL */}
-          <div className="p-6 border border-cyan-500/10 rounded-xl bg-white/[0.02]">
-            <h2 className="text-cyan-300 font-black mb-4">NEUTRAL LAYER</h2>
+          <div className="p-6 border border-cyan-500/10 rounded-xl space-y-4">
+            <h2 className="text-cyan-300 font-black">NEUTRAL LAYER</h2>
 
-            <div className="space-y-4">
-              <Field
-                label="Title"
-                icon={Brain}
-                value={form.neutralTitle}
-                onChange={(e: any) => update("neutralTitle", e.target.value)}
-              />
+            <FieldInput
+              label="Title"
+              icon={Brain}
+              value={form.neutralTitle}
+              onChange={(e: any) => update("neutralTitle", e.target.value)}
+            />
 
-              <Field
-                label="Summary"
-                icon={FileText}
-                value={form.neutralSummary}
-                onChange={(e: any) => update("neutralSummary", e.target.value)}
-              />
+            <FieldInput
+              label="Summary"
+              icon={FileText}
+              value={form.neutralSummary}
+              onChange={(e: any) => update("neutralSummary", e.target.value)}
+            />
 
-              <TextArea
-                label="Description"
-                icon={AlignLeft}
-                value={form.neutralDescription}
-                onChange={(e: any) =>
-                  update("neutralDescription", e.target.value)
-                }
-              />
-            </div>
+            <FieldTextArea
+              label="Description"
+              icon={AlignLeft}
+              value={form.neutralDescription}
+              onChange={(e: any) =>
+                update("neutralDescription", e.target.value)
+              }
+            />
           </div>
 
           {/* EXTREME */}
-          <div className="p-6 border border-red-500/20 rounded-xl bg-white/[0.02]">
-            <h2 className="text-red-400 font-black mb-4">EXTREME LAYER</h2>
+          <div className="p-6 border border-red-500/20 rounded-xl space-y-4">
+            <h2 className="text-red-400 font-black">EXTREME LAYER</h2>
 
-            <div className="space-y-4">
-              <Field
-                label="Title"
-                icon={Brain}
-                value={form.extremeTitle}
-                onChange={(e: any) => update("extremeTitle", e.target.value)}
-              />
+            <FieldInput
+              label="Title"
+              icon={Brain}
+              value={form.extremeTitle}
+              onChange={(e: any) => update("extremeTitle", e.target.value)}
+            />
 
-              <Field
-                label="Summary"
-                icon={FileText}
-                value={form.extremeSummary}
-                onChange={(e: any) => update("extremeSummary", e.target.value)}
-              />
+            <FieldInput
+              label="Summary"
+              icon={FileText}
+              value={form.extremeSummary}
+              onChange={(e: any) => update("extremeSummary", e.target.value)}
+            />
 
-              <TextArea
-                label="Description"
-                icon={AlignLeft}
-                value={form.extremeDescription}
-                onChange={(e: any) =>
-                  update("extremeDescription", e.target.value)
-                }
-              />
-            </div>
+            <FieldTextArea
+              label="Description"
+              icon={AlignLeft}
+              value={form.extremeDescription}
+              onChange={(e: any) =>
+                update("extremeDescription", e.target.value)
+              }
+            />
           </div>
 
           <button
             onClick={submit}
             className="w-full p-5 bg-cyan-400 text-black font-black rounded-lg
-            hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
+            hover:shadow-[0_0_50px_rgba(34,211,238,0.6)] transition"
           >
             TRANSMIT PERSPECTIVE SPLIT
           </button>
         </div>
-      </div>
+      </FormCard>
     </div>
   );
 }

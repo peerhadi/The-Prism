@@ -1,49 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { redirect, useParams } from "next/navigation";
-import Snackbar from "@/app/components/Snackbar";
+import { useParams, useRouter } from "next/navigation";
 import { Tags, Activity } from "lucide-react";
+
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import FieldInput from "@/app/components/dashboard/FieldInput";
 import { useToast } from "@/lib/toast/toastStore";
-
-function Field({ label, icon: Icon, ...props }: any) {
-  return (
-    <div className="space-y-2">
-      <label className="flex items-center gap-2 text-cyan-300 text-xs tracking-[0.3em] uppercase">
-        {Icon && <Icon size={14} className="text-cyan-400" />}
-        {label}
-      </label>
-
-      <input
-        {...props}
-        className="w-full p-4 bg-black/40 border border-cyan-500/10
-        focus:border-cyan-400 outline-none rounded-lg"
-      />
-    </div>
-  );
-}
 
 export default function EditCategory() {
   const { id } = useParams();
-  const [toast, setToast] = useState(false);
+  const router = useRouter();
+
+  const [form, setForm] = useState<{
+    name: string;
+    averageBias: string;
+  } | null>(null);
 
   useEffect(() => {
+    if (!id) return;
+
     fetch(`http://localhost:8080/api/categories/${id}`)
       .then((r) => r.json())
       .then(setForm);
   }, [id]);
 
-  const [form, setForm] = useState<{ name: string; averageBias: string }>({
-    name: "",
-    averageBias: "",
-  });
-
   const update = (k: string, v: any) => {
-    setForm({ ...form, [k]: v });
+    setForm((prev) => (prev ? { ...prev, [k]: v } : prev));
   };
 
   const submit = async () => {
+    if (!form) return;
+
     await fetch(`http://localhost:8080/api/categories/${id}`, {
       method: "PUT",
       headers: {
@@ -52,24 +40,25 @@ export default function EditCategory() {
       },
       body: JSON.stringify({
         ...form,
-        averageBias: parseInt(form.averageBias),
+        averageBias: parseInt(form.averageBias || "0"),
       }),
     });
 
-    const { addToast } = useToast.getState();
-    addToast({
+    useToast.getState().addToast({
       title: "Success",
       description: "Successfully modified category",
     });
-    redirect("/dashboard/categories");
+
+    router.push("/dashboard/categories");
   };
 
-  if (!form)
+  if (!form) {
     return (
       <div className="text-cyan-400 p-10 animate-pulse">
         decoding category node...
       </div>
     );
+  }
 
   return (
     <div className="min-h-screen bg-[#02050a] text-white flex items-center justify-center p-10">
@@ -78,11 +67,6 @@ export default function EditCategory() {
           { label: "Categories", href: "/dashboard/categories" },
           { label: "Edit" },
         ]}
-      />
-      <Snackbar
-        open={toast}
-        message="Category updated"
-        onClose={() => setToast(false)}
       />
 
       <div
@@ -95,14 +79,14 @@ export default function EditCategory() {
         </h1>
 
         <div className="space-y-6">
-          <Field
+          <FieldInput
             label="Category Name"
             icon={Tags}
             value={form.name}
             onChange={(e: any) => update("name", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Average Bias"
             icon={Activity}
             value={form.averageBias}

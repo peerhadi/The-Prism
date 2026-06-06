@@ -16,11 +16,8 @@ export async function perspectiveRoutes(app: FastifyInstance) {
 
   app.delete("/:id", controller.delete);
   app.post("/rss/sync", async (_, reply) => {
-    const data = await syncPerspectives();
+    await syncPerspectives();
 
-    return reply.send({
-      count: data.length,
-      data,
-    });
+    return reply.code(200).send({ success: true });
   });
 }

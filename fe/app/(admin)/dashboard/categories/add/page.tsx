@@ -1,39 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import Snackbar from "@/app/components/Snackbar";
+import { useRouter } from "next/navigation";
 import { Tags, Activity } from "lucide-react";
-import { redirect } from "next/navigation";
+
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import FieldInput from "@/app/components/dashboard/FieldInput";
 import { useToast } from "@/lib/toast/toastStore";
 
-function Field({ label, icon: Icon, ...props }: any) {
-  return (
-    <div className="space-y-2">
-      <label className="flex items-center gap-2 text-cyan-300 text-xs tracking-[0.3em] uppercase">
-        {Icon && <Icon size={14} className="text-cyan-400" />}
-        {label}
-      </label>
-
-      <input
-        {...props}
-        className="w-full p-4 bg-black/40 border border-cyan-500/10
-        focus:border-cyan-400 outline-none rounded-lg"
-      />
-    </div>
-  );
-}
-
 export default function AddCategory() {
-  const [toast, setToast] = useState(false);
+  const router = useRouter();
 
-  const [form, setForm] = useState<{ name: string; averageBias: string }>({
+  const [form, setForm] = useState<{
+    name: string;
+    averageBias: string;
+  }>({
     name: "",
     averageBias: "",
   });
 
   const update = (k: string, v: any) => {
-    setForm({ ...form, [k]: v });
+    setForm((prev) => ({ ...prev, [k]: v }));
   };
 
   const submit = async () => {
@@ -45,16 +32,16 @@ export default function AddCategory() {
       },
       body: JSON.stringify({
         ...form,
-        averageBias: parseInt(form.averageBias),
+        averageBias: parseInt(form.averageBias || "0"),
       }),
     });
 
-    const { addToast } = useToast.getState();
-    addToast({
+    useToast.getState().addToast({
       title: "Success",
       description: "Successfully added category",
     });
-    redirect("/dashboard/categories");
+
+    router.push("/dashboard/categories");
   };
 
   return (
@@ -64,11 +51,6 @@ export default function AddCategory() {
           { label: "Categories", href: "/dashboard/categories" },
           { label: "Add" },
         ]}
-      />
-      <Snackbar
-        open={toast}
-        message="Category emitted"
-        onClose={() => setToast(false)}
       />
 
       <div
@@ -81,14 +63,14 @@ export default function AddCategory() {
         </h1>
 
         <div className="space-y-6">
-          <Field
+          <FieldInput
             label="Category Name"
             icon={Tags}
             value={form.name}
             onChange={(e: any) => update("name", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Average Bias"
             icon={Activity}
             value={form.averageBias}
