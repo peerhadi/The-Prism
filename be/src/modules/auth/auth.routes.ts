@@ -68,7 +68,6 @@ export async function authRoutes(app: FastifyInstance) {
       token,
     };
   });
-  app.post("/github", githubAuth);
   app.get(
     "/me",
     {
