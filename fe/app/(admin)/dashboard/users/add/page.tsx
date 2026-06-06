@@ -1,31 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import Snackbar from "@/app/components/Snackbar";
+import { useRouter } from "next/navigation";
+
 import { User, Mail, Lock, Image, FileText } from "lucide-react";
-import { redirect } from "next/navigation";
+
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import FormCard from "@/app/components/dashboard/FormCard";
+import FieldInput from "@/app/components/dashboard/FieldInput";
+
 import { useToast } from "@/lib/toast/toastStore";
 
-function Field({ label, icon: Icon, ...props }: any) {
-  return (
-    <div className="space-y-2">
-      <label className="flex items-center gap-2 text-cyan-300 text-xs tracking-[0.3em] uppercase">
-        {Icon && <Icon size={14} className="text-cyan-400" />}
-        {label}
-      </label>
-
-      <input
-        {...props}
-        className="w-full p-4 bg-black/40 border border-cyan-500/10
-        focus:border-cyan-400 outline-none rounded-lg"
-      />
-    </div>
-  );
-}
-
 export default function AddUser() {
-  const [toast, setToast] = useState(false);
+  const router = useRouter();
 
   const [form, setForm] = useState({
     username: "",
@@ -37,7 +24,7 @@ export default function AddUser() {
   });
 
   const update = (k: string, v: any) => {
-    setForm({ ...form, [k]: v });
+    setForm((prev) => ({ ...prev, [k]: v }));
   };
 
   const submit = async () => {
@@ -50,50 +37,37 @@ export default function AddUser() {
       body: JSON.stringify(form),
     });
 
-    const { addToast } = useToast.getState();
-    addToast({
+    useToast.getState().addToast({
       title: "Success",
       description: "Successfully added user",
     });
-    redirect("/dashboard/users");
+
+    router.push("/dashboard/users");
   };
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex items-center justify-center p-10">
+    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center p-10">
       <Breadcrumbs
         items={[{ label: "Users", href: "/dashboard/users" }, { label: "Add" }]}
       />
-      <Snackbar
-        open={toast}
-        message="User instantiated"
-        onClose={() => setToast(false)}
-      />
 
-      <div
-        className="w-full max-w-2xl p-10 rounded-2xl
-        border border-cyan-500/20 bg-white/[0.02]
-        backdrop-blur-xl shadow-[0_0_60px_rgba(34,211,238,0.08)]"
-      >
-        <h1 className="text-center text-3xl font-black text-cyan-400 mb-10">
-          CREATE USER NODE
-        </h1>
-
+      <FormCard title="CREATE USER NODE">
         <div className="space-y-6">
-          <Field
+          <FieldInput
             label="Username"
             icon={User}
             value={form.username}
             onChange={(e: any) => update("username", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Email"
             icon={Mail}
             value={form.email}
             onChange={(e: any) => update("email", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Password"
             icon={Lock}
             type="password"
@@ -101,21 +75,21 @@ export default function AddUser() {
             onChange={(e: any) => update("password", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Bio"
             icon={FileText}
             value={form.bio}
             onChange={(e: any) => update("bio", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Profile Image URL"
             icon={Image}
             value={form.profileImageUrl}
             onChange={(e: any) => update("profileImageUrl", e.target.value)}
           />
 
-          <Field
+          <FieldInput
             label="Banner URL"
             icon={Image}
             value={form.bannerUrl}
@@ -130,7 +104,7 @@ export default function AddUser() {
             INITIALIZE USER
           </button>
         </div>
-      </div>
+      </FormCard>
     </div>
   );
 }
