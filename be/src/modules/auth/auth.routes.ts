@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
 import { githubAuth } from "./auth.controller.js";
 import { prisma } from "../../shared/prisma.js";
+import { githubAuth } from "./auth.controller.js";
 
 export async function authRoutes(app: FastifyInstance) {
   app.post("/register", async (request, reply) => {
@@ -91,4 +92,5 @@ export async function authRoutes(app: FastifyInstance) {
       return safeUser;
     },
   );
+  app.post("/github", githubAuth);
 }
