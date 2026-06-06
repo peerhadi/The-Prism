@@ -1,14 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { redirect, useParams } from "next/navigation";
-import Snackbar from "@/app/components/Snackbar";
+import { useParams, useRouter } from "next/navigation";
+
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import FormCard from "@/app/components/dashboard/FormCard";
+import FieldInput from "@/app/components/dashboard/FieldInput";
+
 import { useToast } from "@/lib/toast/toastStore";
 
 export default function EditPerspective() {
   const { id } = useParams();
-  const [toast, setToast] = useState(false);
+  const router = useRouter();
+
   const [form, setForm] = useState<any>(null);
 
   const update = (path: string, value: any) => {
@@ -27,12 +31,11 @@ export default function EditPerspective() {
   };
 
   useEffect(() => {
+    if (!id) return;
+
     fetch(`http://localhost:8080/api/perspectives/${id}`)
       .then((r) => r.json())
-      .then((r) => {
-        console.log(r);
-        setForm(r);
-      });
+      .then(setForm);
   }, [id]);
 
   const save = async () => {
@@ -45,113 +48,93 @@ export default function EditPerspective() {
       body: JSON.stringify(form),
     });
 
-    const { addToast } = useToast.getState();
-    addToast({
+    useToast.getState().addToast({
       title: "Success",
       description: "Successfully modified perspective",
     });
-    redirect("/dashboard/perspectives");
+
+    router.push("/dashboard/perspectives");
   };
 
-  if (!form)
-    return <div className="text-cyan-400 p-10">decoding signal...</div>;
+  if (!form) {
+    return (
+      <div className="text-cyan-400 p-10 animate-pulse">decoding signal...</div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex justify-center p-10">
+    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center p-10">
       <Breadcrumbs
         items={[
           { label: "Perspectives", href: "/dashboard/perspectives" },
           { label: "Edit" },
         ]}
       />
-      <Snackbar
-        open={toast}
-        message="Perspective updated"
-        onClose={() => setToast(false)}
-      />
 
-      <div
-        className="w-full max-w-3xl p-10 rounded-2xl
-        border border-cyan-500/20 bg-white/[0.02]
-        backdrop-blur-xl shadow-[0_0_60px_rgba(34,211,238,0.08)]"
-      >
-        <h1 className="text-center text-3xl font-black text-cyan-400 mb-10">
-          EDIT PERSPECTIVE LENS
-        </h1>
-
-        {/* FIXED TOP TITLE */}
+      <FormCard title="EDIT PERSPECTIVE LENS">
+        {/* TOP TITLE */}
         <div className="mb-8">
-          <label className="text-cyan-300 text-xs tracking-[0.3em] uppercase">
-            Perspective Title
-          </label>
-
-          <input
-            className="w-full mt-2 p-4 bg-black/40 border border-cyan-500/10 rounded-lg"
+          <FieldInput
+            label="Perspective Title"
             value={form.title}
-            onChange={(e) => update("title", e.target.value)}
+            onChange={(e: any) => update("title", e.target.value)}
           />
         </div>
 
         {/* NEUTRAL */}
-        <div className="mb-10 p-6 border border-cyan-500/10 rounded-xl">
-          <h2 className="text-cyan-300 font-bold mb-4">NEUTRAL</h2>
+        <div className="mb-10 p-6 border border-cyan-500/10 rounded-xl space-y-4">
+          <h2 className="text-cyan-300 font-bold tracking-widest">NEUTRAL</h2>
 
-          <input
-            className="w-full mb-3 p-3 bg-black/40 border border-cyan-500/10 rounded"
+          <FieldInput
+            label="Title"
             value={form.neutral.title}
-            onChange={(e) => update("neutral.title", e.target.value)}
-            placeholder="title"
+            onChange={(e: any) => update("neutral.title", e.target.value)}
           />
 
-          <textarea
-            className="w-full mb-3 p-3 bg-black/40 border border-cyan-500/10 rounded"
+          <FieldInput
+            label="Summary"
             value={form.neutral.summary}
-            onChange={(e) => update("neutral.summary", e.target.value)}
-            placeholder="summary"
+            onChange={(e: any) => update("neutral.summary", e.target.value)}
           />
 
-          <textarea
-            className="w-full p-3 bg-black/40 border border-cyan-500/10 rounded"
+          <FieldInput
+            label="Description"
             value={form.neutral.description}
-            onChange={(e) => update("neutral.description", e.target.value)}
-            placeholder="description"
+            onChange={(e: any) => update("neutral.description", e.target.value)}
           />
         </div>
 
         {/* EXTREME */}
-        <div className="mb-10 p-6 border border-red-500/20 rounded-xl">
-          <h2 className="text-red-400 font-bold mb-4">EXTREME</h2>
+        <div className="mb-10 p-6 border border-red-500/20 rounded-xl space-y-4">
+          <h2 className="text-red-400 font-bold tracking-widest">EXTREME</h2>
 
-          <input
-            className="w-full mb-3 p-3 bg-black/40 border border-cyan-500/10 rounded"
+          <FieldInput
+            label="Title"
             value={form.extreme.title}
-            onChange={(e) => update("extreme.title", e.target.value)}
-            placeholder="title"
+            onChange={(e: any) => update("extreme.title", e.target.value)}
           />
 
-          <textarea
-            className="w-full mb-3 p-3 bg-black/40 border border-cyan-500/10 rounded"
+          <FieldInput
+            label="Summary"
             value={form.extreme.summary}
-            onChange={(e) => update("extreme.summary", e.target.value)}
-            placeholder="summary"
+            onChange={(e: any) => update("extreme.summary", e.target.value)}
           />
 
-          <textarea
-            className="w-full p-3 bg-black/40 border border-cyan-500/10 rounded"
+          <FieldInput
+            label="Description"
             value={form.extreme.description}
-            onChange={(e) => update("extreme.description", e.target.value)}
-            placeholder="description"
+            onChange={(e: any) => update("extreme.description", e.target.value)}
           />
         </div>
 
         <button
           onClick={save}
           className="w-full p-5 bg-cyan-400 text-black font-black rounded-lg
-          hover:shadow-[0_0_50px_rgba(34,211,238,0.6)]"
+          hover:shadow-[0_0_50px_rgba(34,211,238,0.6)] transition"
         >
           SAVE PERSPECTIVE
         </button>
-      </div>
+      </FormCard>
     </div>
   );
 }

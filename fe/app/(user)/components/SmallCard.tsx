@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 export interface ShortStoryCardProps {
   badge: string;
   id: string;
-  headline: string;
+  title: string;
   description: string;
   imageUrl: string;
   actionLabel?: string;
@@ -18,7 +18,7 @@ export interface ShortStoryCardProps {
 export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
   badge,
   id,
-  headline,
+  title,
   description,
   imageUrl,
   actionLabel = "Explore Framing",
@@ -33,7 +33,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
         {/* BACKGROUND IMAGE */}
         <img
           src={imageUrl}
-          alt={headline}
+          alt={title}
           className="h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
         />
 
@@ -57,7 +57,7 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
 
           {/* HEADLINE */}
           <h3 className="text-[20px] leading-tight font-bold text-white transition-colors ">
-            {headline}
+            {title}
           </h3>
 
           {/* DESCRIPTION */}

@@ -141,6 +141,7 @@ function methodBasedGuard(app: any) {
   });
 }
 await app.register(authRoutes, { prefix: "/api/auth" });
+await app.register(aiRoutes, { prefix: "/api/aiRoutes" });
 await app.register(
   async function (instance) {
     methodBasedGuard(instance);

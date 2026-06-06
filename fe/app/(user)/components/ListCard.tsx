@@ -7,7 +7,7 @@ import { BarChart3, ArrowRight } from "lucide-react";
 export interface CompactListCardProps {
   category: string;
   sourceCount: number;
-  headline: string;
+  title: string;
   description: string;
   imageUrl: string;
   actionLabel?: string;
@@ -17,13 +17,12 @@ export interface CompactListCardProps {
 export default function GenericCompactListCard<T extends CompactListCardProps>({
   category,
   sourceCount,
-  headline,
+  title,
   description,
   imageUrl,
   actionLabel = "Analyze Framing",
   onActionClick,
 }: T) {
-  console.log(headline, description);
   return (
     <div className="w-full py-3">
       <Card
@@ -45,7 +44,7 @@ export default function GenericCompactListCard<T extends CompactListCardProps>({
             </div>
 
             <h2 className="truncate text-lg font-bold text-white transition-colors group-hover:text-cyan-300 md:text-xl drop-shadow-[0_0_8px_cyan]">
-              {headline}
+              {title}
             </h2>
 
             <p className="line-clamp-2 text-[13px] font-light text-white/50 italic drop-shadow-sm">
@@ -64,7 +63,7 @@ export default function GenericCompactListCard<T extends CompactListCardProps>({
           <div className="relative h-[120px] w-full shrink-0 overflow-hidden rounded-[16px] border border-white/10 md:h-[160px] md:w-[220px]">
             <img
               src={imageUrl}
-              alt={headline}
+              alt={title}
               className="h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:scale-110 group-hover:opacity-100 group-hover:rotate-2"
             />
             {/* Neon Gradient Overlay */}
