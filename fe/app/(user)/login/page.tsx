@@ -194,12 +194,15 @@ export default function SignInPage() {
         router={router}
         onContinue={() => {
           setIsPopupVisible(false);
+
           addToast({
             title: "Success",
             description: "Logged In Successfully",
           });
-          router.refresh();
-          router.push("/");
+
+          // ⚡ FIX: Forces a clean window load, ensuring the token is read fresh
+          // and layout components like the Navbar mount exactly when they should.
+          window.location.href = "/stories";
         }}
       />
     </>

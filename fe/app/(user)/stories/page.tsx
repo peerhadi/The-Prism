@@ -11,7 +11,7 @@ import StoryRightPanel from "@/app/components/crud/story/StoryRightPanel";
 
 import { PrismLoader } from "@/app/components/loadingScreen";
 import { getBiasColor } from "@/app/utils/getbiascolor";
-import GenericObsidianStoryCard from "../components/HeroCard";
+import HeroCard from "../components/HeroCard";
 
 export default function StoriesPage() {
   const [topics, setTopics] = useState<any[]>([]);
@@ -81,7 +81,7 @@ export default function StoriesPage() {
       center={
         <>
           {hero && (
-            <GenericObsidianStoryCard
+            <HeroCard
               type={hero.type}
               createdAt={new Date(hero.createdAt).toLocaleDateString()}
               title={hero.title}

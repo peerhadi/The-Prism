@@ -14,42 +14,71 @@ import {
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useToast } from "@/lib/toast/toastStore";
-
+import { PrismLoader } from "./loadingScreen";
+const STATIC_LINKS = [
+  { name: "Stories", href: "/stories", desc: "Live intelligence streams" },
+  { name: "Explore", href: "/explore", desc: "Narrative and bias analysis" },
+  {
+    name: "Narrative Split",
+    href: "/narrative-split",
+    desc: "Compare global narratives",
+  },
+  { name: "AI Chat", href: "/ai-chat", desc: "Interact with Prism AI" },
+  { name: "Archive", href: "/archive", desc: "Historical signal database" },
+  { name: "Bias", href: "/bias", desc: "Learn how we calculate bias" },
+  { name: "About", href: "/about", desc: "Inside the intelligence framework" },
+];
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [token, setToken] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(null);
   const [userImage, setUserImage] = useState("");
+  const [loaded, setLoaded] = useState(false);
+  const [links, setLinks] = useState(STATIC_LINKS);
   useEffect(() => {
-    const t = window.localStorage.getItem("token");
-    if (t) {
-      setToken(t);
-      fetch(`http://localhost:8080/api/auth/me`, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${t}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setUserImage(res.profileImageUrl);
-          setIsAdmin(res.role === "ADMIN");
-          console.log(res.role === "ADMIN");
-          if (res.role === "ADMIN") {
-            setLinks([
-              ...links,
-              {
-                name: "Dashboard",
-                href: "/dashboard",
-                desc: "The admin dashboard",
-              },
-            ]);
-          }
-        });
+    if (typeof window !== "undefined") {
+      const t = window.localStorage.getItem("token");
+      setLoaded(true);
+      console.log(t);
+      if (t) {
+        setToken(t);
+        fetch(`http://localhost:8080/api/auth/me`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${t}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            setUserImage(res.profileImageUrl);
+            setIsAdmin(res.role === "ADMIN");
+            console.log(res.role === "ADMIN");
+            if (res.role === "ADMIN") {
+              setLinks((prevLinks) => {
+                // Prevent duplicate dashboards if useEffect triggers twice in StrictMode
+                if (prevLinks.some((l) => l.href === "/dashboard"))
+                  return prevLinks;
+                return [
+                  ...prevLinks,
+                  {
+                    name: "Dashboard",
+                    href: "/dashboard",
+                    desc: "The admin dashboard",
+                  },
+                ];
+              });
+            }
+          })
+          .catch((e) => {
+            console.log(e);
+          });
+      } else {
+        setIsAdmin(false);
+      }
     }
-  }, []);
+  }, [loaded]);
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -89,45 +118,8 @@ export function Navbar() {
     router.push("/login");
     window.location.reload();
   };
-  const [links, setLinks] = useState([
-    {
-      name: "Stories",
-      href: "/stories",
-      desc: "Live intelligence streams",
-    },
-    {
-      name: "Explore",
-      href: "/explore",
-      desc: "Narrative and bias analysis",
-    },
-    {
-      name: "Narrative Split",
-      href: "/narrative-split",
-      desc: "Compare global narratives",
-    },
-    {
-      name: "AI Chat",
-      href: "/ai-chat",
-      desc: "Interact with Prism AI",
-    },
-    {
-      name: "Archive",
-      href: "/archive",
-      desc: "Historical signal database",
-    },
-    {
-      name: "Bias",
-      href: "/bias",
-      desc: "Learn how we calculate bias",
-    },
-    {
-      name: "About",
-      href: "/about",
-      desc: "Inside the intelligence framework",
-    },
-  ]);
-  if (authenticated === null) {
-    return;
+  if (authenticated === null || isAdmin === null) {
+    return <PrismLoader />;
   }
   return (
     <>

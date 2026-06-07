@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 import ArchiveLayout from "@/app/components/crud/archive/ArchiveLayout";
 import { PrismLoader } from "@/app/components/loadingScreen";
 
-import GenericObsidianStoryCard from "../components/HeroCard";
-import GenericShortStoryCard from "../components/SmallCard";
-import GenericCompactListCard from "../components/ListCard";
+import HeroCard from "../components/HeroCard";
+import ShortCard from "../components/SmallCard";
+import ListCard from "../components/ListCard";
 import { HeadlineCard } from "../components/HeadlineCard";
 
 import ArchiveHero from "@/app/components/crud/archive/ArchiveHero";
@@ -55,19 +55,17 @@ export default function ArchivePage() {
 
   const center = (
     <div className="space-y-10">
-      {heroStory && (
-        <GenericObsidianStoryCard {...heroStory} status="ARCHIVED" />
-      )}
+      {heroStory && <HeroCard {...heroStory} status="ARCHIVED" />}
 
       <div className="grid grid-cols-2 gap-8">
         {featured.map((s) => (
-          <GenericShortStoryCard key={s.id} {...s} />
+          <ShortCard key={s.id} {...s} />
         ))}
       </div>
 
       <div className="space-y-8">
-        <GenericCompactListCard {...stream[0]} />
-        <GenericCompactListCard {...stream[1]} />
+        <ListCard {...stream[0]} />
+        <ListCard {...stream[1]} />
       </div>
     </div>
   );
@@ -77,6 +75,7 @@ export default function ArchivePage() {
       <HeadlineCard
         title="Recovered Headlines"
         data={headlines.map((a) => ({
+          sources: a.sources,
           tag: "ARCHIVE",
           time: new Date(a.createdAt).getFullYear().toString(),
           title: a.title,

@@ -1,29 +1,36 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Dna, ArrowUpRight } from "lucide-react"
+import * as React from "react";
+import { Dna, ArrowUpRight } from "lucide-react";
+import SourcesPopup from "./features/SourcesPopup";
 
 interface AnomalyProps {
-  id: string
-  title: string
-  desc: string
-  tag: string
-  intensity: string
-  color: string
-  img: string
+  id: string;
+  title: string;
+  desc: string;
+  tag: string;
+  intensity: string;
+  color: string;
+  img: string;
+  sources: any;
 }
 
 export const AnomalyCard = ({
   id,
   title,
+  sources,
   desc,
   tag,
   intensity,
   color,
   img,
 }: AnomalyProps) => {
+  const [sourceOpen, setSourceOpen] = React.useState(false);
   return (
-    <div className="group relative h-[600px] cursor-pointer overflow-hidden border border-white/5 bg-[#050a12]">
+    <div
+      className="group relative h-[600px] cursor-pointer overflow-hidden border border-white/5 bg-[#050a12]"
+      onClick={() => setSourceOpen(true)}
+    >
       {/* IMAGE LAYER */}
       <div className="absolute inset-0">
         <img
@@ -73,6 +80,12 @@ export const AnomalyCard = ({
           className={`h-full w-0 transition-all duration-1000 group-hover:w-full ${color.replace("border-", "bg-")}`}
         />
       </div>
+
+      <SourcesPopup
+        open={sourceOpen}
+        setOpen={setSourceOpen}
+        sources={sources}
+      />
     </div>
-  )
-}
+  );
+};

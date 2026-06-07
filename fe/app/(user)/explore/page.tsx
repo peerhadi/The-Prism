@@ -52,7 +52,7 @@ export default function ExplorePage() {
 
       const heros = fetched.filter((x: any) => x.type === "HERO");
       const smalls = fetched.filter((x: any) => x.type === "SMALL");
-      const lists = fetched.filter((x: any) => x.type === "SHORT");
+      const lists = fetched.filter((x: any) => x.type === "SMALL");
       setHeroStory(heros[0]);
       setSmall(smalls.slice(0, 4));
       console.log(lists, smalls, heros);
@@ -81,8 +81,7 @@ export default function ExplorePage() {
     return result;
   }, [articles, selectedCategory, search]);
 
-  if (!articles.length || !categories.length || !list.length || !heroStory)
-    return <PrismLoader />;
+  if (!articles.length || !list.length || !heroStory) return <PrismLoader />;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">

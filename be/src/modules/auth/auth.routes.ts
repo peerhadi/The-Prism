@@ -48,13 +48,13 @@ export async function authRoutes(app: FastifyInstance) {
     });
 
     if (!user) {
-      return reply.unauthorized();
+      return reply.code(403);
     }
 
     const valid = await bcrypt.compare(body.password, user.password);
 
     if (!valid) {
-      return reply.unauthorized();
+      return reply.code(403);
     }
 
     const token = await reply.jwtSign({

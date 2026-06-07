@@ -40,6 +40,10 @@ Return STRICT JSON ONLY:
 }
 
 Rules:
+- Sources should ALWAYS BE Arrays, Never Objects in the format [{
+  source: ""
+  url: ""
+}, ...]
 - Preserve title exactly.
 - I NEED 2 HERO CARDS, 10 SMALL CARDS, 12 LIST CARDS, 4 SHORT CARDS EXACTLY.
 - 28 TOTAL STORIES MINIMUM
