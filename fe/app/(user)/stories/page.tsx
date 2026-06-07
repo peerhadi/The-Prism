@@ -70,10 +70,10 @@ export default function StoriesPage() {
         <StoryHeroHeader
           topics={topics}
           stats={[
-            { label: "Global Feeds", value: "12.4K" },
-            { label: "Threat Nodes", value: "847" },
-            { label: "AI Signatures", value: "31K" },
-            { label: "Signal Drift", value: "74%" },
+            { label: "Global Feeds", value: articles.length },
+            { label: "Threat Nodes", value: Math.floor(articles.length / 8) },
+            { label: "AI Signatures", value: Math.floor(articles.length / 2) },
+            { label: "Signal Drift", value: (articles.length % 100) + "%" },
           ]}
         />
       }
@@ -82,6 +82,7 @@ export default function StoriesPage() {
         <>
           {hero && (
             <HeroCard
+              id={hero.id}
               type={hero.type}
               createdAt={new Date(hero.createdAt).toLocaleDateString()}
               title={hero.title}

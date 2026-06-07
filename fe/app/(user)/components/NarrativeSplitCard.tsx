@@ -1,50 +1,32 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Split, Binary, GitBranch, Activity } from "lucide-react"
+import * as React from "react";
+import { Split, Binary, GitBranch, Activity } from "lucide-react";
 
 // Dynamic Image Helper
 const getRandomImage = (seed: string) =>
-  `https://picsum.photos/seed/${seed}/800/500`
+  `https://picsum.photos/seed/${seed}/800/500`;
 
 interface Narrative {
-  label: string
-  title: string
-  description: string
+  label: string;
+  title: string;
+  description: string;
 }
 
 interface NarrativeSplitProps {
-  seedId: string
-  topic: string
-  versionA: Narrative
-  versionB: Narrative
+  seedId: string;
+  versionA: Narrative;
+  versionB: Narrative;
 }
 
 export const NarrativeSplitCard = ({
   seedId,
-  topic,
   versionA,
   versionB,
 }: NarrativeSplitProps) => {
   return (
     <div className="group relative w-full overflow-hidden border border-white/5 bg-[#03070e] transition-colors hover:border-white/10">
       {/* SEED HEADER */}
-      <div className="flex items-center justify-between border-b border-white/5 bg-black/60 px-6 py-3">
-        <div className="flex items-center gap-3">
-          <Binary size={14} className="text-cyan-400" />
-          <span className="font-mono text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">
-            Seed ID: {seedId}
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[9px] font-bold tracking-[0.2em] text-white/20 uppercase">
-            {topic}
-          </span>
-          <div className="h-1 w-16 overflow-hidden rounded-full bg-white/5">
-            <div className="h-full w-1/2 animate-pulse bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
-          </div>
-        </div>
-      </div>
 
       {/* DUAL CONTENT GRID */}
       <div className="grid grid-cols-1 gap-px bg-white/5 lg:grid-cols-2">
@@ -115,5 +97,5 @@ export const NarrativeSplitCard = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

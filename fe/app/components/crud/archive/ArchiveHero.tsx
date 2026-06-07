@@ -2,8 +2,16 @@
 
 import * as React from "react";
 import { Radar, Lock } from "lucide-react";
+import { getBiasColor } from "@/app/utils/getbiascolor";
 
-export default function ArchiveHero({ categories }: { categories: any[] }) {
+export default function ArchiveHero({
+  categories,
+  fileCount,
+}: {
+  categories: any[];
+  fileCount: number;
+}) {
+  console.log(categories);
   return (
     <section className="relative overflow-hidden rounded-[50px] border border-white/10 bg-white/[0.03] p-10 md:p-16">
       <div className="absolute top-0 right-0 h-[400px] w-[400px] rounded-full bg-cyan-500/10 blur-[120px]" />
@@ -15,11 +23,6 @@ export default function ArchiveHero({ categories }: { categories: any[] }) {
             <div className="flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-2 text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
               <Radar className="h-3 w-3 animate-pulse" />
               DEEP STORAGE
-            </div>
-
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-[10px] font-black tracking-[0.35em] text-white/40 uppercase">
-              <Lock className="h-3 w-3" />
-              RESTRICTED ACCESS
             </div>
           </div>
 
@@ -38,15 +41,22 @@ export default function ArchiveHero({ categories }: { categories: any[] }) {
           </p>
 
           <div className="mt-14 flex flex-wrap gap-3">
-            {categories.map((item: any) => (
-              <button
-                key={item.id}
-                className={`group flex items-center gap-3 rounded-full ${item.color} bg-black/30 px-5 py-3 text-[10px] font-black tracking-[0.3em] uppercase transition-all hover:scale-105`}
-              >
-                <div className="h-1.5 w-1.5 rounded-full bg-current" />
-                {item.name}
-              </button>
-            ))}
+            {categories.map((cat, idx) => {
+              return (
+                <button
+                  key={cat.id ?? idx}
+                  className={`
+              group flex items-center gap-3 rounded-full border px-5 py-3
+              text-[11px] font-black tracking-[0.2em] uppercase
+              transition-all duration-300 hover:scale-105
+              ${getBiasColor(cat.averageBias) || "border-white/10 bg-white/5 text-white/60"}
+                  hover:bg-white/10`}
+                >
+                  <div className="h-2 w-2 rounded-full bg-current animate-pulse" />
+                  {cat.name || cat.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -67,10 +77,10 @@ export default function ArchiveHero({ categories }: { categories: any[] }) {
             <div className="h-3 w-3 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_20px_#22d3ee]" />
           </div>
           {[
-            { label: "Recovered Files", value: "12,884" },
-            { label: "AI Reconstructions", value: "341" },
-            { label: "Identity Traces", value: "88%" },
-            { label: "Signal Integrity", value: "74%" },
+            { label: "Recovered Files", value: fileCount },
+            { label: "AI Reconstructions", value: fileCount / 4 },
+            { label: "Identity Traces", value: "0%" },
+            { label: "Signal Integrity", value: "100%" },
           ].map((item, idx) => (
             <div
               key={idx}

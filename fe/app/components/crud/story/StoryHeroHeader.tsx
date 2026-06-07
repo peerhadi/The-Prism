@@ -24,10 +24,6 @@ export default function StoryHeroHeader({
             <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
               LIVE INTELLIGENCE
             </div>
-
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] text-white/40 uppercase">
-              Neural Archive
-            </div>
           </div>
 
           <h1 className="text-6xl font-black tracking-tighter uppercase md:text-[9rem]">
@@ -58,14 +54,31 @@ export default function StoryHeroHeader({
 
       {/* TOPICS */}
       <div className="relative z-10 mt-12 flex flex-wrap gap-4">
-        {topics.map((t, i) => (
-          <button
-            key={i}
-            className={`rounded-full border px-5 py-3 text-[11px] font-black uppercase ${t.color}`}
-          >
-            {t.label}
-          </button>
-        ))}
+        {/* ALL */}
+        <button
+          className={`rounded-full border px-5 py-3 text-[11px] font-black tracking-[0.2em] uppercase transition-all duration-300 hover:scale-105
+              border-cyan-500 bg-cyan-500/20 text-cyan-300`}
+        >
+          All Stories
+        </button>
+
+        {/* CATEGORIES */}
+        {topics.map((cat, idx) => {
+          return (
+            <button
+              key={cat.id ?? idx}
+              className={`
+              group flex items-center gap-3 rounded-full border px-5 py-3
+              text-[11px] font-black tracking-[0.2em] uppercase
+              transition-all duration-300 hover:scale-105
+              ${cat.color || "border-white/10 bg-white/5 text-white/60"}
+                  hover:bg-white/10`}
+            >
+              <div className="h-2 w-2 rounded-full bg-current animate-pulse" />
+              {cat.name || cat.label}
+            </button>
+          );
+        })}
       </div>
     </section>
   );

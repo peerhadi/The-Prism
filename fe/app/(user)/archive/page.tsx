@@ -88,7 +88,7 @@ export default function ArchivePage() {
 
   return (
     <ArchiveLayout
-      hero={<ArchiveHero categories={categories} />}
+      hero={<ArchiveHero categories={categories} fileCount={articles.length} />}
       left={left}
       center={center}
       right={right}
