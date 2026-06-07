@@ -1,7 +1,7 @@
 "use client";
 
-import GenericCompactListCard from "@/app/(user)/components/ListCard";
-import GenericShortStoryCard from "@/app/(user)/components/SmallCard";
+import ListCard from "@/app/(user)/components/ListCard";
+import ShortCard from "@/app/(user)/components/SmallCard";
 import React from "react";
 
 export default function StoryLiveStream({
@@ -21,13 +21,13 @@ export default function StoryLiveStream({
 
       <div className="grid md:grid-cols-2 gap-8">
         {small.map((s) => (
-          <GenericShortStoryCard key={s.id} {...s} />
+          <ShortCard key={s.id} {...s} />
         ))}
       </div>
 
       <div className="space-y-6">
         {list.map((l, i) => (
-          <GenericCompactListCard key={i} {...l} />
+          <ListCard key={i} {...l} />
         ))}
       </div>
     </div>

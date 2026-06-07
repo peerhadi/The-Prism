@@ -2,8 +2,9 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Sparkles } from "lucide-react";
+import NarrativeOverlay from "./features/NarrativeButton";
+import SourcesPopup from "./features/SourcesPopup";
 
 export interface ShortStoryCardProps {
   badge: string;
@@ -13,23 +14,21 @@ export interface ShortStoryCardProps {
   imageUrl: string;
   actionLabel?: string;
   onActionClick?: () => void;
+  sources: any;
 }
 
-export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
-  badge,
+export default function ShortCard<T extends ShortStoryCardProps>({
   id,
   title,
   description,
   imageUrl,
-  actionLabel = "Explore Framing",
-  onActionClick,
+  sources,
 }: T) {
+  const [sourceOpen, setSourceOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   return (
     <div className="w-full">
-      <Card
-        onClick={onActionClick}
-        className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] border border-white/5 transition-all duration-500 hover:rotate-1 hover:scale-[1.03] py-0"
-      >
+      <Card className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] border border-white/5 transition-all duration-500 hover:rotate-1 hover:scale-[1.03] py-0">
         {/* BACKGROUND IMAGE */}
         <img
           src={imageUrl}
@@ -44,12 +43,6 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
         <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
           {/* META DATA */}
           <div className="mb-3 flex items-center justify-between">
-            <Badge
-              variant="outline"
-              className="px-2 py-0 text-[9px] font-black tracking-[0.2em] uppercase shadow-[0_0_10px_cyan] animate-pulse"
-            >
-              {badge}
-            </Badge>
             <span className="font-mono text-[10px] tracking-tighter text-white/40">
               {id}
             </span>
@@ -66,16 +59,46 @@ export default function GenericShortStoryCard<T extends ShortStoryCardProps>({
           </p>
 
           {/* FOOTER ACTION */}
-          <div className="mt-5 flex items-center gap-2 border-t border-white/5 pt-4">
-            <span className="text-[10px] font-black tracking-widest text-white/40 uppercase">
-              {actionLabel}
-            </span>
-            <ArrowRight className="h-3 w-3 text-white/40 transition-transform group-hover:translate-x-1 group-hover:text-cyan-400" />
+          <div className="mt-5 flex w-full justify-between gap-2 border-t border-white/5 pt-4">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpen(true);
+              }}
+              className="group flex items-center gap-2 rounded-full 
+               bg-black/40 backdrop-blur-xl border border-cyan-400/20
+               px-3 py-2 hover:bg-black/60 transition-all duration-300"
+            >
+              <Sparkles className="h-4 w-4 text-cyan-300 group-hover:scale-110 transition-transform" />
+
+              <span className="text-[11px] tracking-wide text-cyan-200/80">
+                See narratives
+              </span>
+            </button>
+
+            <button
+              onClick={() => setSourceOpen(true)}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black transition-transform hover:rotate-45 active:scale-90"
+            >
+              <ArrowUpRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
 
         {/* NEON ROTATING BORDER */}
         <div className="pointer-events-none absolute inset-0 rounded-[24px] border-2 border-cyan-400/30 animate-spin-slow blur-md opacity-50" />
+        <NarrativeOverlay
+          open={open}
+          onClose={() => setOpen(false)}
+          title={title}
+          description={description}
+        />
+
+        <SourcesPopup
+          open={sourceOpen}
+          setOpen={setSourceOpen}
+          sources={sources}
+        />
       </Card>
     </div>
   );

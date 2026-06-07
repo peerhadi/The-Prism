@@ -17,6 +17,7 @@ export default function StoryRightPanel({
 
       <AnomalyCard
         id={anomaly?.id}
+        sources={anomaly?.sources}
         title={anomaly?.title}
         desc={anomaly?.description}
         tag="Critical"

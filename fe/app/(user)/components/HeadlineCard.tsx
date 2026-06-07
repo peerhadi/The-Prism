@@ -2,11 +2,13 @@
 
 import React from "react";
 import { Radio, ChevronRight } from "lucide-react";
+import SourcesPopup from "./features/SourcesPopup";
 
 type HeadlineVariant = "cyan" | "purple" | "red" | "emerald";
 
 interface HeadlineItem {
   tag: string;
+  sources: any;
   time: string;
   title: string;
   variant?: HeadlineVariant;
@@ -16,7 +18,6 @@ interface HeadlineCardProps {
   title: string;
   data: HeadlineItem[];
   onActionClick?: () => void;
-  actionLabel?: string;
 }
 
 const variantStyles: Record<HeadlineVariant, { bg: string; text: string }> = {
@@ -26,12 +27,9 @@ const variantStyles: Record<HeadlineVariant, { bg: string; text: string }> = {
   emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400" },
 };
 
-export const HeadlineCard: React.FC<HeadlineCardProps> = ({
-  title,
-  data,
-  onActionClick,
-  actionLabel = "Access Archives",
-}) => {
+export const HeadlineCard: React.FC<HeadlineCardProps> = ({ title, data }) => {
+  const [sourceOpen, setSourceOpen] = React.useState(false);
+  const [selectedSource, setSelectedSource] = React.useState();
   return (
     <div className="relative w-full overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-b from-white/5 to-transparent p-8 backdrop-blur-2xl shadow-lg">
       {/* Neon Pulse Header */}
@@ -65,23 +63,27 @@ export const HeadlineCard: React.FC<HeadlineCardProps> = ({
                 </span>
               </div>
 
-              <h4 className="mt-1 text-[14px] font-bold leading-snug text-white/70 transition-colors group-hover:text-cyan-300 drop-shadow-[0_0_6px_cyan]">
+              <h4
+                className="mt-1 text-[14px] font-bold leading-snug text-white/70 transition-colors group-hover:text-cyan-300 drop-shadow-[0_0_6px_cyan]"
+                onClick={() => {
+                  setSelectedSource(item.sources);
+                  setSourceOpen(true);
+                }}
+              >
                 {item.title}
               </h4>
             </div>
           );
         })}
-      </div>
 
-      {/* Action Button */}
-      {onActionClick && (
-        <button
-          onClick={onActionClick}
-          className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-black/20 py-3 text-[10px] font-black tracking-[0.3em] text-white/40 uppercase transition-all hover:bg-cyan-500/10 hover:text-cyan-400 hover:scale-[1.02]"
-        >
-          {actionLabel} <ChevronRight className="h-3 w-3" />
-        </button>
-      )}
+        {selectedSource && (
+          <SourcesPopup
+            open={sourceOpen}
+            setOpen={setSourceOpen}
+            sources={selectedSource}
+          />
+        )}
+      </div>
     </div>
   );
 };

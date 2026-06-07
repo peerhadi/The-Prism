@@ -11,9 +11,9 @@ export default function ConflictCTA() {
           <AudioWaveform className="h-8 w-8 text-red-400" />
         </div>
 
-        <h2 className="text-5xl md:text-7xl font-black uppercase leading-tight">
+        <h1 className="sm:text-5xl md:text-8xl lg:text-[110px] font-black uppercase leading-tight">
           WHICH REALITY SURVIVES?
-        </h2>
+        </h1>
 
         <p className="mt-10 text-white/40">
           Two competing narratives cannot coexist indefinitely in the same

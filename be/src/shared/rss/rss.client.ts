@@ -58,7 +58,10 @@ export async function fetchRSS() {
           title: item.title,
           description: item.contentSnippet || "",
           link: item.link,
-          source: url,
+          sources: {
+            source: feed.title,
+            url: item.link,
+          },
           imageUrl: item.image,
         });
       }
