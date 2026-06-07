@@ -7,19 +7,17 @@ import NarrativeOverlay from "./features/NarrativeButton";
 import SourcesPopup from "./features/SourcesPopup";
 
 export interface ListCardProps {
-  category: string;
-  sourceCount: number;
   title: string;
   description: string;
   imageUrl: string;
   actionLabel?: string;
   onActionClick?: () => void;
   sources: any;
+  id: string;
 }
 
 export default function ListCard<T extends ListCardProps>({
-  category,
-  sourceCount,
+  id,
   title,
   description,
   imageUrl,
@@ -34,17 +32,6 @@ export default function ListCard<T extends ListCardProps>({
         <div className="flex flex-col-reverse gap-5 p-6 md:flex-row md:items-center">
           {/* LEFT SIDE: TEXT CONTENT */}
           <div className="flex-1 min-w-0 space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-black tracking-[0.25em] text-cyan-400 uppercase drop-shadow-md">
-                {category}
-              </span>
-              <div className="h-1 w-1 rounded-full bg-white/20" />
-              <div className="flex items-center gap-1 text-[9px] font-bold tracking-tight text-white/30 uppercase">
-                <BarChart3 className="h-3 w-3" />
-                <span>{sourceCount} Sources</span>
-              </div>
-            </div>
-
             <h2 className="truncate text-lg font-bold text-white transition-colors group-hover:text-cyan-300 md:text-xl drop-shadow-[0_0_8px_cyan]">
               {title}
             </h2>
@@ -118,6 +105,7 @@ export default function ListCard<T extends ListCardProps>({
         />
 
         <SourcesPopup
+          id={id}
           open={sourceOpen}
           setOpen={setSourceOpen}
           sources={sources}

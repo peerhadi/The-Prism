@@ -1,13 +1,7 @@
 import { Activity } from "lucide-react";
 
-export default function LiveFeed() {
-  const feed = [
-    "Autonomous sentiment clusters manipulate geopolitical framing.",
-    "Neural recommendation engines display synchronized drift.",
-    "Synthetic amplification spreads across decentralized nodes.",
-    "Deepfake ecosystems exceed anomaly thresholds.",
-  ];
-
+export default function LiveFeed({ feed }) {
+  console.log(feed);
   return (
     <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
       <div className="mb-6 flex items-center justify-between">

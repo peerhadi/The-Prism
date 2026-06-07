@@ -15,7 +15,6 @@ export default function StorySplitCard({
   return (
     <NarrativeSplitCard
       seedId="NODE-X44"
-      topic="Narrative Divergence"
       versionA={{
         label: "Verified Narrative",
         title: p.neutral.title,

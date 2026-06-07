@@ -38,7 +38,7 @@ export default function CategoryChips({
       {/* CATEGORIES */}
       {categories.map((cat, idx) => {
         const isActive = selected === cat.id;
-
+        console.log(cat);
         return (
           <button
             key={cat.id ?? idx}

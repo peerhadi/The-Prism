@@ -14,12 +14,14 @@ interface HeroCardProps {
   status: string;
   imageUrl: string;
   onActionClick?: () => void;
+  id: string;
 }
 
 export default function HeroCard({
   type,
   createdAt,
   title,
+  id,
   description,
   sources,
   imageUrl,
@@ -115,6 +117,7 @@ export default function HeroCard({
         description={description}
       />
       <SourcesPopup
+        id={id}
         open={sourceOpen}
         setOpen={setSourceOpen}
         sources={sources}

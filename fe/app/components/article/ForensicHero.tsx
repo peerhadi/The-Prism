@@ -1,10 +1,16 @@
 import { Activity, Fingerprint } from "lucide-react";
 
-export default function ForensicHero() {
+export default function ForensicHero({
+  imageUrl,
+  title,
+}: {
+  imageUrl: string;
+  title: string;
+}) {
   return (
     <section className="relative overflow-hidden rounded-[40px] border border-white/10 bg-white/[0.03] p-10 backdrop-blur-2xl">
       <img
-        src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2000&auto=format&fit=crop"
+        src={imageUrl}
         className="absolute inset-0 h-full w-full object-cover opacity-15"
         alt=""
       />
@@ -17,17 +23,15 @@ export default function ForensicHero() {
             <Activity className="h-3 w-3 animate-pulse" />
             Deep Scan Active
           </div>
-
-          <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[10px] tracking-[0.25em] text-white/40 uppercase">
-            <Fingerprint className="h-3 w-3" />
-            Prism-992-Alpha
-          </div>
         </div>
 
         <h1 className="text-6xl md:text-8xl font-black tracking-tight uppercase leading-none w-full">
-          Architects of{" "}
+          {title
+            .split(" ")
+            .slice(0, title.split(" ").length - 1)
+            .join(" ")}{" "}
           <span className="inline-block leading-none pb-1 bg-gradient-to-b from-cyan-200 to-cyan-700 bg-clip-text text-transparent">
-            Consent
+            {title.split(" ")[title.split(" ").length - 1]}
           </span>
         </h1>
 
