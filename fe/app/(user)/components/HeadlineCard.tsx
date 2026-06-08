@@ -30,6 +30,7 @@ const variantStyles: Record<HeadlineVariant, { bg: string; text: string }> = {
 };
 
 export const HeadlineCard: React.FC<HeadlineCardProps> = ({ title, data }) => {
+  console.log(data);
   const [sourceOpen, setSourceOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<HeadlineItem>();
   return (

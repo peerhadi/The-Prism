@@ -37,16 +37,13 @@ export default function ForensicSpecimenPage() {
 
         <section className="mt-10 grid gap-10 xl:grid-cols-[280px_1fr_320px]">
           <aside className="space-y-6">
-            <HeadlineCard
-              title={"Live Headlines"}
-              data={articles.slice(0, 8)}
-            />
+            <HeadlineCard title="LIVE HEADLINES" data={articles.slice(0, 8)} />
           </aside>
 
           <ArticleBody article={article} />
 
           <aside className="space-y-6">
-            <LiveFeed feed={articles.slice(8, 16).map((x) => x.title)} />
+            <LiveFeed feed={articles.slice(8, 16)} />
           </aside>
         </section>
       </main>
