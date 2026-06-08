@@ -82,6 +82,7 @@ export const AnomalyCard = ({
       </div>
 
       <SourcesPopup
+        id={id}
         open={sourceOpen}
         setOpen={setSourceOpen}
         sources={sources}

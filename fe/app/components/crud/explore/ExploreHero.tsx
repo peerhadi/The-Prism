@@ -21,10 +21,6 @@ export default function ExploreHero({
               <Compass className="inline h-3 w-3 mr-2" />
               Explore Network
             </div>
-
-            <div className="px-4 py-2 text-[10px] uppercase tracking-[0.2em] text-white/40 border border-white/10 rounded-full">
-              Discovery Engine
-            </div>
           </div>
 
           <h1 className="text-6xl md:text-[9rem] font-black uppercase leading-[0.9]">

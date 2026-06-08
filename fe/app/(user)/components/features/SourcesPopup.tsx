@@ -14,6 +14,7 @@ interface Props {
   open: boolean;
   setOpen: (v: boolean) => void;
   sources: Source[];
+  id: string;
 }
 
 function getFavicon(url: string) {
@@ -25,7 +26,7 @@ function getFavicon(url: string) {
   }
 }
 
-export default function SourcesPopup({ open, setOpen, sources }: Props) {
+export default function SourcesPopup({ open, setOpen, sources, id }: Props) {
   const mounted = typeof window !== "undefined";
 
   const grouped = useMemo(() => {
@@ -103,6 +104,29 @@ export default function SourcesPopup({ open, setOpen, sources }: Props) {
                 </a>
               );
             })}
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-cyan-400/50 to-cyan-400/10" />
+
+              <span className="text-[9px] tracking-[0.35em] text-cyan-300/80 uppercase">
+                OR
+              </span>
+
+              <div className="h-px flex-1 bg-gradient-to-l from-transparent via-cyan-400/50 to-cyan-400/10" />
+            </div>
+            <a
+              href={`/story/${id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-4 hover:bg-white/10 transition group"
+            >
+              {/* ICON */}
+              <img src={"/logo.png"} className="h-6 w-6 rounded" />
+
+              {/* TITLE ONLY */}
+              <div className="text-sm text-white/80 group-hover:text-cyan-300 transition">
+                The Prism
+              </div>
+            </a>
           </div>
         </div>
       </div>

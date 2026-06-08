@@ -18,8 +18,8 @@ export interface ShortStoryCardProps {
 }
 
 export default function ShortCard<T extends ShortStoryCardProps>({
-  id,
   title,
+  id,
   description,
   imageUrl,
   sources,
@@ -42,11 +42,6 @@ export default function ShortCard<T extends ShortStoryCardProps>({
         {/* CONTENT OVERLAY */}
         <div className="absolute inset-0 flex flex-col justify-end p-6 z-10">
           {/* META DATA */}
-          <div className="mb-3 flex items-center justify-between">
-            <span className="font-mono text-[10px] tracking-tighter text-white/40">
-              {id}
-            </span>
-          </div>
 
           {/* HEADLINE */}
           <h3 className="text-[20px] leading-tight font-bold text-white transition-colors ">
@@ -95,6 +90,7 @@ export default function ShortCard<T extends ShortStoryCardProps>({
         />
 
         <SourcesPopup
+          id={id}
           open={sourceOpen}
           setOpen={setSourceOpen}
           sources={sources}
