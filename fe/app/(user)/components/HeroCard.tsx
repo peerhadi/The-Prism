@@ -15,6 +15,7 @@ interface HeroCardProps {
   imageUrl: string;
   onActionClick?: () => void;
   id: string;
+  preview?: boolean;
 }
 
 export default function HeroCard({
@@ -25,15 +26,22 @@ export default function HeroCard({
   description,
   sources,
   imageUrl,
+  preview,
 }: HeroCardProps) {
   const [open, setOpen] = React.useState(false);
   const [sourceOpen, setSourceOpen] = React.useState(false);
 
   return (
-    <Card className="relative w-full max-w-[900px] overflow-hidden rounded-[32px]  max-h-[700px] border border-white/10 bg-black/30 backdrop-blur-xl shadow-[0_0_60px_rgba(0,255,255,0.2)] hover:shadow-[0_0_100px_rgba(0,255,255,0.4)] transition-all duration-500 p-0 cursor-pointer">
+    <Card
+      className={`relative w-full overflow-hidden rounded-[32px] border border-white/10 bg-black/30 backdrop-blur-xl transition-all duration-500 p-0 cursor-pointer
+  ${preview ? "max-h-[460px]" : "max-w-[900px] max-h-[700px]"}
+`}
+    >
       {/* Background Image */}
       {/* Image Layer */}
-      <div className="relative h-[300px] w-full">
+      <div
+        className={`relative ${preview ? "max-h-[120px]" : "max-h-[300px]"} w-full`}
+      >
         <img
           src={imageUrl}
           alt={title}
@@ -62,7 +70,9 @@ export default function HeroCard({
       </div>
 
       {/* Floating Info Box */}
-      <div className="relative z-10 mx-6 my-8 rounded-[24px] border border-white/10 bg-black/40 p-8 backdrop-blur-2xl shadow-2xl">
+      <div
+        className={` relative z-10 my-[20] mx-6 rounded-[24px] border border-white/10 bg-black/40 p-8 backdrop-blur-2xl shadow-2xl ${preview ? "" : "max-h-[300px]"}`}
+      >
         {/* Top Row: Genre + Date */}
         <div className="mb-6 flex items-center justify-between">
           <Badge className="border-none bg-cyan-500/20 px-3 py-1 text-[10px] tracking-widest text-cyan-300 uppercase">
@@ -110,18 +120,22 @@ export default function HeroCard({
         {/* Neon Glow Accent */}
         <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-cyan-500/10 blur-[80px]" />
       </div>
-      <NarrativePopup
-        open={open}
-        onClose={() => setOpen(false)}
-        title={title}
-        description={description}
-      />
-      <SourcesPopup
-        id={id}
-        open={sourceOpen}
-        setOpen={setSourceOpen}
-        sources={sources}
-      />
+      {!preview && (
+        <NarrativePopup
+          open={open}
+          onClose={() => setOpen(false)}
+          title={title}
+          description={description}
+        />
+      )}
+      {!preview && (
+        <SourcesPopup
+          id={id}
+          open={sourceOpen}
+          setOpen={setSourceOpen}
+          sources={sources}
+        />
+      )}
     </Card>
   );
 }

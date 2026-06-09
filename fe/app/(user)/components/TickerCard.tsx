@@ -15,6 +15,7 @@ interface StickyInsightProps {
   content: string;
   variant?: InsightVariant;
   icon?: LucideIcon;
+  preview?: boolean;
 }
 
 const variants = {
@@ -44,6 +45,7 @@ export default function StickyInsight({
   title = "Analysis Note",
   content = "AI detected a 40% shift in emotional language within this narrative cluster.",
   variant = "cyan",
+  preview = false,
 }: StickyInsightProps) {
   const style = variants[variant];
   const Icon = style.icon;
@@ -51,7 +53,7 @@ export default function StickyInsight({
   return (
     <Card
       className={cn(
-        "relative min-h-[280px] w-[400px] p-6 overflow-hidden rounded-[24px]",
+        `relative ${preview ? `min-h-[350px] w-[400px] flex justify-center flex-col` : "min-h-[280px] w-[400px]"} p-6 overflow-hidden rounded-[24px]`,
         "bg-black/70 border border-white/5 shadow-2xl",
         "transition-transform duration-500 hover:rotate-3 hover:scale-105",
         "max-w-[100%]",
@@ -74,24 +76,37 @@ export default function StickyInsight({
         {/* ICON */}
         <div
           className={cn(
-            "flex items-center justify-center h-12 w-12 rounded-xl border-2 border-white/10 bg-black/40 shadow-md",
+            `flex items-center justify-center ${preview ? "h-18 w-18" : "h-12 w-12"} rounded-xl border-2 border-white/10 bg-black/40 shadow-md`,
             style.text,
           )}
         >
-          <Icon className="h-6 w-6 animate-spin-slow" />
+          <Icon
+            className={`${preview ? "h-12 w-12" : "h-6 w-6"} animate-spin-slow`}
+          />
         </div>
 
         {/* TITLE */}
-        <h3 className={cn("mt-4 text-xl font-bold tracking-tight", style.text)}>
+        <h3
+          className={cn(
+            `mt-4 ${preview ? "text-4xl" : "text-2xl"} font-bold tracking-tight`,
+            style.text,
+          )}
+        >
           {title}
         </h3>
 
         {/* CONTENT */}
-        <p className="mt-2 text-sm leading-snug text-white/70">{content}</p>
+        <p
+          className={`mt-2 ${preview ? "text-xl" : "text-sm"} leading-snug text-white/70`}
+        >
+          {content}
+        </p>
 
         {/* FOOTER */}
         <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-2">
-          <span className="text-[10px] font-bold tracking-widest text-white/30 uppercase">
+          <span
+            className={`${preview ? "text-md" : "text-[10px]"} font-bold tracking-widest text-white/30 uppercase`}
+          >
             System Log
           </span>
           <div className="h-2 w-2 animate-ping rounded-full bg-white/50" />

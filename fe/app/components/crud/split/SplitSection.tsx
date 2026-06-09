@@ -4,7 +4,7 @@ import { ArrowRight, Split } from "lucide-react";
 
 export default function SplitSection({ event }: { event: any }) {
   return (
-    <section className="relative min-h-screen overflow-hidden border-y border-white/5">
+    <section className="border border-white/10 rounded-2xl">
       {/* LABEL */}
       <div className="absolute top-10 left-1/2 hidden -translate-x-1/2 lg:flex">
         <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/60 px-5 py-3 backdrop-blur-xl">

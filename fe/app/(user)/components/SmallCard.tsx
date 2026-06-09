@@ -32,10 +32,12 @@ export default function ShortCard<T extends ShortStoryCardProps>({
         {/* BACKGROUND IMAGE */}
         <img
           src={imageUrl}
-          alt={title}
+          onError={(e) => {
+            e.currentTarget.src = "https://picsum.photos/800/600?random=100";
+          }}
           className="h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+          alt="A descriptive anchor text for accessibility"
         />
-
         {/* CYBER BLUISH GRADIENT OVERLAY */}
         <div className="absolute inset-0 animate-gradient-xy pointer-events-none" />
 
