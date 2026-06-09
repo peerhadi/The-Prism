@@ -16,16 +16,13 @@ export default function ArchiveCategoryIndex({
       <h4 className="mt-2 text-3xl font-black uppercase">Archive Nodes</h4>
 
       <div className="mt-6 space-y-5">
-        {categories.map((category) => {
+        {categories.map((category, i) => {
           const count = articles.filter(
             (a) => a.category?.id === category.id,
           ).length;
 
           return (
-            <div
-              key={category.id}
-              className="group border-b border-white/5 pb-4"
-            >
+            <div key={i} className="group border-b border-white/5 pb-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white/70 group-hover:text-white">
                   {category.name}

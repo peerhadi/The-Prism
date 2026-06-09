@@ -47,8 +47,8 @@ export default function ExplorePage() {
           !!x.type
         );
       });
-
-      fetched = fetched.reverse().slice(Math.max(0, fetched.length - 28));
+      console.log(fetched.length);
+      fetched = fetched.reverse().slice(Math.max(0, fetched.length - 10));
 
       const heros = fetched.filter((x: any) => x.type === "HERO");
       const smalls = fetched.filter((x: any) => x.type === "SMALL");

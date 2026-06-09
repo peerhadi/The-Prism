@@ -2,7 +2,14 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { FileText, Tags, Eye, Users, LayoutDashboard } from "lucide-react";
+import {
+  FileText,
+  Tags,
+  Eye,
+  Users,
+  LayoutDashboard,
+  Layout,
+} from "lucide-react";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 
 const navItems = [
@@ -33,6 +40,13 @@ const navItems = [
     href: "/dashboard/users",
     icon: Users,
     desc: "User management & permissions",
+  },
+  {
+    id: "layout",
+    label: "Layout",
+    href: "/dashboard/layout",
+    icon: Layout,
+    desc: "Layout management & editing",
   },
 ];
 
