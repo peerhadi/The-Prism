@@ -42,44 +42,85 @@ export default function LayoutDashboardPage() {
     hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#02050a] text-white flex">
-      {/* ================= BACKGROUND ================= */}
+    <div
+      className="relative min-h-screen overflow-hidden flex"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
+      {/* BACKGROUND */}
       <div className="fixed inset-0 z-0 overflow-hidden">
-        <div className="absolute inset-0 bg-[#02050a]" />
+        <div
+          className="absolute inset-0"
+          style={{ background: "var(--background)" }}
+        />
 
-        <div className="absolute -top-[20%] left-[10%] h-[600px] w-[600px] rounded-full bg-cyan-500/10 blur-[160px]" />
-        <div className="absolute top-[40%] right-[-10%] h-[700px] w-[700px] rounded-full bg-blue-500/10 blur-[180px]" />
-        <div className="absolute bottom-[-20%] left-[30%] h-[600px] w-[600px] rounded-full bg-cyan-400/5 blur-[150px]" />
+        <div
+          className="absolute -top-[20%] left-[10%] h-[600px] w-[600px] rounded-full blur-[160px]"
+          style={{ background: "var(--primary-glow)" }}
+        />
 
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+        <div
+          className="absolute top-[40%] right-[-10%] h-[700px] w-[700px] rounded-full blur-[180px]"
+          style={{ background: "var(--secondary-glow)" }}
+        />
+
+        <div
+          className="absolute bottom-[-20%] left-[30%] h-[600px] w-[600px] rounded-full blur-[150px]"
+          style={{ background: "var(--accent-glow)" }}
+        />
+
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+              linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px)
+            `,
+            backgroundSize: "50px 50px",
+          }}
+        />
       </div>
 
-      {/* ================= MAIN ================= */}
+      {/* MAIN */}
       <main className="relative z-10 flex-1 flex flex-col items-center px-6 py-20">
-        {/* HERO */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center max-w-4xl"
         >
-          <p className="text-cyan-400 text-xs tracking-[0.5em] font-black uppercase mb-6">
+          <p
+            className="text-xs tracking-[0.5em] font-black uppercase mb-6"
+            style={{ color: "var(--primary)" }}
+          >
             PRISM LAYOUT ENGINE
           </p>
 
           <h1 className="text-6xl md:text-8xl font-black leading-none">
             SELECT
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-b from-cyan-200 via-cyan-400 to-blue-600">
+            <span
+              style={{
+                background: `linear-gradient(
+                  to bottom,
+                  var(--accent),
+                  var(--primary),
+                  var(--secondary)
+                )`,
+                WebkitBackgroundClip: "text",
+                color: "transparent",
+              }}
+            >
               MODE
             </span>
           </h1>
 
-          <div className="mt-10 text-cyan-100/60 text-lg">
+          <div className="mt-10 text-lg" style={{ color: "var(--text-muted)" }}>
             {greeting}, operator. Choose layout configuration.
           </div>
         </motion.div>
 
-        {/* CARDS */}
         <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
           {layouts.map((item, i) => {
             const Icon = item.icon;
@@ -93,22 +134,45 @@ export default function LayoutDashboardPage() {
               >
                 <Link
                   href={item.href}
-                  className="group relative block overflow-hidden border border-cyan-500/10 bg-white/[0.02] p-8 backdrop-blur-xl transition-all hover:border-cyan-400/30 hover:bg-cyan-400/[0.03]"
+                  className="group relative block overflow-hidden p-8 transition-all"
+                  style={{
+                    border: "1px solid var(--border)",
+                    background: "var(--surface)",
+                  }}
                 >
                   <div className="flex items-start gap-5">
-                    <div className="p-4 rounded-xl border border-cyan-400/20 bg-cyan-400/5 text-cyan-400">
+                    <div
+                      className="p-4 rounded-xl"
+                      style={{
+                        border: "1px solid var(--primary-border)",
+                        background: "var(--primary-soft)",
+                        color: "var(--primary)",
+                      }}
+                    >
                       <Icon size={22} />
                     </div>
 
                     <div>
-                      <h2 className="text-2xl font-black uppercase group-hover:text-cyan-300">
+                      <h2
+                        className="text-2xl font-black uppercase"
+                        style={{ color: "var(--text-primary)" }}
+                      >
                         {item.label}
                       </h2>
-                      <p className="text-cyan-100/50 mt-2">{item.desc}</p>
+
+                      <p
+                        className="mt-2"
+                        style={{ color: "var(--text-muted)" }}
+                      >
+                        {item.desc}
+                      </p>
                     </div>
                   </div>
 
-                  <div className="absolute bottom-0 left-0 h-[2px] w-0 bg-cyan-400 transition-all duration-700 group-hover:w-full" />
+                  <div
+                    className="absolute bottom-0 left-0 h-[2px] w-0 transition-all duration-700 group-hover:w-full"
+                    style={{ background: "var(--primary)" }}
+                  />
                 </Link>
               </motion.div>
             );

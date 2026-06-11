@@ -11,19 +11,19 @@ import {
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-white/10 bg-[#02040A]">
+    <footer className="relative overflow-hidden border-t border-[var(--border)] bg-[var(--background)]">
       {/* BACKGROUND */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 h-[300px] w-[300px] rounded-full bg-cyan-500/10 blur-[120px]" />
+        <div className="absolute top-0 left-1/4 h-[300px] w-[300px] rounded-full bg-[var(--primary-soft)] blur-[120px]" />
 
         <div className="absolute inset-0 opacity-[0.04]">
-          <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:60px_60px]" />
+          <div className="h-full w-full bg-[linear-gradient(var(--grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--grid-line)_1px,transparent_1px)] bg-[size:60px_60px]" />
         </div>
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1600px] px-6 py-14">
         {/* TOP */}
-        <div className="grid gap-12 border-white/10 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-12 md:grid-cols-2 xl:grid-cols-4">
           {/* BRAND */}
           <div>
             <div className="flex items-center gap-3">
@@ -34,15 +34,17 @@ export function Footer() {
               />
 
               <div>
-                <h2 className="text-2xl font-black uppercase">The Prism</h2>
+                <h2 className="text-2xl font-black uppercase text-[var(--text-primary)]">
+                  The Prism
+                </h2>
 
-                <p className="text-[10px] tracking-[0.3em] text-cyan-400 uppercase">
+                <p className="text-[10px] tracking-[0.3em] text-[var(--primary)] uppercase">
                   Narrative Intelligence
                 </p>
               </div>
             </div>
 
-            <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/45">
+            <p className="mt-6 max-w-sm text-sm leading-relaxed text-[var(--text-secondary)]">
               Autonomous intelligence systems tracking narrative divergence,
               emotional steering, synthetic amplification, and global
               information drift.
@@ -51,7 +53,7 @@ export function Footer() {
 
           {/* NAVIGATION */}
           <div>
-            <h3 className="mb-5 text-[11px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+            <h3 className="mb-5 text-[11px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">
               Navigation
             </h3>
 
@@ -65,7 +67,7 @@ export function Footer() {
                 <Link
                   key={name}
                   href={href}
-                  className="group flex items-center justify-between border-b border-white/5 pb-3 text-sm text-white/50 transition-all hover:text-cyan-400"
+                  className="group flex items-center justify-between border-b border-[var(--border-subtle)] pb-3 text-sm text-[var(--text-secondary)] transition-all hover:text-[var(--primary)]"
                 >
                   {name}
 
@@ -77,7 +79,7 @@ export function Footer() {
 
           {/* SYSTEM STATUS */}
           <div>
-            <h3 className="mb-5 text-[11px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+            <h3 className="mb-5 text-[11px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">
               System Status
             </h3>
 
@@ -87,29 +89,31 @@ export function Footer() {
                   icon: Activity,
                   label: "Deep Scan",
                   value: "ACTIVE",
-                  color: "text-cyan-400",
+                  color: "text-[var(--success)]",
                 },
                 {
                   icon: Globe,
                   label: "Global Nodes",
                   value: "142",
-                  color: "text-white",
+                  color: "text-[var(--text-primary)]",
                 },
                 {
                   icon: Shield,
                   label: "Threat Level",
                   value: "HIGH",
-                  color: "text-red-400",
+                  color: "text-[var(--danger)]",
                 },
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between rounded-2xl border border-white/5 bg-white/[0.03] p-4"
+                  className="flex items-center justify-between rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-secondary)] p-4"
                 >
                   <div className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4 text-cyan-400" />
+                    <item.icon className="h-4 w-4 text-[var(--primary)]" />
 
-                    <span className="text-sm text-white/50">{item.label}</span>
+                    <span className="text-sm text-[var(--text-secondary)]">
+                      {item.label}
+                    </span>
                   </div>
 
                   <span
@@ -124,7 +128,7 @@ export function Footer() {
 
           {/* LEGAL */}
           <div>
-            <h3 className="mb-5 text-[11px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+            <h3 className="mb-5 text-[11px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">
               Network
             </h3>
 
@@ -138,7 +142,7 @@ export function Footer() {
                 <Link
                   key={name}
                   href={href}
-                  className="block border-b border-white/5 pb-3 text-sm text-white/50 transition-colors hover:text-cyan-400"
+                  className="block border-b border-[var(--border-subtle)] pb-3 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--primary)]"
                 >
                   {name}
                 </Link>
@@ -149,7 +153,7 @@ export function Footer() {
       </div>
 
       {/* BOTTOM GLOW */}
-      <div className="absolute bottom-0 left-0 h-[1px] w-full bg-cyan-400/70 shadow-[0_0_20px_#22d3ee]" />
+      <div className="absolute bottom-0 left-0 h-[1px] w-full bg-[var(--primary)] shadow-[0_0_20px_var(--primary-glow)]" />
     </footer>
   );
 }

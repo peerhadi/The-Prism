@@ -15,12 +15,25 @@ export default function SettingRow({
   onCheckedChange: (checked: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/30 p-5 transition-all duration-300 hover:border-cyan-500/20">
+    <div
+      className="flex items-center justify-between rounded-2xl border p-5 transition-all duration-300"
+      style={{
+        background: "var(--surface)",
+        borderColor: "var(--border)",
+      }}
+    >
+      {/* TEXT */}
       <div>
-        <p className="font-semibold">{title}</p>
-        <p className="mt-1 text-sm text-white/40">{description}</p>
+        <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+          {title}
+        </p>
+
+        <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
+          {description}
+        </p>
       </div>
 
+      {/* SWITCH */}
       <Switch checked={checked} onCheckedChange={onCheckedChange} />
     </div>
   );

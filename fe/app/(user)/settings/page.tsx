@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { Activity, Globe } from "lucide-react";
+import { Activity } from "lucide-react";
 
 import { PrismLoader } from "@/app/components/loadingScreen";
 
@@ -15,12 +15,7 @@ export default function SettingsPage() {
   const [sources, setSources] = useState<string[]>([]);
   const [newSource, setNewSource] = useState("");
   const [token, setToken] = useState("");
-  useEffect(() => {
-    const t = window.localStorage.getItem("token");
-    if (t) {
-      setToken(t);
-    }
-  });
+
   const [privacySettings, setPrivacySettings] = useState<any>({
     id: "",
     friendRequests: true,
@@ -41,6 +36,40 @@ export default function SettingsPage() {
 
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
+  /* ---------------- TOKEN LOAD ---------------- */
+  useEffect(() => {
+    const t = window.localStorage.getItem("token");
+    if (t) setToken(t);
+  }, []);
+
+  /* ---------------- FETCH USER ---------------- */
+  useEffect(() => {
+    if (!token) return;
+
+    fetch("http://localhost:8080/api/auth/me", {
+      headers: { Authorization: "Bearer " + token },
+    })
+      .then((r) => r.json())
+      .then((res) => {
+        setPrivacySettings({
+          id: res.id,
+          friendRequests: res.friendRequests,
+          publicProfile: res.publicProfile,
+        });
+      });
+  }, [token]);
+
+  useEffect(() => {
+    if (window) {
+      if (theme === "light") {
+        document.getElementsByTagName("body")[0].classList.remove("dark");
+      } else {
+        document.getElementsByTagName("body")[0].classList.add("dark");
+      }
+    }
+  }, [theme]);
+
+  /* ---------------- SOURCES ---------------- */
   const addSource = () => {
     const value = newSource.trim();
     if (!value) return;
@@ -76,51 +105,74 @@ export default function SettingsPage() {
     ]);
 
   const saveSources = async () => {};
-
   const changePassword = async () => {};
   const deleteAccount = async () => {};
 
-  useEffect(() => {
-    if (token) {
-      fetch("http://localhost:8080/api/auth/me", {
-        headers: { Authorization: "Bearer " + token },
-      })
-        .then((r) => r.json())
-        .then((res) =>
-          setPrivacySettings({
-            id: res.id,
-            friendRequests: res.friendRequests,
-            publicProfile: res.publicProfile,
-          }),
-        );
-    }
-  }, []);
-
   if (!privacySettings.id) return <PrismLoader />;
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.12),transparent_35%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_30%)]" />
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      {/* BACKGROUND GLOWS */}
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at top, var(--primary-soft), transparent 40%)",
+          }}
+        />
 
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at bottom right, var(--secondary-soft), transparent 40%)",
+          }}
+        />
+      </div>
+
+      {/* CONTENT */}
       <main className="relative z-10 mx-auto max-w-6xl px-6 py-12">
-        <section className="relative overflow-hidden w-full rounded-[40px] border border-white/10 bg-white/[0.03] p-10 backdrop-blur-2xl mt-6 mb-12">
-          <div className="relative z-10">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
-              <Activity className="h-3 w-3 animate-pulse" />
-              System Configuration
-            </div>
-
-            <h1 className="text-5xl font-black uppercase md:text-7xl">
-              Settings
-            </h1>
-
-            <p className="mt-4 text-white/50 max-w-2xl">
-              Manage sources, AI preferences, themes, privacy, and account
-              controls.
-            </p>
+        {/* HEADER */}
+        <section
+          className="mb-12 w-full rounded-[40px] border p-10 backdrop-blur-2xl"
+          style={{
+            background: "var(--glass-bg)",
+            borderColor: "var(--border)",
+          }}
+        >
+          <div
+            className="mb-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[10px] font-black tracking-[0.3em] uppercase"
+            style={{
+              borderColor: "var(--primary-border)",
+              background: "var(--primary-soft)",
+              color: "var(--primary)",
+            }}
+          >
+            <Activity className="h-3 w-3 animate-pulse" />
+            System Configuration
           </div>
+
+          <h1
+            className="text-5xl font-black uppercase md:text-7xl"
+            style={{ color: "var(--text-primary)" }}
+          >
+            Settings
+          </h1>
+
+          <p className="mt-4 max-w-2xl" style={{ color: "var(--text-muted)" }}>
+            Manage sources, AI preferences, themes, privacy, and account
+            controls.
+          </p>
         </section>
 
+        {/* CARDS */}
         <div className="space-y-8">
           <SourcesCard
             sources={sources}

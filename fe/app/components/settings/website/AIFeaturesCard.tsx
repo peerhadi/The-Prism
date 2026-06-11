@@ -3,20 +3,38 @@
 import React from "react";
 import CyberCard from "./CyberCard";
 import SettingRow from "./SettingRow";
+import { BrainCircuit } from "lucide-react";
 
 export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
   return (
-    <CyberCard title="AI Features" icon={require("lucide-react").BrainCircuit}>
-      <div className="mb-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-4">
-        <p className="text-sm text-yellow-300">
+    <CyberCard title="AI Features" icon={BrainCircuit}>
+      {/* INFO BANNER */}
+      <div
+        className="mb-6 rounded-2xl border p-4"
+        style={{
+          borderColor: "var(--warning-border)",
+          background: "var(--warning-soft)",
+        }}
+      >
+        <p className="text-sm" style={{ color: "var(--warning)" }}>
           These settings are stored locally on this device and are not synced to
           your account.
         </p>
       </div>
 
       <div className="space-y-5">
-        <div className="rounded-2xl border border-white/10 bg-black/30 p-5">
-          <label className="mb-3 block text-xs font-black tracking-[0.2em] text-white/40 uppercase">
+        {/* SELECT BOX */}
+        <div
+          className="rounded-2xl border p-5"
+          style={{
+            borderColor: "var(--border)",
+            background: "var(--surface)",
+          }}
+        >
+          <label
+            className="mb-3 block text-xs font-black tracking-[0.2em] uppercase"
+            style={{ color: "var(--text-muted)" }}
+          >
             Summary Length
           </label>
 
@@ -28,7 +46,12 @@ export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
                 summaryLength: e.target.value,
               }))
             }
-            className="h-12 w-full rounded-xl border border-white/10 bg-black/50 px-4"
+            className="h-12 w-full rounded-xl px-4 outline-none"
+            style={{
+              background: "var(--input-bg)",
+              border: "1px solid var(--input-border)",
+              color: "var(--text-primary)",
+            }}
           >
             <option value="short">Short</option>
             <option value="medium">Medium</option>
@@ -36,6 +59,7 @@ export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
           </select>
         </div>
 
+        {/* SETTINGS */}
         <SettingRow
           title="Show Bias Analysis"
           description="Display source bias and narrative analysis."

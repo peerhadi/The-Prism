@@ -54,7 +54,7 @@ export default function RootLayout({
         geist.variable,
       )}
     >
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="dark">
         <ThemeProvider>
           <Navbar />
           <GoogleOAuthProvider clientId="326949971375-3qq23gr7vdd4tnubscvs7n5agk9hbbue.apps.googleusercontent.com">

@@ -16,7 +16,14 @@ export default function AuthField({
 }: any) {
   return (
     <div className="space-y-1">
-      <Label className="text-[9px] tracking-[0.4em] text-white/40 uppercase">
+      <Label
+        className={`text-[9px] tracking-[0.4em] ${
+          uppercase ? "uppercase" : ""
+        }`}
+        style={{
+          color: "var(--text-faint)",
+        }}
+      >
         {label}
       </Label>
 
@@ -26,11 +33,21 @@ export default function AuthField({
         onChange={onChange}
         onBlur={onBlur}
         placeholder={placeholder}
-        className="h-10 border-cyan-300/10 bg-white/5 text-cyan-100 tracking-[0.2em] placeholder:text-white/10 focus:border-cyan-300/40 focus:ring-0"
+        className="h-10 tracking-[0.2em] focus:ring-0"
+        style={{
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--border)",
+          color: "var(--text-primary)",
+        }}
       />
 
       {error && (
-        <p className="text-[10px] text-red-400 tracking-[0.2em]">{error}</p>
+        <p
+          className="text-[10px] tracking-[0.2em]"
+          style={{ color: "var(--danger)" }}
+        >
+          {error}
+        </p>
       )}
     </div>
   );

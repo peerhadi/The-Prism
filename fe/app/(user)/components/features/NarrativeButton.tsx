@@ -148,26 +148,21 @@ ${input}
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
       {/* BACKDROP */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-2xl"
+        className="absolute inset-0 bg-[var(--backdrop)] backdrop-blur-2xl"
         onClick={onClose}
       />
 
       {/* CENTER FLOATING PANEL */}
-      <div
-        className="relative w-full max-w-2xl h-[80vh] rounded-2xl 
-                      border border-white/10 bg-black/60 backdrop-blur-3xl 
-                      shadow-[0_0_80px_rgba(0,255,255,0.15)]
-                      flex flex-col p-5 z-10"
-      >
+      <div className="relative w-full max-w-2xl h-[80vh] rounded-2xl border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-3xl shadow-[var(--shadow-2xl)] flex flex-col p-5 z-10">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-cyan-300">
+          <div className="flex items-center gap-2 text-[var(--primary)]">
             <Sparkles className="h-5 w-5" />
             Narrative Mode
           </div>
 
           <button onClick={onClose}>
-            <X className="h-5 w-5 text-white/60" />
+            <X className="h-5 w-5 text-[var(--text-muted)]" />
           </button>
         </div>
 
@@ -178,8 +173,8 @@ ${input}
               key={i}
               className={`p-3 rounded-xl text-sm max-w-[90%] ${
                 m.role === "user"
-                  ? "ml-auto bg-cyan-500/20 text-cyan-200"
-                  : "bg-white/5 text-white/70"
+                  ? "ml-auto bg-[var(--primary-soft)] text-[var(--primary)] border border-[var(--primary-border)]"
+                  : "bg-[var(--surface-secondary)] text-[var(--text-secondary)] border border-[var(--border-subtle)]"
               }`}
             >
               <div style={{ whiteSpace: "pre-wrap" }}>
@@ -190,7 +185,9 @@ ${input}
             </div>
           ))}
 
-          {loading && <div className="text-white/40 text-sm">Thinking...</div>}
+          {loading && (
+            <div className="text-[var(--text-muted)] text-sm">Thinking...</div>
+          )}
         </div>
 
         {/* INPUT */}
@@ -199,12 +196,12 @@ ${input}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about narrative, bias, perspective..."
-            className="flex-1 rounded-xl bg-white/5 px-4 py-3 text-sm text-white outline-none"
+            className="flex-1 rounded-xl bg-[var(--input-bg)] border border-[var(--input-border)] px-4 py-3 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--input-focus)]"
           />
 
           <button
             onClick={send}
-            className="px-4 rounded-xl bg-cyan-500/20 text-cyan-200"
+            className="px-4 rounded-xl bg-[var(--primary-soft)] border border-[var(--primary-border)] text-[var(--primary)] hover:bg-[var(--surface-hover)] transition-colors"
           >
             →
           </button>
