@@ -27,8 +27,15 @@ export default function UsersPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white p-10">
+    <div
+      className="min-h-screen p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
       <Breadcrumbs items={[{ label: "Users" }]} />
+
       <Snackbar
         open={toast}
         message="User spectrum loaded"
@@ -36,36 +43,53 @@ export default function UsersPage() {
       />
 
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-4xl font-black text-cyan-400">USERS GRID</h1>
+        <h1 className="text-4xl font-black" style={{ color: "var(--primary)" }}>
+          USERS GRID
+        </h1>
 
         <Link
           href="/dashboard/users/add"
-          className="px-5 py-2 border border-cyan-400/40 bg-cyan-400/10
-          hover:bg-cyan-400 hover:text-black transition font-bold"
+          className="px-5 py-2 font-bold transition"
+          style={{
+            border: "1px solid var(--primary-border)",
+            background: "var(--primary-soft)",
+            color: "var(--primary)",
+          }}
         >
           + NEW USER
         </Link>
       </div>
 
       <div className="grid gap-4">
-        {users.map((u, i) => (
+        {users.map((user, index) => (
           <motion.div
-            key={u.id}
+            key={user.id}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.03 }}
-            className="p-6 border border-cyan-500/10 bg-white/[0.02]
-            hover:border-cyan-400/30 hover:bg-cyan-400/5 transition"
+            transition={{ delay: index * 0.03 }}
+            className="p-6 transition"
+            style={{
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+            }}
           >
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-bold">{u.username}</h2>
-                <p className="text-cyan-100/40 text-sm">{u.email}</p>
+                <h2
+                  className="text-xl font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {user.username}
+                </h2>
+
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+                  {user.email}
+                </p>
               </div>
 
               <Link
-                href={`/dashboard/users/${u.id}`}
-                className="text-cyan-400 hover:text-cyan-200"
+                href={`/dashboard/users/${user.id}`}
+                style={{ color: "var(--primary)" }}
               >
                 edit →
               </Link>

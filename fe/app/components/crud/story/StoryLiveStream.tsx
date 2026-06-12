@@ -13,13 +13,13 @@ export default function StoryLiveStream({
 }) {
   return (
     <div className="space-y-10">
-      <div className="border-b border-white/10 pb-4 flex justify-between">
-        <h2 className="text-[11px] uppercase text-white/40 tracking-widest">
+      <div className="flex justify-between border-b border-[var(--border)] pb-4">
+        <h2 className="text-[11px] uppercase tracking-widest text-[var(--text-muted)]">
           LIVE STORY STREAM
         </h2>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid gap-8 md:grid-cols-2">
         {small.map((s) => (
           <ShortCard key={s.id} {...s} />
         ))}

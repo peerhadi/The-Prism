@@ -12,6 +12,7 @@ export default function ProfilePage() {
   const [token, setToken] = React.useState("");
   const [user, setUser] = React.useState<any>({});
 
+  /* ---------------- FORM ---------------- */
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -38,6 +39,7 @@ export default function ProfilePage() {
     },
   });
 
+  /* ---------------- AUTH LOAD ---------------- */
   React.useEffect(() => {
     const t = window.localStorage.getItem("token") || "";
     setToken(t);
@@ -52,11 +54,33 @@ export default function ProfilePage() {
   if (!user.id) return <PrismLoader />;
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
-      {/* BACKGROUND */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.12),transparent_35%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_30%)]" />
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      {/* BACKGROUND LAYERS */}
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at top, var(--primary-soft), transparent 40%)",
+          }}
+        />
 
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at bottom right, var(--secondary-soft), transparent 40%)",
+          }}
+        />
+      </div>
+
+      {/* CONTENT */}
       <main className="relative z-10 mx-auto max-w-7xl px-6 py-12">
         <ProfileHeader />
 

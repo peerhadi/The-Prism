@@ -14,10 +14,11 @@ export default function NarrativeSplitPage() {
     fetch("http://localhost:8080/api/perspectives")
       .then((res) => res.json())
       .then((data) => {
-        const clean = data
-          .filter((x: any) => x?.neutral?.title && x?.extreme?.title)
-          .reverse()
-          .slice(0, 4);
+        let clean = data.filter(
+          (x: any) =>
+            x?.neutral?.title && x?.extreme?.title && x?.imageUrl?.length,
+        );
+        clean = clean.slice(0, 4);
 
         setEvents(clean);
       });
@@ -26,14 +27,36 @@ export default function NarrativeSplitPage() {
   if (!events.length) return <PrismLoader />;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-black text-white">
+    <div
+      className="relative min-h-screen overflow-x-hidden"
+      style={{
+        background: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
       {/* GLOBAL BACKGROUND */}
       <div className="pointer-events-none fixed inset-0">
-        <div className="absolute top-0 left-0 h-[700px] w-[700px] rounded-full bg-cyan-500/10 blur-[180px]" />
-        <div className="absolute bottom-0 right-0 h-[700px] w-[700px] rounded-full bg-red-500/10 blur-[180px]" />
+        {/* glowing orbs */}
+        <div
+          className="absolute top-0 left-0 h-[700px] w-[700px] rounded-full blur-[180px]"
+          style={{ background: "var(--primary-glow)" }}
+        />
 
+        <div
+          className="absolute bottom-0 right-0 h-[700px] w-[700px] rounded-full blur-[180px]"
+          style={{ background: "var(--danger-glow)" }}
+        />
+
+        {/* grid */}
         <div className="absolute inset-0 opacity-[0.04]">
-          <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:90px_90px]" />
+          <div
+            className="h-full w-full"
+            style={{
+              backgroundImage:
+                "linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)",
+              backgroundSize: "90px 90px",
+            }}
+          />
         </div>
       </div>
 

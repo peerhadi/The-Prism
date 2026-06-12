@@ -47,7 +47,11 @@ export default function StoriesPage() {
           (x: any) => x.title && x.description && x.imageUrl,
         );
 
-        const sliced = clean.slice(-28).reverse();
+        // FIX: use clean.length, not fetched.length
+        const sliced = clean.slice(
+          Math.max(0, clean.length - 28),
+          clean.length,
+        );
 
         const heros = sliced.filter((x: any) => x.type === "HERO");
         const smalls = sliced.filter((x: any) => x.type === "SMALL");

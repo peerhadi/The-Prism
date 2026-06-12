@@ -12,14 +12,46 @@ export default function AboutFocusCard({
   description: string;
 }) {
   return (
-    <div className="group border border-white/10 bg-white/[0.03] p-8 transition-all duration-300 hover:border-cyan-400/30 hover:bg-white/[0.05]">
-      <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full border border-cyan-400/20 bg-cyan-400/10 text-cyan-400">
+    <div
+      className="group border p-8 transition-all duration-300"
+      style={{
+        background: "var(--surface)",
+        borderColor: "var(--border)",
+      }}
+    >
+      {/* ICON WRAPPER */}
+      <div
+        className="mb-6 flex h-12 w-12 items-center justify-center rounded-full border"
+        style={{
+          borderColor: "var(--primary-border)",
+          background: "var(--primary-soft)",
+          color: "var(--primary)",
+        }}
+      >
         {icon}
       </div>
 
-      <h3 className="mb-4 text-2xl font-semibold">{title}</h3>
+      {/* TITLE */}
+      <h3
+        className="mb-4 text-2xl font-semibold"
+        style={{ color: "var(--text-primary)" }}
+      >
+        {title}
+      </h3>
 
-      <p className="leading-relaxed text-white/60">{description}</p>
+      {/* DESCRIPTION */}
+      <p className="leading-relaxed" style={{ color: "var(--text-muted)" }}>
+        {description}
+      </p>
+
+      {/* HOVER LAYER (system glow instead of cyan shift) */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--primary-soft), transparent)",
+        }}
+      />
     </div>
   );
 }

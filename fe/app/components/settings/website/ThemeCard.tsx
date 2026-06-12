@@ -2,47 +2,91 @@
 
 import React from "react";
 import CyberCard from "./CyberCard";
+import { Palette } from "lucide-react";
 
 export default function ThemeCard({ theme, setTheme }: any) {
   return (
-    <CyberCard title="Theme" icon={require("lucide-react").Palette}>
+    <CyberCard title="Theme" icon={Palette}>
       <div className="grid gap-4 md:grid-cols-2">
+        {/* DARK */}
         <button
           onClick={() => setTheme("dark")}
-          className={`rounded-2xl border p-6 text-left transition-all ${
-            theme === "dark"
-              ? "border-cyan-500/40 bg-cyan-500/10"
-              : "border-white/10 bg-black/30"
-          }`}
+          className="rounded-2xl border p-6 text-left transition-all"
+          style={{
+            borderColor:
+              theme === "dark" ? "var(--primary-border)" : "var(--border)",
+            background:
+              theme === "dark" ? "var(--primary-soft)" : "var(--surface)",
+          }}
         >
-          <div className="mb-4 h-24 rounded-xl border border-white/10 bg-[#05070d]" />
-          <p className="font-semibold">Dark Theme</p>
-          <p className="mt-1 text-sm text-white/40">
+          <div
+            className="mb-4 h-24 rounded-xl border"
+            style={{
+              background: "#05070d",
+              borderColor: "var(--border)",
+            }}
+          />
+
+          <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+            Dark Theme
+          </p>
+
+          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
             Prism default experience.
           </p>
         </button>
 
+        {/* LIGHT */}
         <button
           onClick={() => setTheme("light")}
-          className={`rounded-2xl border p-6 text-left transition-all ${
-            theme === "light"
-              ? "border-cyan-500/40 bg-cyan-500/10"
-              : "border-white/10 bg-black/30"
-          }`}
+          className="rounded-2xl border p-6 text-left transition-all"
+          style={{
+            borderColor:
+              theme === "light" ? "var(--primary-border)" : "var(--border)",
+            background:
+              theme === "light" ? "var(--primary-soft)" : "var(--surface)",
+          }}
         >
-          <div className="mb-4 h-24 rounded-xl border border-black/10 bg-white" />
-          <p className="font-semibold">Light Theme</p>
-          <p className="mt-1 text-sm text-white/40">
+          <div
+            className="mb-4 h-24 rounded-xl border"
+            style={{
+              background: "#ffffff",
+              borderColor: "var(--border)",
+            }}
+          />
+
+          <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+            Light Theme
+          </p>
+
+          <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
             Bright reading experience.
           </p>
         </button>
       </div>
 
-      <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-5">
-        <p className="font-semibold">Active Theme</p>
-        <p className="mt-1 text-sm text-white/40">
+      {/* ACTIVE THEME */}
+      <div
+        className="mt-6 rounded-2xl border p-5"
+        style={{
+          background: "var(--surface)",
+          borderColor: "var(--border)",
+        }}
+      >
+        <p className="font-semibold" style={{ color: "var(--text-primary)" }}>
+          Active Theme
+        </p>
+
+        <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>
           Current theme:{" "}
-          <span className="text-cyan-400 capitalize">{theme}</span>
+          <span
+            style={{
+              color: "var(--primary)",
+              textTransform: "capitalize",
+            }}
+          >
+            {theme}
+          </span>
         </p>
       </div>
     </CyberCard>

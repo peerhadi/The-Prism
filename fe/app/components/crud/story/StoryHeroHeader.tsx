@@ -10,27 +10,27 @@ export default function StoryHeroHeader({
   stats: any[];
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[50px] border border-white/10 bg-white/[0.03] p-10 backdrop-blur-2xl">
-      {/* glow */}
+    <section className="relative overflow-hidden rounded-[50px] border border-[var(--border)] bg-[var(--glass-bg)] p-10 backdrop-blur-2xl">
+      {/* Glow */}
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 h-[300px] w-[300px] rounded-full bg-cyan-500/20 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-purple-500/20 blur-[120px] animate-pulse" />
+        <div className="absolute top-0 left-0 h-[300px] w-[300px] rounded-full bg-[var(--primary-soft)] blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-[var(--secondary-soft)] blur-[120px] animate-pulse" />
       </div>
 
       <div className="relative z-10 flex flex-col gap-10 xl:flex-row xl:items-end xl:justify-between">
         {/* LEFT */}
         <div className="max-w-5xl">
           <div className="mb-6 flex flex-wrap items-center gap-3">
-            <div className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+            <div className="rounded-full border border-[var(--primary-border)] bg-[var(--primary-soft)] px-4 py-2 text-[10px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">
               LIVE INTELLIGENCE
             </div>
           </div>
 
-          <h1 className="text-6xl font-black tracking-tighter uppercase md:text-[9rem]">
+          <h1 className="text-6xl font-black tracking-tighter uppercase text-[var(--text-primary)] md:text-[9rem]">
             STORIES
           </h1>
 
-          <p className="mt-8 text-white/50 max-w-3xl">
+          <p className="mt-8 max-w-3xl text-[var(--text-secondary)]">
             Autonomous intelligence systems tracking narrative divergence,
             emotional manipulation, and geopolitical distortion.
           </p>
@@ -41,10 +41,13 @@ export default function StoryHeroHeader({
           {stats.map((s, i) => (
             <div
               key={i}
-              className="rounded-3xl border border-white/10 bg-black/30 p-5"
+              className="rounded-3xl border border-[var(--border)] bg-[var(--surface-secondary)] p-5 backdrop-blur-xl"
             >
-              <div className="text-3xl font-black">{s.value}</div>
-              <div className="text-[10px] text-white/40 uppercase">
+              <div className="text-3xl font-black text-[var(--text-primary)]">
+                {s.value}
+              </div>
+
+              <div className="text-[10px] uppercase text-[var(--text-muted)]">
                 {s.label}
               </div>
             </div>
@@ -56,8 +59,16 @@ export default function StoryHeroHeader({
       <div className="relative z-10 mt-12 flex flex-wrap gap-4">
         {/* ALL */}
         <button
-          className={`rounded-full border px-5 py-3 text-[11px] font-black tracking-[0.2em] uppercase transition-all duration-300 hover:scale-105
-              border-cyan-500 bg-cyan-500/20 text-cyan-300`}
+          className="
+            rounded-full border border-[var(--primary-border)]
+            bg-[var(--primary-soft)]
+            px-5 py-3
+            text-[11px] font-black tracking-[0.2em]
+            text-[var(--primary)]
+            uppercase
+            transition-all duration-300
+            hover:scale-105
+          "
         >
           All Stories
         </button>
@@ -67,12 +78,19 @@ export default function StoryHeroHeader({
           return (
             <button
               key={cat.id ?? idx}
-              className={`
-              group flex items-center gap-3 rounded-full border px-5 py-3
-              text-[11px] font-black tracking-[0.2em] uppercase
-              transition-all duration-300 hover:scale-105
-              ${cat.color || "border-white/10 bg-white/5 text-white/60"}
-                  hover:bg-white/10`}
+              className="
+                group flex items-center gap-3 rounded-full
+                border border-[var(--border)]
+                bg-[var(--surface-secondary)]
+                px-5 py-3
+                text-[11px] font-black tracking-[0.2em]
+                text-[var(--text-secondary)]
+                uppercase
+                transition-all duration-300
+                hover:scale-105
+                hover:bg-[var(--surface-hover)]
+                hover:text-[var(--text-primary)]
+              "
             >
               <div className="h-2 w-2 rounded-full bg-current animate-pulse" />
               {cat.name || cat.label}

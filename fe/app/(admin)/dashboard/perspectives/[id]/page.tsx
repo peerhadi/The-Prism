@@ -9,6 +9,32 @@ import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { useToast } from "@/lib/toast/toastStore";
 
+const BREADCRUMBS = [
+  { label: "Perspectives", href: "/dashboard/perspectives" },
+  { label: "Edit" },
+];
+
+const SECTIONS = [
+  {
+    key: "neutral",
+    title: "NEUTRAL",
+    border: "var(--primary-border)",
+    heading: "var(--primary)",
+  },
+  {
+    key: "extreme",
+    title: "EXTREME",
+    border: "var(--danger-border)",
+    heading: "var(--danger)",
+  },
+];
+
+const FIELDS = [
+  { key: "title", label: "Title" },
+  { key: "summary", label: "Summary" },
+  { key: "description", label: "Description" },
+];
+
 export default function EditPerspective() {
   const { id } = useParams();
   const router = useRouter();
@@ -58,21 +84,23 @@ export default function EditPerspective() {
 
   if (!form) {
     return (
-      <div className="text-cyan-400 p-10 animate-pulse">decoding signal...</div>
+      <div className="p-10 animate-pulse" style={{ color: "var(--primary)" }}>
+        decoding signal...
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center p-10">
-      <Breadcrumbs
-        items={[
-          { label: "Perspectives", href: "/dashboard/perspectives" },
-          { label: "Edit" },
-        ]}
-      />
+    <div
+      className="min-h-screen flex flex-col items-center p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
+      <Breadcrumbs items={BREADCRUMBS} />
 
       <FormCard title="EDIT PERSPECTIVE LENS">
-        {/* TOP TITLE */}
         <div className="mb-8">
           <FieldInput
             label="Perspective Title"
@@ -81,56 +109,44 @@ export default function EditPerspective() {
           />
         </div>
 
-        {/* NEUTRAL */}
-        <div className="mb-10 p-6 border border-cyan-500/10 rounded-xl space-y-4">
-          <h2 className="text-cyan-300 font-bold tracking-widest">NEUTRAL</h2>
+        {SECTIONS.map((section) => (
+          <div
+            key={section.key}
+            className="mb-10 p-6 rounded-xl space-y-4"
+            style={{
+              border: `1px solid ${section.border}`,
+            }}
+          >
+            <h2
+              className="font-bold tracking-widest"
+              style={{
+                color: section.heading,
+              }}
+            >
+              {section.title}
+            </h2>
 
-          <FieldInput
-            label="Title"
-            value={form.neutral.title}
-            onChange={(e: any) => update("neutral.title", e.target.value)}
-          />
-
-          <FieldInput
-            label="Summary"
-            value={form.neutral.summary}
-            onChange={(e: any) => update("neutral.summary", e.target.value)}
-          />
-
-          <FieldInput
-            label="Description"
-            value={form.neutral.description}
-            onChange={(e: any) => update("neutral.description", e.target.value)}
-          />
-        </div>
-
-        {/* EXTREME */}
-        <div className="mb-10 p-6 border border-red-500/20 rounded-xl space-y-4">
-          <h2 className="text-red-400 font-bold tracking-widest">EXTREME</h2>
-
-          <FieldInput
-            label="Title"
-            value={form.extreme.title}
-            onChange={(e: any) => update("extreme.title", e.target.value)}
-          />
-
-          <FieldInput
-            label="Summary"
-            value={form.extreme.summary}
-            onChange={(e: any) => update("extreme.summary", e.target.value)}
-          />
-
-          <FieldInput
-            label="Description"
-            value={form.extreme.description}
-            onChange={(e: any) => update("extreme.description", e.target.value)}
-          />
-        </div>
+            {FIELDS.map((field) => (
+              <FieldInput
+                key={field.key}
+                label={field.label}
+                value={form[section.key][field.key]}
+                onChange={(e: any) =>
+                  update(`${section.key}.${field.key}`, e.target.value)
+                }
+              />
+            ))}
+          </div>
+        ))}
 
         <button
           onClick={save}
-          className="w-full p-5 bg-cyan-400 text-black font-black rounded-lg
-          hover:shadow-[0_0_50px_rgba(34,211,238,0.6)] transition"
+          className="w-full p-5 font-black rounded-lg transition"
+          style={{
+            background: "var(--button-primary)",
+            color: "var(--primary-foreground)",
+            border: "1px solid var(--primary-border)",
+          }}
         >
           SAVE PERSPECTIVE
         </button>

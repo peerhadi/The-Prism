@@ -18,7 +18,12 @@ export default function AddComponentButton({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-xl bg-cyan-500 px-4 py-2 font-medium text-black"
+        className="flex items-center gap-2 rounded-xl px-4 py-2 font-medium transition"
+        style={{
+          background: "var(--primary)",
+          color: "var(--primary-foreground)",
+          border: "1px solid var(--primary-border)",
+        }}
       >
         <Plus size={16} />
         Add Component
@@ -26,28 +31,52 @@ export default function AddComponentButton({
 
       {open && (
         <>
-          {/* Blur Background */}
           <div
-            className="fixed inset-0 z-[9998] bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 z-[9998] backdrop-blur-md"
+            style={{
+              background: "var(--backdrop)",
+            }}
             onClick={() => setOpen(false)}
           />
 
-          {/* Modal */}
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6">
-            <div className="w-full max-w-3xl rounded-3xl border border-cyan-500/20 bg-[#05070d] p-8 shadow-[0_0_80px_rgba(0,255,255,0.15)]">
+            <div
+              className="w-full max-w-3xl rounded-3xl p-8"
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                boxShadow: "var(--shadow-xl)",
+              }}
+            >
               <div className="mb-8 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-black text-white">
+                  <h2
+                    className="text-2xl font-black"
+                    style={{
+                      color: "var(--text-primary)",
+                    }}
+                  >
                     Add Component
                   </h2>
-                  <p className="mt-1 text-sm text-white/40">
+
+                  <p
+                    className="mt-1 text-sm"
+                    style={{
+                      color: "var(--text-muted)",
+                    }}
+                  >
                     Choose a block to insert into the layout
                   </p>
                 </div>
 
                 <button
                   onClick={() => setOpen(false)}
-                  className="rounded-xl border border-white/10 p-2 text-white/60 hover:bg-white/5"
+                  className="rounded-xl p-2 transition"
+                  style={{
+                    border: "1px solid var(--border)",
+                    color: "var(--text-muted)",
+                    background: "var(--surface-secondary)",
+                  }}
                 >
                   <X size={18} />
                 </button>
@@ -61,13 +90,27 @@ export default function AddComponentButton({
                       onSelect(component);
                       setOpen(false);
                     }}
-                    className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left transition hover:border-cyan-400/30 hover:bg-cyan-500/5"
+                    className="rounded-2xl p-6 text-left transition"
+                    style={{
+                      border: "1px solid var(--border)",
+                      background: "var(--surface-secondary)",
+                    }}
                   >
-                    <div className="text-xs tracking-[0.3em] text-cyan-400 uppercase">
+                    <div
+                      className="text-xs uppercase tracking-[0.3em]"
+                      style={{
+                        color: "var(--primary)",
+                      }}
+                    >
                       Component
                     </div>
 
-                    <div className="mt-2 text-lg font-bold text-white">
+                    <div
+                      className="mt-2 text-lg font-bold"
+                      style={{
+                        color: "var(--text-primary)",
+                      }}
+                    >
                       {component}
                     </div>
                   </button>

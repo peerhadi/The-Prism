@@ -54,14 +54,20 @@ export default function EditCategory() {
 
   if (!form) {
     return (
-      <div className="text-cyan-400 p-10 animate-pulse">
+      <div className="animate-pulse p-10" style={{ color: "var(--primary)" }}>
         decoding category node...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex items-center justify-center p-10">
+    <div
+      className="min-h-screen flex items-center justify-center p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
       <Breadcrumbs
         items={[
           { label: "Categories", href: "/dashboard/categories" },
@@ -70,11 +76,19 @@ export default function EditCategory() {
       />
 
       <div
-        className="w-full max-w-2xl p-10 rounded-2xl
-        border border-cyan-500/20 bg-white/[0.02]
-        backdrop-blur-xl shadow-[0_0_60px_rgba(34,211,238,0.08)]"
+        className="w-full max-w-2xl rounded-2xl p-10 backdrop-blur-xl"
+        style={{
+          background: "var(--card)",
+          border: "1px solid var(--card-border)",
+          boxShadow: "var(--shadow-lg)",
+        }}
       >
-        <h1 className="text-center text-3xl font-black text-cyan-400 mb-10">
+        <h1
+          className="mb-10 text-center text-3xl font-black"
+          style={{
+            color: "var(--primary)",
+          }}
+        >
           EDIT CATEGORY NODE
         </h1>
 
@@ -95,8 +109,12 @@ export default function EditCategory() {
 
           <button
             onClick={submit}
-            className="w-full mt-4 p-4 bg-cyan-400 text-black font-black
-            hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition rounded-lg"
+            className="mt-4 w-full rounded-lg p-4 font-black transition"
+            style={{
+              background: "var(--primary)",
+              color: "var(--primary-foreground)",
+              border: "1px solid var(--primary-border)",
+            }}
           >
             SAVE NODE
           </button>

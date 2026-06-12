@@ -226,8 +226,19 @@ export default function ExploreBuilderPage() {
               setSelectedCategory={() => {}}
             />
 
-            <div className="rounded-[36px] border border-white/10 bg-black/30 p-8">
-              <h3 className="text-[11px] uppercase tracking-[0.35em] text-purple-400 mb-6">
+            <div
+              className="rounded-[36px] p-8"
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              <h3
+                className="mb-6 text-[11px] uppercase tracking-[0.35em]"
+                style={{
+                  color: "var(--secondary)",
+                }}
+              >
                 Quick Access
               </h3>
 
@@ -238,10 +249,28 @@ export default function ExploreBuilderPage() {
                 <div className="space-y-4">
                   {left.map((item, i) => (
                     <Draggable key={i} item={item}>
-                      <div className="p-4 rounded-2xl border border-white/10">
-                        <h4 className="font-bold text-sm">{item.title}</h4>
+                      <div
+                        className="rounded-2xl p-4"
+                        style={{
+                          background: "var(--surface-secondary)",
+                          border: "1px solid var(--border)",
+                        }}
+                      >
+                        <h4
+                          className="text-sm font-bold"
+                          style={{
+                            color: "var(--text-primary)",
+                          }}
+                        >
+                          {item.title}
+                        </h4>
 
-                        <p className="text-xs text-white/40 mt-2">
+                        <p
+                          className="mt-2 text-xs"
+                          style={{
+                            color: "var(--text-muted)",
+                          }}
+                        >
                           {item.description}
                         </p>
                       </div>

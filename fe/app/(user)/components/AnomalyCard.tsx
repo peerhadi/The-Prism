@@ -28,7 +28,7 @@ export const AnomalyCard = ({
   const [sourceOpen, setSourceOpen] = React.useState(false);
   return (
     <div
-      className="group relative h-[600px] cursor-pointer overflow-hidden border border-white/5 bg-[#050a12]"
+      className="group relative h-[600px] cursor-pointer overflow-hidden border border-[var(--border-subtle)] bg-[var(--surface)]"
       onClick={() => setSourceOpen(true)}
     >
       {/* IMAGE LAYER */}
@@ -38,46 +38,66 @@ export const AnomalyCard = ({
           alt={title}
           className="h-full w-full object-cover opacity-40 grayscale transition-all duration-700 group-hover:scale-105 group-hover:opacity-60 group-hover:grayscale-0"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--background)] via-[rgba(0,0,0,0.2)] to-transparent" />
       </div>
 
       {/* OVERLAY DATA */}
       <div className="relative flex h-full flex-col justify-between p-8">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-[9px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+            <p className="text-[9px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">
               {id}
             </p>
-            <div className={`h-[1px] w-8 ${color.replace("border-", "bg-")}`} />
+            <div
+              className="h-[1px] w-8"
+              style={{
+                background: color.includes("cyan")
+                  ? "var(--primary)"
+                  : color.includes("red")
+                    ? "var(--danger)"
+                    : color.includes("purple")
+                      ? "var(--secondary)"
+                      : "var(--accent)",
+              }}
+            />
           </div>
-          <div className="flex items-center gap-1 border border-white/10 bg-black/60 px-2 py-1 backdrop-blur-md">
-            <Dna size={10} className="text-cyan-400" />
-            <span className="text-[9px] font-bold text-white/70">
+          <div className="flex items-center gap-1 border border-[var(--border)] bg-[var(--glass-bg)] px-2 py-1 backdrop-blur-md">
+            <Dna size={10} className="text-[var(--primary)]" />
+            <span className="text-[9px] font-bold text-[var(--text-secondary)]">
               {intensity}
             </span>
           </div>
         </div>
 
         <div className="translate-y-8 space-y-4 transition-all duration-500 group-hover:translate-y-0">
-          <span className="inline-block border border-white/20 px-2 py-1 text-[9px] font-black tracking-widest text-white/40 uppercase">
+          <span className="inline-block border border-[var(--border)] px-2 py-1 text-[9px] font-black tracking-widest text-[var(--text-muted)] uppercase">
             {tag}
           </span>
-          <h3 className="text-3xl leading-none font-black tracking-tighter uppercase">
+          <h3 className="text-3xl leading-none font-black tracking-tighter text-[var(--text-primary)] uppercase">
             {title}
           </h3>
-          <p className="text-[13px] leading-relaxed text-white/50 opacity-0 transition-all duration-500 group-hover:opacity-100">
+          <p className="text-[13px] leading-relaxed text-[var(--text-secondary)] opacity-0 transition-all duration-500 group-hover:opacity-100">
             {desc}
           </p>
-          <div className="flex items-center gap-2 pt-4 text-[10px] font-black tracking-widest text-cyan-400 uppercase opacity-0 transition-all delay-100 duration-500 group-hover:opacity-100">
+          <div className="flex items-center gap-2 pt-4 text-[10px] font-black tracking-widest text-[var(--primary)] uppercase opacity-0 transition-all delay-100 duration-500 group-hover:opacity-100">
             Initialize Deep Scan <ArrowUpRight size={14} />
           </div>
         </div>
       </div>
 
       {/* PROGRESS BAR DECOR */}
-      <div className="absolute bottom-0 left-0 h-1 w-full bg-white/5">
+      <div className="absolute bottom-0 left-0 h-1 w-full bg-[var(--surface-hover)]">
         <div
-          className={`h-full w-0 transition-all duration-1000 group-hover:w-full ${color.replace("border-", "bg-")}`}
+          className="h-full w-0 transition-all duration-1000 group-hover:w-full"
+          style={{
+            background: color.includes("cyan")
+              ? "var(--primary)"
+              : color.includes("red")
+                ? "var(--danger)"
+                : color.includes("purple")
+                  ? "var(--secondary)"
+                  : "var(--accent)",
+          }}
         />
       </div>
 

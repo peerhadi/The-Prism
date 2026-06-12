@@ -13,30 +13,81 @@ export default function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#040816] px-4">
-      {/* NEON FIELD (UNCHANGED) */}
+    <div
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-4"
+      style={{
+        backgroundColor: "var(--background)",
+      }}
+    >
+      {/* NEON FIELD */}
       <div className="absolute inset-0">
-        <div className="absolute top-[-20%] left-[-10%] h-[500px] w-[500px] bg-cyan-400/10 blur-[140px] animate-pulse" />
-        <div className="absolute bottom-[-20%] right-[-10%] h-[500px] w-[500px] bg-fuchsia-500/10 blur-[160px] animate-pulse" />
-        <div className="absolute inset-0 opacity-[0.06] bg-[linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:80px_80px]" />
+        <div
+          className="absolute top-[-20%] left-[-10%] h-[500px] w-[500px] blur-[140px] animate-pulse"
+          style={{ backgroundColor: "var(--primary-soft)" }}
+        />
+
+        <div
+          className="absolute bottom-[-20%] right-[-10%] h-[500px] w-[500px] blur-[160px] animate-pulse"
+          style={{ backgroundColor: "var(--secondary-soft)" }}
+        />
+
+        <div
+          className="absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              "linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px)",
+            backgroundSize: "80px 80px",
+          }}
+        />
       </div>
 
-      <Card className="relative w-full max-w-[500px] rounded-[22px] border border-cyan-300/20 bg-white/5 backdrop-blur-3xl shadow-[0_0_90px_rgba(34,211,238,0.25)]">
-        <div className="absolute top-0 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-cyan-300 to-transparent shadow-[0_0_20px_#22d3ee]" />
+      <Card
+        className="relative w-full max-w-[500px] rounded-[22px] backdrop-blur-3xl"
+        style={{
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--primary-border)",
+          boxShadow: "0 0 90px var(--primary-glow)",
+        }}
+      >
+        {/* top line */}
+        <div
+          className="absolute top-0 left-0 h-[2px] w-full"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, var(--primary), transparent)",
+            boxShadow: "0 0 20px var(--primary)",
+          }}
+        />
 
         <CardHeader className="pt-10 pb-6">
-          <CardTitle className="text-center text-[36px] font-black tracking-[0.25em] text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-cyan-400 to-fuchsia-400 uppercase">
+          <CardTitle
+            className="text-center text-[36px] font-black tracking-[0.25em] uppercase bg-clip-text text-transparent"
+            style={{
+              backgroundImage:
+                "linear-gradient(90deg, var(--primary), var(--accent), var(--secondary))",
+            }}
+          >
             {title}
           </CardTitle>
 
-          <p className="mt-1 text-center text-[10px] tracking-[0.45em] text-cyan-300/60 uppercase">
+          <p
+            className="mt-1 text-center text-[10px] tracking-[0.45em] uppercase"
+            style={{ color: "var(--text-faint)" }}
+          >
             {subtitle}
           </p>
         </CardHeader>
 
         <CardContent className="px-10 pb-12 space-y-6">{children}</CardContent>
 
-        <div className="absolute bottom-0 left-0 h-[2px] w-full bg-gradient-to-r from-transparent via-fuchsia-400/40 to-transparent" />
+        {/* bottom line */}
+        <div
+          className="absolute bottom-0 left-0 h-[2px] w-full"
+          style={{
+            background:
+              "linear-gradient(90deg, transparent, var(--secondary), transparent)",
+          }}
+        />
       </Card>
     </div>
   );

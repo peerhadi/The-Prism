@@ -87,7 +87,6 @@ export async function authRoutes(app: FastifyInstance) {
       }
 
       const { password, ...safeUser } = user;
-
       return safeUser;
     },
   );
