@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Bot, Activity } from "lucide-react";
 import { Msg } from "@/app/components/ai/types";
+
 import NeuralBackground from "@/app/components/ai/NeuralBackground";
 import SidePanelLeft from "@/app/components/ai/SideLeftPanel";
 import ChatWindow from "@/app/components/ai/ChatWindow";
@@ -39,28 +40,54 @@ export default function NeuralAIConsole() {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#02030a] text-white overflow-x-hidden">
+    <div
+      className="relative min-h-screen overflow-x-hidden"
+      style={{
+        background: "var(--background)",
+        color: "var(--foreground)",
+      }}
+    >
+      {/* BACKGROUND LAYER */}
       <NeuralBackground />
 
+      {/* MAIN LAYOUT */}
       <div className="relative z-10 flex justify-between gap-6 p-6 lg:p-10 min-h-screen w-full">
         <SidePanelLeft />
 
-        {/* CENTER */}
-        <main className="lg:col-span-6 flex flex-col rounded-[40px] border border-white/10 bg-white/5 backdrop-blur-3xl overflow-hidden max-h-[700px]">
-          <div className="p-6 border-b border-white/10 flex items-center justify-between">
+        {/* CENTER PANEL */}
+        <main
+          className="flex flex-col rounded-[40px] border backdrop-blur-3xl overflow-hidden max-h-[700px]"
+          style={{
+            background: "var(--surface)",
+            borderColor: "var(--border)",
+          }}
+        >
+          {/* HEADER */}
+          <div
+            className="p-6 border-b flex items-center justify-between"
+            style={{ borderColor: "var(--border)" }}
+          >
             <div className="flex items-center gap-3">
-              <Bot className="text-cyan-400" />
+              <Bot style={{ color: "var(--primary)" }} />
+
               <div>
-                <p className="text-[10px] tracking-[0.4em] text-cyan-300 uppercase">
+                <p
+                  className="text-[10px] tracking-[0.4em] uppercase"
+                  style={{ color: "var(--primary)" }}
+                >
                   Neural Interface
                 </p>
-                <p className="text-xs text-white/30">Live inference stream</p>
+
+                <p className="text-xs" style={{ color: "var(--text-muted)" }}>
+                  Live inference stream
+                </p>
               </div>
             </div>
 
-            <Activity className="text-purple-400" />
+            <Activity style={{ color: "var(--secondary)" }} />
           </div>
 
+          {/* CHAT */}
           <ChatWindow messages={messages} />
 
           <ChatInput input={input} setInput={setInput} onSend={send} />

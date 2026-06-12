@@ -9,6 +9,19 @@ import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { useToast } from "@/lib/toast/toastStore";
 
+const BREADCRUMBS = [
+  { label: "Users", href: "/dashboard/users" },
+  { label: "Edit" },
+];
+
+const FIELDS = [
+  { key: "username", label: "Username" },
+  { key: "email", label: "Email" },
+  { key: "bio", label: "Bio" },
+  { key: "profileImageUrl", label: "Profile Image URL" },
+  { key: "bannerUrl", label: "Banner URL" },
+];
+
 export default function EditUser() {
   const { id } = useParams();
   const router = useRouter();
@@ -50,57 +63,41 @@ export default function EditUser() {
 
   if (!form) {
     return (
-      <div className="text-cyan-400 p-10 animate-pulse">
+      <div className="p-10 animate-pulse" style={{ color: "var(--primary)" }}>
         decoding user node...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center p-10">
-      <Breadcrumbs
-        items={[
-          { label: "Users", href: "/dashboard/users" },
-          { label: "Edit" },
-        ]}
-      />
+    <div
+      className="min-h-screen flex flex-col items-center p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
+      <Breadcrumbs items={BREADCRUMBS} />
 
       <FormCard title="EDIT USER NODE">
         <div className="space-y-5">
-          <FieldInput
-            label="Username"
-            value={form.username ?? ""}
-            onChange={(e: any) => update("username", e.target.value)}
-          />
-
-          <FieldInput
-            label="Email"
-            value={form.email ?? ""}
-            onChange={(e: any) => update("email", e.target.value)}
-          />
-
-          <FieldInput
-            label="Bio"
-            value={form.bio ?? ""}
-            onChange={(e: any) => update("bio", e.target.value)}
-          />
-
-          <FieldInput
-            label="Profile Image URL"
-            value={form.profileImageUrl ?? ""}
-            onChange={(e: any) => update("profileImageUrl", e.target.value)}
-          />
-
-          <FieldInput
-            label="Banner URL"
-            value={form.bannerUrl ?? ""}
-            onChange={(e: any) => update("bannerUrl", e.target.value)}
-          />
+          {FIELDS.map((field) => (
+            <FieldInput
+              key={field.key}
+              label={field.label}
+              value={form[field.key] ?? ""}
+              onChange={(e: any) => update(field.key, e.target.value)}
+            />
+          ))}
 
           <button
             onClick={save}
-            className="w-full p-5 bg-cyan-400 text-black font-black rounded-lg
-            hover:shadow-[0_0_50px_rgba(34,211,238,0.6)] transition"
+            className="w-full p-5 font-black rounded-lg transition"
+            style={{
+              background: "var(--button-primary)",
+              color: "var(--primary-foreground)",
+              border: "1px solid var(--primary-border)",
+            }}
           >
             SAVE USER NODE
           </button>

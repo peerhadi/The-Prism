@@ -39,6 +39,7 @@ export default function EditArticle() {
     });
 
     const { addToast } = useToast.getState();
+
     addToast({
       title: "Success",
       description: "Successfully modified article",
@@ -49,11 +50,19 @@ export default function EditArticle() {
 
   if (!form)
     return (
-      <div className="text-cyan-400 p-10 animate-pulse">decoding signal...</div>
+      <div className="p-10 animate-pulse" style={{ color: "var(--primary)" }}>
+        decoding signal...
+      </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center justify-center p-10">
+    <div
+      className="min-h-screen flex flex-col items-center justify-center p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
       <BreadcrumbWrapper
         items={[
           { label: "Articles", href: "/dashboard/articles" },
@@ -67,9 +76,18 @@ export default function EditArticle() {
         onClose={() => setToast(false)}
       />
 
-      {/* PAPER (UNCHANGED UI) */}
-      <div className="w-full max-w-2xl p-10 rounded-2xl border border-cyan-500/20 bg-white/[0.02] backdrop-blur-xl shadow-[0_0_60px_rgba(34,211,238,0.08)]">
-        <h1 className="text-center text-3xl font-black text-cyan-400 mb-10">
+      <div
+        className="w-full max-w-2xl p-10 rounded-2xl backdrop-blur-xl"
+        style={{
+          background: "var(--card)",
+          border: "1px solid var(--card-border)",
+          boxShadow: "var(--shadow-lg)",
+        }}
+      >
+        <h1
+          className="mb-10 text-center text-3xl font-black"
+          style={{ color: "var(--primary)" }}
+        >
           EDIT SIGNAL
         </h1>
 
@@ -104,7 +122,12 @@ export default function EditArticle() {
 
           <button
             onClick={save}
-            className="w-full mt-4 p-4 bg-cyan-400 text-black font-black hover:shadow-[0_0_40px_rgba(34,211,238,0.6)] transition rounded-lg"
+            className="mt-4 w-full rounded-lg p-4 font-black transition"
+            style={{
+              background: "var(--primary)",
+              color: "var(--primary-foreground)",
+              border: "1px solid var(--primary-border)",
+            }}
           >
             SAVE SIGNAL
           </button>

@@ -18,7 +18,7 @@ export default function PasswordField({
 }: any) {
   return (
     <div className="space-y-1">
-      <Label className="text-[9px] tracking-[0.4em] text-white/40 uppercase">
+      <Label className="text-[9px] tracking-[0.4em] text-[var(--text-faint)] uppercase">
         {label}
       </Label>
 
@@ -30,13 +30,21 @@ export default function PasswordField({
           onChange={onChange}
           onBlur={onBlur}
           placeholder="••••••••"
-          className="h-10 border-cyan-300/10 bg-white/5 text-cyan-100 pr-10 focus:border-cyan-300/40 focus:ring-0"
+          className="
+            h-10 pr-10
+            bg-[var(--surface)]
+            text-[var(--text-primary)]
+            border border-[var(--border)]
+            placeholder:text-[var(--text-disabled)]
+            focus:border-[var(--border-focus)]
+            focus:ring-0
+          "
         />
 
         <button
           type="button"
           onClick={() => setShow((p: boolean) => !p)}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-cyan-300/70 hover:text-cyan-200"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)]"
         >
           {show ? (
             <VisibilityOff fontSize="small" />
@@ -47,7 +55,9 @@ export default function PasswordField({
       </div>
 
       {error && (
-        <p className="text-[10px] text-red-400 tracking-[0.2em]">{error}</p>
+        <p className="text-[10px] tracking-[0.2em] text-[var(--danger)]">
+          {error}
+        </p>
       )}
     </div>
   );

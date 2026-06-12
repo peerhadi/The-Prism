@@ -12,6 +12,26 @@ import FieldTextArea from "@/app/components/dashboard/FieldTextArea";
 
 import { useToast } from "@/lib/toast/toastStore";
 
+const BREADCRUMBS = [
+  { label: "Perspectives", href: "/dashboard/perspectives" },
+  { label: "Add" },
+];
+
+const SECTIONS = [
+  {
+    key: "neutral",
+    title: "NEUTRAL LAYER",
+    border: "var(--primary-border)",
+    heading: "var(--primary)",
+  },
+  {
+    key: "extreme",
+    title: "EXTREME LAYER",
+    border: "var(--danger-border)",
+    heading: "var(--danger)",
+  },
+];
+
 export default function AddPerspective() {
   const router = useRouter();
 
@@ -62,17 +82,17 @@ export default function AddPerspective() {
   };
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white flex flex-col items-center p-10">
-      <Breadcrumbs
-        items={[
-          { label: "Perspectives", href: "/dashboard/perspectives" },
-          { label: "Add" },
-        ]}
-      />
+    <div
+      className="min-h-screen flex flex-col items-center p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
+      <Breadcrumbs items={BREADCRUMBS} />
 
       <FormCard title="CREATE PERSPECTIVE LENS">
         <div className="space-y-8">
-          {/* TITLE */}
           <FieldInput
             label="Perspective Title"
             icon={Brain}
@@ -80,66 +100,60 @@ export default function AddPerspective() {
             onChange={(e: any) => update("title", e.target.value)}
           />
 
-          {/* NEUTRAL */}
-          <div className="p-6 border border-cyan-500/10 rounded-xl space-y-4">
-            <h2 className="text-cyan-300 font-black">NEUTRAL LAYER</h2>
+          {SECTIONS.map((section) => (
+            <div
+              key={section.key}
+              className="p-6 rounded-xl space-y-4"
+              style={{
+                border: `1px solid ${section.border}`,
+              }}
+            >
+              <h2
+                className="font-black"
+                style={{
+                  color: section.heading,
+                }}
+              >
+                {section.title}
+              </h2>
 
-            <FieldInput
-              label="Title"
-              icon={Brain}
-              value={form.neutralTitle}
-              onChange={(e: any) => update("neutralTitle", e.target.value)}
-            />
+              <FieldInput
+                label="Title"
+                icon={Brain}
+                value={form[`${section.key}Title` as keyof typeof form]}
+                onChange={(e: any) =>
+                  update(`${section.key}Title`, e.target.value)
+                }
+              />
 
-            <FieldInput
-              label="Summary"
-              icon={FileText}
-              value={form.neutralSummary}
-              onChange={(e: any) => update("neutralSummary", e.target.value)}
-            />
+              <FieldInput
+                label="Summary"
+                icon={FileText}
+                value={form[`${section.key}Summary` as keyof typeof form]}
+                onChange={(e: any) =>
+                  update(`${section.key}Summary`, e.target.value)
+                }
+              />
 
-            <FieldTextArea
-              label="Description"
-              icon={AlignLeft}
-              value={form.neutralDescription}
-              onChange={(e: any) =>
-                update("neutralDescription", e.target.value)
-              }
-            />
-          </div>
-
-          {/* EXTREME */}
-          <div className="p-6 border border-red-500/20 rounded-xl space-y-4">
-            <h2 className="text-red-400 font-black">EXTREME LAYER</h2>
-
-            <FieldInput
-              label="Title"
-              icon={Brain}
-              value={form.extremeTitle}
-              onChange={(e: any) => update("extremeTitle", e.target.value)}
-            />
-
-            <FieldInput
-              label="Summary"
-              icon={FileText}
-              value={form.extremeSummary}
-              onChange={(e: any) => update("extremeSummary", e.target.value)}
-            />
-
-            <FieldTextArea
-              label="Description"
-              icon={AlignLeft}
-              value={form.extremeDescription}
-              onChange={(e: any) =>
-                update("extremeDescription", e.target.value)
-              }
-            />
-          </div>
+              <FieldTextArea
+                label="Description"
+                icon={AlignLeft}
+                value={form[`${section.key}Description` as keyof typeof form]}
+                onChange={(e: any) =>
+                  update(`${section.key}Description`, e.target.value)
+                }
+              />
+            </div>
+          ))}
 
           <button
             onClick={submit}
-            className="w-full p-5 bg-cyan-400 text-black font-black rounded-lg
-            hover:shadow-[0_0_50px_rgba(34,211,238,0.6)] transition"
+            className="w-full p-5 font-black rounded-lg transition"
+            style={{
+              background: "var(--button-primary)",
+              color: "var(--primary-foreground)",
+              border: "1px solid var(--primary-border)",
+            }}
           >
             TRANSMIT PERSPECTIVE SPLIT
           </button>

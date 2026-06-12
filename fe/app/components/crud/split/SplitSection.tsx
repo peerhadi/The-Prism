@@ -4,12 +4,22 @@ import { ArrowRight, Split } from "lucide-react";
 
 export default function SplitSection({ event }: { event: any }) {
   return (
-    <section className="relative min-h-screen overflow-hidden border-y border-white/5">
+    <section className="relative overflow-hidden rounded-[40px] border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-2xl">
       {/* LABEL */}
-      <div className="absolute top-10 left-1/2 hidden -translate-x-1/2 lg:flex">
-        <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/60 px-5 py-3 backdrop-blur-xl">
-          <Split className="h-4 w-4 text-cyan-400" />
-          <span className="text-[10px] font-black tracking-[0.4em] uppercase">
+      <div className="absolute left-1/2 top-10 z-30 hidden -translate-x-1/2 lg:flex">
+        <div
+          className="
+            flex items-center gap-3
+            rounded-full
+            border border-[var(--border)]
+            bg-[var(--surface-secondary)]
+            px-5 py-3
+            backdrop-blur-xl
+          "
+        >
+          <Split className="h-4 w-4 text-[var(--primary)]" />
+
+          <span className="text-[10px] font-black tracking-[0.4em] uppercase text-[var(--text-primary)]">
             NARRATIVE FRACTURE
           </span>
         </div>
@@ -17,53 +27,97 @@ export default function SplitSection({ event }: { event: any }) {
 
       <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2">
         {/* LEFT */}
-        <div className="group relative flex items-end bg-[#020812] overflow-hidden">
+        <div className="group relative flex items-end overflow-hidden">
           <img
             src={event.imageUrl}
-            className="absolute inset-0 h-full w-full object-cover opacity-30 group-hover:opacity-60 group-hover:scale-105 transition-all"
+            className="
+              absolute inset-0 h-full w-full object-cover
+              opacity-30
+              transition-all duration-700
+              group-hover:scale-105
+              group-hover:opacity-60
+            "
           />
 
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-[#020812]/70 to-[#020812]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary-soft)] via-[var(--background)]/70 to-[var(--background)]" />
+
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,var(--primary-soft),transparent_60%)]" />
 
           <div className="relative z-10 p-10 md:p-20">
-            <div className="mb-6 flex items-center gap-2 text-cyan-400 text-[10px] uppercase tracking-[0.4em]">
+            <div className="mb-6 text-[10px] uppercase tracking-[0.4em] text-[var(--primary)]">
               VERIFIED NARRATIVE
             </div>
 
-            <h2 className="text-3xl md:text-6xl font-black uppercase">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--text-primary)] md:text-6xl">
               {event.neutral.title}
             </h2>
 
-            <p className="mt-6 text-white/50">{event.neutral.description}</p>
+            <p className="mt-6 max-w-2xl text-[var(--text-secondary)]">
+              {event.neutral.description}
+            </p>
 
-            <button className="mt-10 flex items-center gap-3 text-cyan-400 uppercase text-[10px] tracking-[0.3em]">
-              VIEW OFFICIAL FEED <ArrowRight className="h-4 w-4" />
+            <button
+              className="
+                mt-10 flex items-center gap-3
+                text-[10px] font-black
+                tracking-[0.3em]
+                uppercase
+                text-[var(--primary)]
+                transition-all
+                hover:translate-x-1
+              "
+            >
+              VIEW OFFICIAL FEED
+              <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>
 
         {/* RIGHT */}
-        <div className="group relative flex items-end bg-[#090202] overflow-hidden">
+        <div className="group relative flex items-end overflow-hidden border-t border-[var(--border)] lg:border-l lg:border-t-0">
           <img
             src={event.imageUrl}
-            className="absolute inset-0 h-full w-full object-cover opacity-30 grayscale group-hover:grayscale-0 group-hover:opacity-70 group-hover:scale-105 transition-all"
+            className="
+              absolute inset-0 h-full w-full object-cover
+              opacity-30 grayscale
+              transition-all duration-700
+              group-hover:scale-105
+              group-hover:opacity-70
+              group-hover:grayscale-0
+            "
           />
 
-          <div className="absolute inset-0 bg-gradient-to-bl from-red-500/20 via-[#090202]/70 to-[#090202]" />
+          <div className="absolute inset-0 bg-gradient-to-bl from-[var(--secondary-soft)] via-[var(--background)]/70 to-[var(--background)]" />
 
-          <div className="relative z-10 p-10 md:p-20">
-            <div className="mb-6 text-red-400 text-[10px] uppercase tracking-[0.4em]">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,var(--secondary-soft),transparent_60%)]" />
+
+          <div className="relative z-10 p-10 text-left md:p-20 lg:text-right">
+            <div className="mb-6 text-[10px] uppercase tracking-[0.4em] text-[var(--secondary)]">
               EXTREME NARRATIVE
             </div>
 
-            <h2 className="text-3xl md:text-6xl font-black uppercase">
+            <h2 className="text-3xl font-black uppercase tracking-tight text-[var(--text-primary)] md:text-6xl">
               {event.extreme.title}
             </h2>
 
-            <p className="mt-6 text-white/50">{event.extreme.description}</p>
+            <p className="mt-6 ml-auto max-w-2xl text-[var(--text-secondary)]">
+              {event.extreme.description}
+            </p>
 
-            <button className="mt-10 flex items-center gap-3 text-red-400 uppercase text-[10px] tracking-[0.3em]">
-              VIEW LEAKED FEED <ArrowRight className="h-4 w-4" />
+            <button
+              className="
+                mt-10 flex items-center gap-3
+                text-[10px] font-black
+                tracking-[0.3em]
+                uppercase
+                text-[var(--secondary)]
+                transition-all
+                hover:translate-x-1
+                lg:ml-auto
+              "
+            >
+              VIEW LEAKED FEED
+              <ArrowRight className="h-4 w-4" />
             </button>
           </div>
         </div>

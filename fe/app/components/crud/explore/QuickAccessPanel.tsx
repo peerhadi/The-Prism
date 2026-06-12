@@ -1,17 +1,43 @@
+"use client";
+
 export default function QuickAccessPanel({ list }: any) {
   return (
-    <div className="rounded-[36px] border border-white/10 bg-black/30 p-8">
-      <h3 className="text-[11px] uppercase tracking-[0.35em] text-purple-400 mb-6">
-        Quick Access
-      </h3>
+    <div className="relative overflow-hidden rounded-[36px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl">
+      {/* Glow */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 right-0 h-[180px] w-[180px] rounded-full bg-[var(--glass-glass-bg)] blur-[100px]" />
+      </div>
 
-      <div className="space-y-4">
-        {list.map((a: any) => (
-          <div key={a.id} className="p-4 rounded-2xl border border-white/10">
-            <h4 className="font-bold text-sm">{a.title}</h4>
-            <p className="text-xs text-white/40 mt-2">{a.description}</p>
-          </div>
-        ))}
+      <div className="relative z-10">
+        <h3 className="mb-6 text-[11px] font-black tracking-[0.35em] text-[var(--primary)] uppercase">
+          Quick Access
+        </h3>
+
+        <div className="space-y-4">
+          {list.map((a: any) => (
+            <div
+              key={a.id}
+              className="
+                group
+                rounded-2xl
+                border border-[var(--border)]
+                bg-[var(--surface-secondary)]
+                p-4
+                transition-all duration-300
+                hover:border-[var(--primary-border)]
+                hover:bg-[var(--surface-hover)]
+              "
+            >
+              <h4 className="text-sm font-bold text-[var(--text-primary)] transition-colors group-hover:text-[var(--primary)]">
+                {a.title}
+              </h4>
+
+              <p className="mt-2 text-xs leading-relaxed text-[var(--text-secondary)]">
+                {a.description}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

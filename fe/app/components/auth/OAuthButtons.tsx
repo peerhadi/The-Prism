@@ -16,7 +16,7 @@ export default function OAuthButtons({
       <Button
         type="button"
         onClick={onGoogle}
-        className="h-10 w-full border border-cyan-300/20 bg-white/5 text-cyan-300 hover:bg-cyan-300/10 hover:text-white transition"
+        className="h-10 w-full border bg-[var(--surface)] text-[var(--primary)] border-[var(--primary-border)] hover:bg-[var(--primary-soft)] hover:text-[var(--text-primary)] transition"
       >
         <GoogleIcon sx={{ fontSize: 16 }} />
         {googleLabel}
@@ -25,7 +25,7 @@ export default function OAuthButtons({
       <Button
         type="button"
         onClick={onGithub}
-        className="h-10 w-full border border-fuchsia-300/20 bg-white/5 text-fuchsia-300 hover:bg-fuchsia-300/10 hover:text-white transition"
+        className="h-10 w-full border bg-[var(--surface)] text-[var(--secondary)] border-[var(--secondary-border)] hover:bg-[var(--secondary-soft)] hover:text-[var(--text-primary)] transition"
       >
         <GitHubIcon sx={{ fontSize: 16 }} />
         {githubLabel}

@@ -16,8 +16,6 @@ import AuthDivider from "@/app/components/auth/AuthDivider";
 import OAuthButtons from "@/app/components/auth/OAuthButtons";
 import SuccessPopup from "@/app/components/auth/SuccessPopup";
 
-import GoogleIcon from "@mui/icons-material/Google";
-import GitHubIcon from "@mui/icons-material/GitHub";
 import { useToast } from "@/lib/toast/toastStore";
 
 export default function SignInPage() {
@@ -68,7 +66,7 @@ export default function SignInPage() {
     },
 
     validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email format").required(),
+      email: Yup.string().email("Invalid format").required(),
       password: Yup.string().min(6).required(),
     }),
 
@@ -124,7 +122,7 @@ export default function SignInPage() {
   return (
     <>
       <AuthShell title="LOGIN" subtitle="Identity Verification Required">
-        <form onSubmit={formik.handleSubmit} className="space-y-5">
+        <form className="space-y-5" onSubmit={formik.handleSubmit}>
           <AuthField
             label="Email"
             name="email"
@@ -146,18 +144,18 @@ export default function SignInPage() {
             error={formik.touched.password && formik.errors.password}
           />
 
-          {/* controls row (UNCHANGED UI) */}
+          {/* controls */}
           <div className="flex items-center justify-between pt-1">
             <div className="flex items-center gap-2">
-              <Checkbox className="border-cyan-300/40 data-[state=checked]:bg-cyan-400" />
-              <span className="text-[9px] tracking-[0.35em] text-white/40 uppercase">
+              <Checkbox className="border-[var(--border)] data-[state=checked]:bg-[var(--primary)]" />
+              <span className="text-[9px] tracking-[0.35em] uppercase text-[var(--text-muted)]">
                 Persist Session
               </span>
             </div>
 
             <Link
               href="#"
-              className="text-[9px] tracking-[0.35em] text-cyan-300/60 uppercase hover:text-cyan-300"
+              className="text-[9px] tracking-[0.35em] uppercase text-[var(--accent)]/70 hover:text-[var(--accent)]"
             >
               Lost Key?
             </Link>
@@ -165,9 +163,15 @@ export default function SignInPage() {
 
           <Button
             type="submit"
-            className="w-full h-10 rounded-md bg-gradient-to-r from-cyan-400 via-cyan-300 to-fuchsia-400 text-black font-black tracking-[0.25em] uppercase shadow-[0_0_30px_rgba(34,211,238,0.35)] hover:scale-[1.02] transition"
+            className="
+              w-full h-10 rounded-md font-black tracking-[0.25em] uppercase
+              bg-[var(--primary)]
+              text-[var(--text-inverse)]
+              shadow-[0_0_30px_var(--primary-glow)]
+              hover:scale-[1.02] transition
+            "
           >
-            Sign In
+            SIGN IN
           </Button>
         </form>
 
@@ -180,9 +184,9 @@ export default function SignInPage() {
           githubLabel="GitHub Sign In"
         />
 
-        <p className="text-center text-[10px] tracking-[0.35em] text-white/30 uppercase pt-2">
+        <p className="text-center text-[10px] tracking-[0.35em] uppercase text-[var(--text-faint)] pt-2">
           New operative?{" "}
-          <Link className="text-cyan-300 hover:underline" href="/signup">
+          <Link className="text-[var(--accent)] hover:underline" href="/signup">
             Register here
           </Link>
         </p>
@@ -200,8 +204,6 @@ export default function SignInPage() {
             description: "Logged In Successfully",
           });
 
-          // ⚡ FIX: Forces a clean window load, ensuring the token is read fresh
-          // and layout components like the Navbar mount exactly when they should.
           window.location.href = "/stories";
         }}
       />

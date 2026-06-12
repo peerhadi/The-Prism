@@ -1,65 +1,99 @@
 "use client";
 
 import { Activity, Globe, Radar, Sparkles, Compass } from "lucide-react";
-import CategoryChips from "./CategoryChips";
 
 export default function ExploreHero({
   articles,
   categories,
   filteredCount,
   smallCount,
-  selectedCategory,
-  setSelectedCategory,
 }: any) {
   return (
-    <section className="relative overflow-hidden rounded-[50px] border border-white/10 bg-white/[0.03] p-10 backdrop-blur-2xl">
-      <div className="flex flex-col xl:flex-row xl:justify-between xl:items-end gap-10">
+    <section className="relative overflow-hidden rounded-[50px] border border-[var(--border)] bg-[var(--glass-bg)] p-10 backdrop-blur-2xl">
+      {/* Glow */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 h-[300px] w-[300px] rounded-full bg-[var(--primary-soft)] blur-[120px] animate-pulse" />
+
+        <div className="absolute bottom-0 right-0 h-[300px] w-[300px] rounded-full bg-[var(--secondary-soft)] blur-[120px] animate-pulse" />
+      </div>
+
+      <div className="relative z-10 flex flex-col gap-10 xl:flex-row xl:items-end xl:justify-between">
         {/* LEFT */}
-        <div>
-          <div className="flex gap-3 mb-6">
-            <div className="px-4 py-2 text-[10px] uppercase tracking-[0.3em] text-cyan-400 border border-cyan-500/30 bg-cyan-500/10 rounded-full">
-              <Compass className="inline h-3 w-3 mr-2" />
-              Explore Network
+        <div className="max-w-5xl">
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <div className="rounded-full border border-[var(--primary-border)] bg-[var(--primary-soft)] px-4 py-2 text-[10px] font-black tracking-[0.3em] text-[var(--primary)] uppercase">
+              <Compass className="mr-2 inline h-3 w-3" />
+              EXPLORE NETWORK
+            </div>
+
+            <div className="rounded-full border border-[var(--border)] bg-[var(--surface-secondary)] px-4 py-2 text-[10px] font-black tracking-[0.2em] text-[var(--text-muted)] uppercase">
+              DISCOVERY ENGINE
             </div>
           </div>
 
-          <h1 className="text-6xl md:text-[9rem] font-black uppercase leading-[0.9]">
+          <h1 className="text-6xl font-black tracking-tighter uppercase text-[var(--text-primary)] md:text-[9rem]">
             EXPLORE
           </h1>
 
-          <p className="text-white/50 mt-6 max-w-2xl">
-            Discover narratives, investigate signals, and navigate intelligence
-            graphs.
+          <p className="mt-8 max-w-3xl text-[var(--text-secondary)]">
+            Discover narratives, investigate signals, track information
+            movement, and navigate intelligence networks across the Prism
+            ecosystem.
           </p>
         </div>
 
         {/* RIGHT STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           {[
-            { icon: Activity, label: "Articles", value: articles.length },
-            { icon: Globe, label: "Categories", value: categories.length },
-            { icon: Radar, label: "Filtered", value: filteredCount },
-            { icon: Sparkles, label: "Discoveries", value: smallCount },
+            {
+              icon: Activity,
+              label: "Articles",
+              value: articles.length,
+            },
+            {
+              icon: Globe,
+              label: "Categories",
+              value: categories.length,
+            },
+            {
+              icon: Radar,
+              label: "Filtered",
+              value: filteredCount,
+            },
+            {
+              icon: Sparkles,
+              label: "Discoveries",
+              value: smallCount,
+            },
           ].map((item, i) => (
             <div
               key={i}
-              className="p-5 rounded-3xl border border-white/10 bg-black/30"
+              className="
+                rounded-3xl
+                border border-[var(--border)]
+                bg-[var(--surface-secondary)]
+                p-5
+                backdrop-blur-xl
+              "
             >
-              <item.icon className="h-6 w-6 text-cyan-400 mb-4" />
-              <div className="text-3xl font-black">{item.value}</div>
-              <div className="text-[10px] uppercase tracking-[0.25em] text-white/40">
+              <item.icon
+                className="mb-4 h-6 w-6"
+                style={{
+                  color: "var(--primary)",
+                }}
+              />
+
+              <div className="text-3xl font-black text-[var(--text-primary)]">
+                {item.value}
+              </div>
+
+              <div className="text-[10px] uppercase text-[var(--text-muted)]">
                 {item.label}
               </div>
             </div>
           ))}
         </div>
       </div>
-
-      <CategoryChips
-        categories={categories}
-        selected={selectedCategory}
-        onSelect={setSelectedCategory}
-      />
     </section>
   );
 }

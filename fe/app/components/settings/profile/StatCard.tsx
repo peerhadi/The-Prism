@@ -12,17 +12,41 @@ export function StatCard({
   subtitle: string;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-3xl border border-white/10 bg-black/30 p-6 transition-all duration-300 hover:border-cyan-500/30">
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+    <div
+      className="group relative overflow-hidden rounded-3xl border p-6 transition-all duration-300"
+      style={{
+        background: "var(--surface)",
+        borderColor: "var(--border)",
+      }}
+    >
+      {/* HOVER GLOW */}
+      <div
+        className="absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--primary-soft), var(--secondary-soft))",
+        }}
+      />
 
+      {/* CONTENT */}
       <div className="relative z-10">
-        <p className="text-[10px] font-black tracking-[0.25em] text-cyan-400 uppercase">
+        <p
+          className="text-[10px] font-black tracking-[0.25em] uppercase"
+          style={{ color: "var(--primary)" }}
+        >
           {title}
         </p>
 
-        <h3 className="mt-3 text-4xl font-black">{value}</h3>
+        <h3
+          className="mt-3 text-4xl font-black"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {value}
+        </h3>
 
-        <p className="mt-2 text-sm text-white/40">{subtitle}</p>
+        <p className="mt-2 text-sm" style={{ color: "var(--text-muted)" }}>
+          {subtitle}
+        </p>
       </div>
     </div>
   );

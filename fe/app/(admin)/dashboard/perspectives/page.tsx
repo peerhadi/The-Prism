@@ -13,6 +13,16 @@ type Perspective = {
   extreme: any;
 };
 
+const BREADCRUMBS = [{ label: "Perspectives" }];
+
+const PAGE = {
+  title: "PERSPECTIVES GRID",
+  toast: "Perspective field synced",
+  createHref: "/dashboard/perspectives/add",
+  createLabel: "+ NEW PERSPECTIVE",
+  subtitle: "neutral • extreme data layers",
+};
+
 export default function PerspectivesPage() {
   const [items, setItems] = useState<Perspective[]>([]);
   const [toast, setToast] = useState(false);
@@ -27,23 +37,36 @@ export default function PerspectivesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white p-10">
-      <Breadcrumbs items={[{ label: "Perspectives" }]} />
+    <div
+      className="min-h-screen p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
+      <Breadcrumbs items={BREADCRUMBS} />
+
       <Snackbar
         open={toast}
-        message="Perspective field synced"
+        message={PAGE.toast}
         onClose={() => setToast(false)}
       />
 
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-4xl font-black text-cyan-400">PERSPECTIVES GRID</h1>
+        <h1 className="text-4xl font-black" style={{ color: "var(--primary)" }}>
+          {PAGE.title}
+        </h1>
 
         <Link
-          href="/dashboard/perspectives/add"
-          className="px-5 py-2 border border-cyan-400/40 bg-cyan-400/10
-          hover:bg-cyan-400 hover:text-black transition font-bold"
+          href={PAGE.createHref}
+          className="px-5 py-2 font-bold transition rounded-lg"
+          style={{
+            border: "1px solid var(--primary-border)",
+            background: "var(--primary-soft)",
+            color: "var(--primary)",
+          }}
         >
-          + NEW PERSPECTIVE
+          {PAGE.createLabel}
         </Link>
       </div>
 
@@ -54,20 +77,29 @@ export default function PerspectivesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="p-6 border border-cyan-500/10 bg-white/[0.02]
-            hover:border-cyan-400/30 hover:bg-cyan-400/5 transition"
+            className="p-6 transition rounded-xl"
+            style={{
+              border: "1px solid var(--border)",
+              background: "var(--surface)",
+            }}
           >
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-xl font-bold">{p.title}</h2>
-                <p className="text-cyan-100/40 text-sm">
-                  neutral • extreme data layers
+                <h2
+                  className="text-xl font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {p.title}
+                </h2>
+
+                <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+                  {PAGE.subtitle}
                 </p>
               </div>
 
               <Link
                 href={`/dashboard/perspectives/${p.id}`}
-                className="text-cyan-400 hover:text-cyan-200"
+                style={{ color: "var(--primary)" }}
               >
                 edit →
               </Link>

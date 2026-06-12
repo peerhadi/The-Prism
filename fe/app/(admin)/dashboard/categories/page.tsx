@@ -26,8 +26,15 @@ export default function CategoriesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#02050a] text-white p-10">
+    <div
+      className="min-h-screen p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
       <Breadcrumbs items={[{ label: "Categories" }]} />
+
       <Snackbar
         open={toast}
         message="Category spectrum loaded"
@@ -35,12 +42,23 @@ export default function CategoriesPage() {
       />
 
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-4xl font-black text-cyan-400">CATEGORIES GRID</h1>
+        <h1
+          className="text-4xl font-black"
+          style={{
+            color: "var(--primary)",
+          }}
+        >
+          CATEGORIES GRID
+        </h1>
 
         <Link
           href="/dashboard/categories/add"
-          className="px-5 py-2 border border-cyan-400/40 bg-cyan-400/10
-          hover:bg-cyan-400 hover:text-black transition font-bold"
+          className="px-5 py-2 border transition font-bold"
+          style={{
+            borderColor: "var(--primary-border)",
+            background: "var(--primary-soft)",
+            color: "var(--primary)",
+          }}
         >
           + NEW CATEGORY
         </Link>
@@ -53,20 +71,31 @@ export default function CategoriesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="p-6 border border-cyan-500/10 bg-white/[0.02]
-            hover:border-cyan-400/30 hover:bg-cyan-400/5 transition"
+            className="p-6 border transition"
+            style={{
+              background: "var(--card)",
+              borderColor: "var(--card-border)",
+            }}
           >
             <div className="flex justify-between">
               <div>
                 <h2 className="text-xl font-bold">{c.name}</h2>
-                <p className="text-cyan-100/40 text-sm">
+
+                <p
+                  className="text-sm"
+                  style={{
+                    color: "var(--text-muted)",
+                  }}
+                >
                   avg bias: {c.averageBias}
                 </p>
               </div>
 
               <Link
                 href={`/dashboard/categories/${c.id}`}
-                className="text-cyan-400 hover:text-cyan-200"
+                style={{
+                  color: "var(--primary)",
+                }}
               >
                 edit →
               </Link>

@@ -1,61 +1,68 @@
 import { jsonrepair } from "jsonrepair";
 
 const CLASSIFY_PROMPT = `
-You are an expert news editor.
+You are an expert news editor. Your task is to filter a list of news articles based on strict content safety guidelines, and then organize the allowed articles into specific UI categories in a strict JSON format.
 
-You will receive articles.
+---
 
-Select EXACTLY:
+### 1. CONTENT SAFETY FILTER (Strictly 13+ Family-Friendly)
+Evaluate the title, description, and summary of every article. EXCLUDE any article that contains even a minor reference to:
+- Explicit sexual content, sexual misconduct, abuse allegations, or adult entertainment.
+- Graphic violence, murder, domestic abuse, explosions/fires with casualties, or detailed crimes.
+- Suicide or self-harm.
+- Explicit drug use or trafficking.
 
-- major_stories (2)
-- majorish_stories (6)
-- good_headlines (4)
-- minor_interesting (2)
-- trending (8)
-- eye_catching (5)
-- controversial (1)
+*Self-Correction Note:* If an article is borderline or mentions any sensitive keyword, drop it immediately. Informative over sensational.
 
-For every selected article return:
+---
+
+### 2. SLOT FILLING & DUPLICATION RULES
+Because the final output requires specific quantities for each array, you MUST reuse the allowed (safe) articles to fill the numbers if the original list is too small.
+
+- Do not use articles that failed the Content Safety Filter.
+- Fill the exact counts required below. If you run out of unique safe articles, cycle back and repeat the safe articles until the exact structure is fully populated.
+
+---
+
+### 3. OUTPUT STRUCTURE REQUIREMENTS
+Generate a strict JSON object with these exact keys and array lengths:
+
+- "major_stories": Exactly 2 items (type: "HERO")
+- "majorish_stories": Exactly 6 items (type: "SMALL")
+- "good_headlines": Exactly 4 items (type: "SHORT")
+- "minor_interesting": Exactly 2 items (type: "SHORT")
+- "trending": Exactly 8 items (type: "LIST")
+- "eye_catching": Exactly 5 items (type: "SMALL")
+- "controversial": Exactly 1 item (type: "LIST")
+
+Total items in JSON must equal exactly 28.
+
+---
+
+### 4. JSON SCHEMA PER ITEM
+Every item inside the arrays must follow this schema exactly. No fields can be missing or null:
 
 {
-  "title": "",
-  "description": "",
-  "summary": "",
-  "biasLevel": 0,
-  "imageUrl": null,
-  "sources": [],
-  "type": SHORT/HERO/SMALL/LIST depending on the importance.
-}
-ALL FIELDS ARE MANDATORY LEAVE THEM EMPTY IF NOT POSSIBLE TO FILL. MANDATORY TO MENTION. ALL FIELDS: title, description, summary, biasLevel, imageUrl, sources, type ALL MANDATORY DO NOT MISS ONE, CREATE IT IF NECESSARY, BUT SET IT TO A VALID VALUE
-Return STRICT JSON ONLY:
-
-{
-  "major_stories": [],
-  "majorish_stories": [],
-  "good_headlines": [],
-  "minor_interesting": [],
-  "trending": [],
-  "eye_catching": [],
-  "controversial": []
+  "title": "Preserve original title exactly",
+  "description": "Preserve original description exactly (or empty string if original was empty)",
+  "summary": "A short, strictly neutral 1-sentence summary",
+  "biasLevel": 0.0, 
+  "imageUrl": "Must be a valid string URL. Never null or empty.",
+  "sources": [    
+    {
+      "source": "Source Name",
+      "url": "Source URL"
+    }
+  ],
+  "type": "Must match the layout type specified in section 3 (HERO, SMALL, SHORT, or LIST)"
 }
 
-Rules:
-- Sources should ALWAYS BE Arrays, Never Objects in the format [{
-  source: ""
-  url: ""
-}, ...]
-- Preserve title exactly.
-- I NEED 2 HERO CARDS, 10 SMALL CARDS, 12 LIST CARDS, 4 SHORT CARDS EXACTLY.
-- 28 TOTAL STORIES MINIMUM
-- IMAGE URLS can NOT be null, you need to set it to some value, repeat links if necessary
-- DO NOT EVER EVER GIVE ME AN EXPLANATION. NO text before or after JSON.
-- Preserve description exactly.
-- summary should be a short neutral summary.
-- biasLevel must be a number between 0 and 1.
-- sources must contain the original source information.
-- type must match the section the article belongs to.
-- Return JSON only.
-- DO NOT put any article without an IMAGE URL, if there isn't one present, do not use that article
+---
+
+### 5. EXECUTION GUARDRAIL
+- Return STRICT JSON ONLY. 
+- Do not wrap the JSON in markdown code blocks (no \`\`\`json). 
+- Do not include conversational text, notes, or explanations before or after the JSON payload.
 `;
 
 function safeParse(text: string) {

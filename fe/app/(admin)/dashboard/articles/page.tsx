@@ -28,24 +28,36 @@ export default function ArticlesPage() {
         setToast(true);
       });
   }, []);
+
   return (
-    <div className="min-h-screen bg-[#02050a] text-white p-10">
+    <div
+      className="min-h-screen p-10"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
       <Breadcrumbs items={[{ label: "Articles" }]} />
+
       <Snackbar
         open={toast}
         message="Signal stream loaded"
         onClose={() => setToast(false)}
       />
 
-      <div className="flex justify-between items-center mb-10">
+      <div className="mb-10 flex items-center justify-between">
         <h1 className="text-4xl font-black tracking-tight">
-          <span className="text-cyan-400">ARTICLES</span> GRID
+          <span style={{ color: "var(--primary)" }}>ARTICLES</span> GRID
         </h1>
 
         <Link
           href="/dashboard/articles/add"
-          className="px-5 py-2 border border-cyan-400/40 bg-cyan-400/10
-          hover:bg-cyan-400 hover:text-black transition font-bold tracking-widest"
+          className="px-5 py-2 font-bold tracking-widest transition"
+          style={{
+            border: "1px solid var(--primary-border)",
+            background: "var(--primary-soft)",
+            color: "var(--primary)",
+          }}
         >
           + NEW ENTRY
         </Link>
@@ -58,20 +70,31 @@ export default function ArticlesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="p-6 border border-cyan-500/10 bg-white/[0.02]
-            hover:bg-cyan-400/5 hover:border-cyan-400/30 transition"
+            className="p-6 transition"
+            style={{
+              background: "var(--card)",
+              border: "1px solid var(--card-border)",
+            }}
           >
             <div className="flex justify-between">
               <div>
                 <h2 className="text-xl font-bold">{a.title}</h2>
-                <p className="text-cyan-100/40 text-sm mt-1">
+
+                <p
+                  className="mt-1 text-sm"
+                  style={{
+                    color: "var(--text-muted)",
+                  }}
+                >
                   type: {a.type} • bias: {a.biasLevel}
                 </p>
               </div>
 
               <Link
                 href={`/dashboard/articles/${a.id}`}
-                className="text-cyan-400 hover:text-cyan-200"
+                style={{
+                  color: "var(--primary)",
+                }}
               >
                 edit →
               </Link>

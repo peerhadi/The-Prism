@@ -32,10 +32,10 @@ export default function ArchivePage() {
       .then((r) => r.json())
       .then((fetched) => {
         fetched = fetched.slice(
-          Math.max(fetched.length - 56),
+          Math.max(0, fetched.length - 56),
           Math.max(28, fetched.length - 28),
         );
-
+        console.log(fetched);
         setHeroStory(fetched[0] || null);
         setFeatured(fetched.slice(1, 3));
         setStream(fetched.slice(3, 5));
@@ -43,7 +43,6 @@ export default function ArchivePage() {
         setArticles(fetched);
       });
   }, []);
-
   if (!heroStory || !articles.length) return <PrismLoader />;
 
   const left = (

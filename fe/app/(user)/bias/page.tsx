@@ -52,10 +52,31 @@ export default function BiasMethodologyPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#02040A] text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.12),transparent_35%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.12),transparent_30%)]" />
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{
+        background: "var(--background)",
+        color: "var(--text-primary)",
+      }}
+    >
+      {/* GLOBAL BACKGROUND LAYERS */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at top, var(--primary-soft), transparent 35%)",
+        }}
+      />
 
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at bottom right, var(--secondary-soft), transparent 30%)",
+        }}
+      />
+
+      {/* CONTENT */}
       <main className="relative z-10 mx-auto max-w-[1800px] px-6 py-12 md:px-10">
         <BiasHero />
         <BiasScale />

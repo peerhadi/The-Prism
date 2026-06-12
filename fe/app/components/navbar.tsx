@@ -124,7 +124,7 @@ export function Navbar() {
   return (
     <>
       {/* NAVBAR */}
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-black/50 backdrop-blur-2xl">
+      <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-2xl">
         {/* glow */}
         <div className="absolute bottom-0 left-0 h-px w-full bg-cyan-400/70 shadow-[0_0_20px_#22d3ee]" />
 
@@ -133,17 +133,17 @@ export function Navbar() {
           <div className="flex items-center gap-5">
             <button
               onClick={() => setOpen(true)}
-              className="group flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] transition-all hover:border-cyan-500/30 hover:bg-cyan-500/10"
+              className="group flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] transition-all hover:border-[var(--primary-border)] hover:bg-[var(--primary-soft)]"
             >
               <Menu
                 suppressHydrationWarning
-                className="h-5 w-5 text-cyan-400 transition-transform group-hover:scale-110"
+                className="h-5 w-5 text-[var(--primary)] transition-transform group-hover:scale-110"
               />
             </button>
 
             <Link
               href={authenticated ? "/stories" : "/"}
-              className="flex items-center gap-3"
+              className="flex items-center gap-3 font-black"
             >
               <img
                 src="/logo.png"
@@ -152,11 +152,11 @@ export function Navbar() {
               />
 
               <div>
-                <h1 className="text-[22px] leading-none font-black tracking-tight uppercase">
+                <h1 className="text-[22px] leading-none text-[var(--text-primary)]! tracking-tight uppercase">
                   The Prism
                 </h1>
 
-                <p className="mt-1 text-[9px] tracking-[0.3em] text-cyan-400 uppercase">
+                <p className="mt-1 text-[9px] tracking-[0.3em] text-[var(--primary)] uppercase">
                   Narrative Intelligence
                 </p>
               </div>
@@ -174,7 +174,7 @@ export function Navbar() {
               <Link
                 key={name}
                 href={href}
-                className="relative text-[13px] font-black tracking-[0.25em] text-white/50 uppercase transition-colors hover:text-cyan-400"
+                className="relative text-[13px] font-black tracking-[0.25em] text-[var(--text-secondary)] uppercase transition-colors hover:text-[var(--primary)]"
               >
                 {name}
               </Link>
@@ -188,14 +188,14 @@ export function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-3 text-[11px] font-black tracking-[0.25em] text-white/60 uppercase transition-all hover:border-white/20 hover:bg-white/10 md:block"
+                  className="hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-secondary)] px-5 py-3 text-[11px] font-black tracking-[0.25em] text-[var(--text-secondary)] uppercase transition-all hover:border-[var(--border-strong)] hover:bg-[var(--surface-hover)] md:block"
                 >
                   Log In
                 </Link>
 
                 <Link
                   href="/signup"
-                  className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 px-5 py-3 text-[11px] font-black tracking-[0.25em] text-cyan-400 uppercase transition-all hover:scale-[1.03] hover:bg-cyan-500/20"
+                  className="rounded-2xl border border-[var(--primary-border)] bg-[var(--primary-soft)] px-5 py-3 text-[11px] font-black tracking-[0.25em] text-[var(--primary)] uppercase transition-all hover:scale-[1.03] hover:bg-[var(--surface-hover)]"
                 >
                   Sign Up
                 </Link>
@@ -204,7 +204,11 @@ export function Navbar() {
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className={`group flex items-center gap-3 ${userImage ? "" : "border border-cyan-500/20 bg-cyan-500/[0.04]"} p-2 transition-all hover:border-cyan-500/40 hover:bg-cyan-500/[0.08] overflow-hidden rounded-4xl`}
+                  className={`group flex items-center gap-3 ${
+                    userImage
+                      ? ""
+                      : "border border-[var(--primary-border)] bg-[var(--primary-soft)]"
+                  } p-2 transition-all hover:border-[var(--primary)] hover:bg-[var(--surface-hover)] overflow-hidden rounded-4xl`}
                 >
                   {userImage?.length ? (
                     <img
@@ -213,17 +217,18 @@ export function Navbar() {
                       className="h-11 w-12 rounded-4xl object-cover"
                     />
                   ) : (
-                    <User className="h-8 w-8 text-cyan-400" />
+                    <User className="h-8 w-8 text-[var(--primary)]" />
                   )}
                 </button>
+
                 <div
                   className={`
     absolute right-0 top-[calc(100%+12px)]
     w-64 overflow-hidden rounded-3xl
-    border border-cyan-500/20
-    bg-[#050816]/95
+    border border-[var(--primary-border)]
+    bg-[var(--surface-elevated)]
     backdrop-blur-2xl
-    shadow-[0_0_40px_rgba(34,211,238,0.12)]
+    shadow-[0_0_40px_var(--primary-glow)]
 
     origin-top-right
     transition-all duration-300
@@ -236,37 +241,37 @@ export function Navbar() {
     }
   `}
                 >
-                  <div className="h-px w-full bg-cyan-500/20" />
+                  <div className="h-px w-full bg-[var(--primary-border)]" />
 
                   <Link
                     href="/profile"
-                    className="flex items-center gap-4 px-5 py-4 transition-all hover:bg-cyan-500/[0.05]"
+                    className="flex items-center gap-4 px-5 py-4 transition-all hover:bg-[var(--surface-hover)]"
                   >
-                    <User className="h-5 w-5 text-cyan-400" />
+                    <User className="h-5 w-5 text-[var(--primary)]" />
 
-                    <span className="text-[11px] font-black tracking-[0.2em] uppercase">
+                    <span className="text-[11px] font-black tracking-[0.2em] uppercase text-[var(--text-primary)]">
                       Profile
                     </span>
                   </Link>
 
                   <Link
                     href="/settings"
-                    className="flex items-center gap-4 px-5 py-4 transition-all hover:bg-cyan-500/[0.05]"
+                    className="flex items-center gap-4 px-5 py-4 transition-all hover:bg-[var(--surface-hover)]"
                   >
-                    <Settings className="h-5 w-5 text-cyan-400" />
+                    <Settings className="h-5 w-5 text-[var(--primary)]" />
 
-                    <span className="text-[11px] font-black tracking-[0.2em] uppercase">
+                    <span className="text-[11px] font-black tracking-[0.2em] uppercase text-[var(--text-primary)]">
                       Settings
                     </span>
                   </Link>
 
                   <button
                     onClick={logout}
-                    className="flex w-full items-center gap-4 px-5 py-4 text-left transition-all hover:bg-red-500/10"
+                    className="flex w-full items-center gap-4 px-5 py-4 text-left transition-all hover:bg-[var(--danger-soft)]"
                   >
-                    <LogOut className="h-5 w-5 text-red-400" />
+                    <LogOut className="h-5 w-5 text-[var(--danger)]" />
 
-                    <span className="text-[11px] font-black tracking-[0.2em] text-red-400 uppercase">
+                    <span className="text-[11px] font-black tracking-[0.2em] uppercase text-[var(--danger)]">
                       Logout
                     </span>
                   </button>
@@ -276,31 +281,29 @@ export function Navbar() {
           </div>
         </div>
       </header>
-
-      {/* SIDEBAR */}
       <aside
         className={`
-fixed top-0 left-0 z-[100]
-h-screen w-full max-w-[360px]
-overflow-hidden
-border-r border-white/10
-bg-[#050816]/95
-backdrop-blur-2xl
+    fixed top-0 left-0 z-[100]
+    h-screen w-full max-w-[360px]
+    overflow-hidden
+    border-r border-[var(--border)]
+    bg-[var(--surface-elevated)]
+    backdrop-blur-2xl
 
-transform-gpu
-transition-all
-duration-500
-ease-[cubic-bezier(0.22,1,0.36,1)]
+    transform-gpu
+    transition-all
+    duration-500
+    ease-[cubic-bezier(0.22,1,0.36,1)]
 
-${open ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}
-`}
+    ${open ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"}
+  `}
       >
         {/* bg */}
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 h-[300px] w-[300px] rounded-full bg-cyan-500/10 blur-[120px]" />
+          <div className="absolute top-0 left-0 h-[300px] w-[300px] rounded-full bg-[var(--primary-soft)] blur-[120px]" />
 
           <div className="absolute inset-0 opacity-[0.05]">
-            <div className="h-full w-full bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:50px_50px]" />
+            <div className="h-full w-full bg-[linear-gradient(var(--grid-line)_1px,transparent_1px),linear-gradient(90deg,var(--grid-line)_1px,transparent_1px)] bg-[size:50px_50px]" />
           </div>
         </div>
 
