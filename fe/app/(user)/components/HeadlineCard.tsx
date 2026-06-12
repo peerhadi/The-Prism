@@ -41,6 +41,7 @@ export const HeadlineCard: React.FC<HeadlineCardProps> = ({ title, data }) => {
       {/* Neon Pulse Header */}
       <h3 className="mb-8 flex items-center gap-3 text-[12px] font-black tracking-[0.4em] text-[var(--text-primary)] uppercase">
         <Radio className="h-5 w-5 animate-pulse text-[var(--primary)]" />
+        {title}
       </h3>
 
       {/* Headline Items */}

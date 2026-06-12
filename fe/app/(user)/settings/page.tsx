@@ -60,12 +60,16 @@ export default function SettingsPage() {
   }, [token]);
 
   useEffect(() => {
+    if (!theme) {
+      setTheme(window.localStorage.getItem("theme") || "dark");
+    }
     if (window) {
       if (theme === "light") {
         document.getElementsByTagName("body")[0].classList.remove("dark");
       } else if (theme === "dark") {
         document.getElementsByTagName("body")[0].classList.add("dark");
       }
+      window.localStorage.setItem("theme", theme || "");
     }
   }, [theme]);
 
