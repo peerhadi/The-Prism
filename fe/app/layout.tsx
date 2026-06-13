@@ -18,7 +18,6 @@ if (typeof window !== "undefined") {
   };
 }
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
