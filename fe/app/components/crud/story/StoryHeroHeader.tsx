@@ -1,5 +1,6 @@
 "use client";
 
+import { getBiasColor } from "@/app/utils/getbiascolor";
 import React from "react";
 
 export default function StoryHeroHeader({
@@ -78,7 +79,7 @@ export default function StoryHeroHeader({
           return (
             <button
               key={cat.id ?? idx}
-              className="
+              className={`
                 group flex items-center gap-3 rounded-full
                 border border-[var(--border)]
                 bg-[var(--surface-secondary)]
@@ -86,11 +87,12 @@ export default function StoryHeroHeader({
                 text-[11px] font-black tracking-[0.2em]
                 text-[var(--text-secondary)]
                 uppercase
+                ${cat.color}
                 transition-all duration-300
                 hover:scale-105
                 hover:bg-[var(--surface-hover)]
                 hover:text-[var(--text-primary)]
-              "
+              `}
             >
               <div className="h-2 w-2 rounded-full bg-current animate-pulse" />
               {cat.name || cat.label}
