@@ -25,8 +25,8 @@ const STATIC_LINKS = [
   },
   { name: "AI Chat", href: "/ai-chat", desc: "Interact with Prism AI" },
   { name: "Archive", href: "/archive", desc: "Historical signal database" },
-  { name: "Bias", href: "/bias", desc: "Learn how we calculate bias" },
   { name: "About", href: "/about", desc: "Inside the intelligence framework" },
+  { name: "Feed", href: "/feed", desc: "View your own personalised feed" },
 ];
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -168,8 +168,8 @@ export function Navbar() {
             {[
               ["Stories", "/stories"],
               ["Explore", "/explore"],
+              ["Feed", "/feed"],
               ["Narrative Split", "/narrative-split"],
-              ["Archive", "/archive"],
             ].map(([name, href]) => (
               <Link
                 key={name}

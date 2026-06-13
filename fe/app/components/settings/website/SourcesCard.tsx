@@ -2,9 +2,25 @@
 
 import React from "react";
 import { Plus, ChevronUp, ChevronDown, Trash2, Globe } from "lucide-react";
-import { Input } from "@/components/ui/input";
+
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import CyberCard from "./CyberCard";
+
+export const RSS_FEEDS = [
+  "https://bbci.com/",
+  "http://cnn.com/",
+  "https://nytimes.com/",
+  "https://www.theguardian.com/",
+  "https://www.aljazeera.com/",
+];
 
 export default function SourcesCard({
   sources,
@@ -21,20 +37,45 @@ export default function SourcesCard({
     <CyberCard title="Sources" icon={Globe}>
       {/* ADD SOURCE */}
       <div className="mb-6 flex gap-3">
-        <Input
-          value={newSource}
-          onChange={(e) => setNewSource(e.target.value)}
-          placeholder="Add source..."
-          className="h-12 rounded-xl"
-          style={{
-            background: "var(--input-bg)",
-            border: "1px solid var(--input-border)",
-            color: "var(--text-primary)",
-          }}
-        />
+        <div className="flex-1">
+          <Select value={newSource} onValueChange={setNewSource}>
+            <SelectTrigger
+              className="!h-14 w-full rounded-xl px-4 text-base"
+              style={{
+                background: "var(--input-bg)",
+                border: "1px solid var(--input-border)",
+                color: "var(--text-primary)",
+              }}
+            >
+              <SelectValue placeholder="Select RSS feed..." />
+            </SelectTrigger>
+
+            <SelectContent
+              position="popper"
+              className="rounded-xl p-2"
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+              }}
+            >
+              {RSS_FEEDS.filter((feed) => !sources.includes(feed)).map(
+                (feed) => (
+                  <SelectItem
+                    key={feed}
+                    value={feed}
+                    className="mb-1 rounded-lg px-3 py-3 last:mb-0"
+                  >
+                    {feed}
+                  </SelectItem>
+                ),
+              )}
+            </SelectContent>
+          </Select>
+        </div>
 
         <Button
           onClick={addSource}
+          disabled={!newSource}
           className="h-12 rounded-xl px-5"
           style={{
             background: "var(--primary)",
@@ -57,23 +98,23 @@ export default function SourcesCard({
               borderColor: "var(--border)",
             }}
           >
-            <div>
+            <div className="min-w-0 flex-1">
               <p
+                className="truncate font-semibold"
                 style={{ color: "var(--text-primary)" }}
-                className="font-semibold"
               >
                 {source}
               </p>
 
               <p
-                style={{ color: "var(--text-muted)" }}
                 className="mt-1 text-sm"
+                style={{ color: "var(--text-muted)" }}
               >
                 Preferred source #{index + 1}
               </p>
             </div>
 
-            <div className="flex gap-2">
+            <div className="ml-4 flex gap-2">
               <Button
                 size="icon"
                 variant="outline"

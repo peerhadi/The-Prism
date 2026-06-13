@@ -35,7 +35,6 @@ export default function ArchivePage() {
         fetch(`${API}/api/articles`).then((r) => r.json()),
         fetch(`${API}/api/layout/archive`).then((r) => r.json()),
       ]);
-
       setCategories(catRes);
 
       // ---------------------------
@@ -138,7 +137,7 @@ export default function ArchivePage() {
       <ArchiveCategoryIndex categories={categories} articles={articles} />
     </div>
   );
-
+  if (!articles.length || !categories.length) return <PrismLoader />;
   return (
     <ArchiveLayout
       hero={<ArchiveHero categories={categories} fileCount={articles.length} />}
