@@ -61,7 +61,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (!theme) {
-      setTheme(window.localStorage.getItem("theme") || "dark");
+      setTheme(window.localStorage.getItem("theme"));
     }
     if (window) {
       if (theme === "light") {

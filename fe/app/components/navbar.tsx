@@ -41,7 +41,7 @@ export function Navbar() {
     if (typeof window !== "undefined") {
       const t = window.localStorage.getItem("token");
       setLoaded(true);
-      console.log(t);
+      console.log(t, "s");
       if (t) {
         setToken(t);
         fetch(`http://localhost:8080/api/auth/me`, {
@@ -70,6 +70,18 @@ export function Navbar() {
                 ];
               });
             }
+            setLinks((prevLinks) => {
+              // Prevent duplicate feeds if useEffect triggers twice in StrictMode
+              if (prevLinks.some((l) => l.href === "/feed")) return prevLinks;
+              return [
+                ...prevLinks,
+                {
+                  name: "feed",
+                  href: "/feed",
+                  desc: "The personalised user feed",
+                },
+              ];
+            });
           })
           .catch((e) => {
             console.log(e);
@@ -168,8 +180,11 @@ export function Navbar() {
             {[
               ["Stories", "/stories"],
               ["Explore", "/explore"],
+              [
+                token.length ? "Feed" : "Archive",
+                token.length ? "/feed" : "/archive",
+              ],
               ["Narrative Split", "/narrative-split"],
-              ["Archive", "/archive"],
             ].map(([name, href]) => (
               <Link
                 key={name}
