@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function ConflictCTA() {
   const router = useRouter();
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[var(--background)]">
       {/* Background Glow */}
       <div className="absolute inset-0">
         <div className="absolute left-1/4 top-1/4 h-[400px] w-[400px] rounded-full bg-[var(--primary-soft)] blur-[140px]" />
@@ -27,14 +27,17 @@ export default function ConflictCTA() {
         </div>
 
         {/* Heading */}
-        <h1 className="text-[42px] font-black leading-[0.9] tracking-tight uppercase text-[var(--text-primary)] sm:text-6xl md:text-8xl lg:text-[110px]">
+        <h1 className="text-[42px] text-[var(--text-primary)] leading-[0.9] tracking-tight uppercase font-black sm:text-6xl md:text-8xl lg:text-[110px]">
           WHICH REALITY
           <br />
           SURVIVES?
         </h1>
 
         {/* Description */}
-        <p className="mx-auto mt-10 max-w-2xl text-lg text-[var(--text-secondary)]">
+        <p
+          className="mx-auto mt-10 max-w-2xl text-lg font-black
+            text-[var(--primary)]"
+        >
           Two competing narratives cannot coexist indefinitely in the same
           system.
         </p>

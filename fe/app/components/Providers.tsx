@@ -10,7 +10,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
     if (savedTheme) {
       setTheme(savedTheme);
-      document.documentElement.classList.toggle("dark", savedTheme === "dark");
+      document.body.classList.toggle("dark", savedTheme === "dark");
     }
   }, []);
 

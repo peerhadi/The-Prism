@@ -70,20 +70,19 @@ export default function ExplorePage() {
       // ===========================
       // CURSOR ENGINE (LAYOUT DRIVEN)
       // ===========================
-      let cursor = 0;
 
       const count = (type: string) =>
         components.filter((c: any) => c.type === type).length;
 
       const next = (n: number) => {
+        let cursor = Math.floor(Math.random() * 5);
         const slice = clean.slice(cursor, cursor + n);
-        cursor += n;
         return slice;
       };
 
       // HERO (1)
       const heroCount = count("HERO");
-      setHeroStory(heroCount ? next(1)[0] : null);
+      setHeroStory(heroCount ? next(7)[5] : null);
 
       // INSIGHTS (LEFT)
       const insightCount = count("INSIGHT");
@@ -153,7 +152,7 @@ export default function ExplorePage() {
             setSelectedCategory={setSelectedCategory}
           />
 
-          <QuickAccessPanel list={list} />
+          <QuickAccessPanel list={headlines} />
         </div>
       }
       center={

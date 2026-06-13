@@ -11,6 +11,7 @@ export default function StoryLiveStream({
   small: any[];
   list: any[];
 }) {
+  console.log(small, list);
   return (
     <div className="space-y-10">
       <div className="flex justify-between border-b border-[var(--border)] pb-4">

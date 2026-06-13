@@ -75,7 +75,7 @@ export default function StoriesPage() {
 
       // HERO (always 1)
       const heroCount = components.filter((c: any) => c.type === "HERO").length;
-      const heroArticle = heroCount ? next(1)[0] : null;
+      const heroArticle = heroCount ? next(5)[2] : null;
       setHero(heroArticle);
 
       // INSIGHTS (LEFT PANEL)
@@ -101,7 +101,9 @@ export default function StoriesPage() {
       setHeadlines(next(headlineCount));
 
       // ANOMALY fallback
-      setAnomaly(clean[cursor] || null);
+      const anom = heroArticle;
+      console.log(anom, "Anomly");
+      setAnomaly(anom);
     };
 
     load();
