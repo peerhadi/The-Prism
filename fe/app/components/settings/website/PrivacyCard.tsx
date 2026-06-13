@@ -97,7 +97,12 @@ export default function PrivacyCard({
           {/* BUTTON */}
           <div className="mt-8 flex justify-end">
             <Button
-              onClick={changePassword}
+              onClick={(e) =>
+                changePassword(
+                  passwordForm.currentPassword,
+                  passwordForm.newPassword,
+                )
+              }
               className="h-12 min-w-[180px] rounded-xl px-8"
               style={{
                 background: "var(--primary)",

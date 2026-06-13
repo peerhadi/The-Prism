@@ -18,7 +18,6 @@ if (typeof window !== "undefined") {
   };
 }
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { Navbar } from "./components/navbar";
 import { Footer } from "./components/footer";
@@ -55,14 +54,12 @@ export default function RootLayout({
       )}
     >
       <body suppressHydrationWarning className="dark">
-        <ThemeProvider>
-          <Navbar />
-          <GoogleOAuthProvider clientId="326949971375-3qq23gr7vdd4tnubscvs7n5agk9hbbue.apps.googleusercontent.com">
-            {children}
-            <ToastContainer />
-          </GoogleOAuthProvider>
-          <Footer />
-        </ThemeProvider>
+        <Navbar />
+        <GoogleOAuthProvider clientId="326949971375-3qq23gr7vdd4tnubscvs7n5agk9hbbue.apps.googleusercontent.com">
+          {children}
+          <ToastContainer />
+        </GoogleOAuthProvider>
+        <Footer />
         <DisableHydrationWarnings />
       </body>
     </html>
