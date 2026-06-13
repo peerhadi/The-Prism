@@ -25,7 +25,7 @@ export default function NeuralAIConsole() {
 
     const user: Msg = { role: "user", text: input };
 
-    const res = await fetch("http://localhost:8080/api/aiRoutes", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(input),

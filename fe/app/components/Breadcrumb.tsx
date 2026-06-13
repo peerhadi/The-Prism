@@ -11,7 +11,7 @@ type Item = {
 export default function Breadcrumbs({ items }: { items: Item[] }) {
   return (
     <div
-      className="absolute top-28 left-6 z-50 max-w-[calc(100%-3rem)] flex items-center gap-2 overflow-hidden rounded-2xl px-5 py-3 backdrop-blur-2xl text-sm"
+      className="fixed top-28 left-6 z-50 max-w-[calc(100%-3rem)] flex items-center gap-2 overflow-hidden rounded-2xl px-5 py-3 backdrop-blur-2xl text-sm"
       style={{
         background: "var(--surface)",
         border: "1px solid var(--border)",

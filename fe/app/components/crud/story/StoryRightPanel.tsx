@@ -7,13 +7,15 @@ import React from "react";
 export default function StoryRightPanel({
   headlines,
   anomaly,
+  preview,
 }: {
   headlines: any[];
   anomaly: any;
+  preview?: boolean;
 }) {
   return (
     <div className="space-y-10">
-      <HeadlineCard title="LIVE HEADLINES" data={headlines} />
+      <HeadlineCard title="LIVE HEADLINES" data={headlines} preview={preview} />
 
       <AnomalyCard
         id={anomaly?.id}

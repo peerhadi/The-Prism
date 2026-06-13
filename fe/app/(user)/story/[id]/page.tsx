@@ -1,36 +1,50 @@
 "use client";
 import ForensicHero from "@/app/components/article/ForensicHero";
-import MetricsGrid from "@/app/components/article/MetricsGrid";
-import SignalMatrix from "@/app/components/article/SignalMatrix";
 import ArticleBody from "@/app/components/article/ArticleBody";
 import LiveFeed from "@/app/components/article/LiveFeed";
-import ConfidenceCard from "@/app/components/article/ConfidenceCard";
+import ArticleNotFound from "@/app/components/article/ArticleNotFound";
+import { HeadlineCard } from "../../components/HeadlineCard";
 import { useParams } from "next/navigation";
 import { Article } from "@/lib/api/articles/types";
 import React from "react";
-import { PrismLoader } from "@/app/components/loadingScreen";
-import ArticleNotFound from "@/app/components/article/ArticleNotFound";
-import { HeadlineCard } from "../../components/HeadlineCard";
 
 export default function ForensicSpecimenPage() {
   const { id } = useParams();
+
   const [article, setArticle] = React.useState<Article>();
   const [articles, setArticles] = React.useState<Article[]>();
+
   React.useEffect(() => {
-    fetch(`http://localhost:8080/api/articles/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`)
       .then((res) => res.json())
       .then(setArticle);
 
-    fetch(`http://localhost:8080/api/articles`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`)
       .then((res) => res.json())
       .then(setArticles);
-  }, []);
+  }, [id]);
+
   if (!article || !articles) {
     return <ArticleNotFound />;
   }
+
   return (
-    <div className="min-h-screen overflow-hidden bg-[#02040A] text-white">
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_top,rgba(0,255,255,0.10),transparent_35%)]" />
+    <div
+      className="
+        min-h-screen
+        overflow-hidden
+        text-[var(--text-primary)]
+        bg-[var(--background)]
+      "
+    >
+      {/* Background Glow */}
+      <div
+        className="fixed inset-0"
+        style={{
+          background:
+            "radial-gradient(circle at top, var(--primary-glow), transparent 35%)",
+        }}
+      />
 
       <main className="relative z-10 mx-auto max-w-[1600px] px-6 py-10">
         <ForensicHero title={article.title} imageUrl={article.imageUrl || ""} />
@@ -48,7 +62,14 @@ export default function ForensicSpecimenPage() {
         </section>
       </main>
 
-      <div className="fixed bottom-0 left-0 z-50 h-[2px] w-full bg-cyan-400 shadow-[0_0_15px_#22d3ee]" />
+      {/* Bottom Scan Line */}
+      <div
+        className="fixed bottom-0 left-0 z-50 h-[2px] w-full"
+        style={{
+          background: "var(--primary)",
+          boxShadow: "0 0 15px var(--primary-glow)",
+        }}
+      />
     </div>
   );
 }

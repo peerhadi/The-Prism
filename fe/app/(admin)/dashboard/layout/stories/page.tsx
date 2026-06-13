@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-
+import React, { useEffect, useState } from "react";
+import { Trash2 } from "lucide-react";
 import {
   DndContext,
   PointerSensor,
@@ -15,330 +15,561 @@ import {
   SortableContext,
   useSortable,
   rectSortingStrategy,
+  arrayMove,
 } from "@dnd-kit/sortable";
 
 import { CSS } from "@dnd-kit/utilities";
 
-/* USER COMPONENTS */
+/* UI */
 import HeroCard from "@/app/(user)/components/HeroCard";
 import ShortCard from "@/app/(user)/components/SmallCard";
 import ListCard from "@/app/(user)/components/ListCard";
-import StickyInsight from "@/app/(user)/components/TickerCard";
-import { HeadlineCard } from "@/app/(user)/components/HeadlineCard";
-
-/* STORY COMPONENTS */
 import StoryPageLayout from "@/app/components/crud/story/StoryPageLayout";
+import StorySplitCard from "@/app/components/crud/story/StorySplitCard";
 import StoryLiveSignal from "@/app/components/crud/story/StoryLiveSignal";
 import StoryRightPanel from "@/app/components/crud/story/StoryRightPanel";
-
+import Breadcrumbs from "@/app/components/Breadcrumb";
 import AddComponentButton from "../pallette";
-import StorySplitCard from "@/app/components/crud/story/StorySplitCard";
+import StickyInsight from "@/app/(user)/components/TickerCard";
+import { Radio } from "lucide-react";
+const TrashButton = ({
+  id,
+  handleDelete,
+}: {
+  id: string;
+  handleDelete: (id: string) => void;
+}) => (
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      handleDelete(id);
+    }}
+    className="absolute top-4 right-4 z-50 opacity-100 group-hover:opacity-100 transition pointer-events-auto p-2"
+  >
+    <Trash2 className="h-6 w-6 text-[var(--danger)]" />
+  </button>
+);
+function Draggable({
+  id,
+  children,
+  handleDelete,
+}: {
+  id: string;
+  children: React.ReactNode;
+  handleDelete: (id: string) => void;
+}) {
+  const { setNodeRef, attributes, listeners, transform, transition } =
+    useSortable({ id });
 
-type Article = any;
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      className="relative group isolate"
+    >
+      <TrashButton id={id} handleDelete={handleDelete} />
+      <div {...listeners} className="cursor-grab isolate">
+        {children}
+      </div>
+    </div>
+  );
+}
+function RightHeadlineItem({
+  item,
+  handleDelete,
+}: {
+  item: any;
+  handleDelete: any;
+}) {
+  const { setNodeRef, attributes, listeners, transform, transition } =
+    useSortable({ id: item.id });
 
-type CenterState = {
-  hero: Article | null;
-  small: Article[];
-  list: Article[];
-};
+  const variant = item.variant ?? "cyan";
 
-const mockArticles = Array.from({ length: 30 }, (_, i) => ({
-  id: `article-${i}`,
-  title: `Breaking Story ${i + 1}`,
-  summary:
-    "Signal detected across multiple international sources. Analysis pending.",
-  description: "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-  createdAt: "2026-06-09",
-  type: "NEWS",
-  imageUrl: `https://picsum.photos/800/600?random=${i}`,
-  sources: [],
-}));
-const mockPerspectives = [
-  {
-    id: "perspective-1",
-    title: "Russian authorities detain suspect over St. Petersburg cafe blast",
-
-    neutral: {
-      title: "Russia Detains Suspect in Cafe Blast",
-      summary:
-        "Russian authorities have detained a suspect in connection with a cafe blast in St. Petersburg.",
-      description: "",
-    },
-
-    extreme: {
-      title: "Cafe Blast Suspect Detained",
-      summary:
-        "A suspect has been detained in connection with a cafe blast in St. Petersburg.",
-      description: "",
-    },
-
-    imageUrl: "https://picsum.photos/800/600?random=100",
-
-    createdAt: "2026-06-09T13:30:40.263Z",
-  },
-
-  {
-    id: "perspective-2",
-    title: "Government announces major cybersecurity reforms",
-
-    neutral: {
-      title: "New Cybersecurity Measures Introduced",
-      summary:
-        "Officials unveiled a package of cybersecurity reforms aimed at strengthening digital infrastructure.",
-      description: "",
-    },
-
-    extreme: {
-      title: "Government Expands Digital Security Powers",
-      summary:
-        "Critics and supporters debate the impact of sweeping new cybersecurity authorities.",
-      description: "",
-    },
-
-    imageUrl: "https://picsum.photos/800/600?random=101",
-
-    createdAt: "2026-06-09T13:30:40.263Z",
-  },
-
-  {
-    id: "perspective-3",
-    title: "Global energy markets react to supply concerns",
-
-    neutral: {
-      title: "Energy Prices Rise Amid Supply Questions",
-      summary:
-        "Markets responded to uncertainty surrounding future energy supplies.",
-      description: "",
-    },
-
-    extreme: {
-      title: "Supply Fears Shake Energy Markets",
-      summary:
-        "Investors reacted strongly as concerns over future supply intensified.",
-      description: "",
-    },
-
-    imageUrl: "https://picsum.photos/800/600?random=102",
-
-    createdAt: "2026-06-09T13:30:40.263Z",
-  },
-];
-export default function StoryBuilderPage() {
-  const sensors = useSensors(useSensor(PointerSensor));
-
-  const articles = mockArticles;
-
-  const [left, setLeft] = useState(articles.slice(0, 4));
-
-  const [right, setRight] = useState(articles.slice(10, 15));
-
-  const [center, setCenter] = useState<CenterState>({
-    hero: articles[0],
-    small: articles.slice(4, 6),
-    list: articles.slice(6, 8),
-  });
-
-  const headlines = articles.slice(0, 5);
-
-  const anomaly = articles[11];
-
-  const handleAddComponent = (type: string) => {
-    const article = articles[Math.floor(Math.random() * articles.length)];
-
-    switch (type) {
-      case "INSIGHT":
-        setLeft((prev) => [...prev, article]);
-        break;
-
-      case "HEADLINE":
-        setRight((prev) => [...prev, article]);
-        break;
-
-      case "SMALL":
-        setCenter((prev) => ({
-          ...prev,
-          small: [...prev.small, article],
-        }));
-        break;
-
-      case "LIST":
-        setCenter((prev) => ({
-          ...prev,
-          list: [...prev.list, article],
-        }));
-        break;
-
-      case "HERO":
-        setCenter((prev) => ({
-          ...prev,
-          hero: article,
-        }));
-        break;
-    }
-  };
-
-  const findContainer = (id: string) => {
-    if (center.small.find((i) => i.id === id)) return "small";
-
-    if (center.list.find((i) => i.id === id)) return "list";
-
-    if (left.find((i) => i.id === id)) return "left";
-
-    return null;
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-
-    if (!over) return;
-
-    const activeId = active.id as string;
-    const overId = over.id as string;
-
-    const from = findContainer(activeId);
-    const to = findContainer(overId);
-
-    if (!from || !to) return;
-
-    if (from === "left" || to === "left") {
-      setLeft((prev) => {
-        const fromIndex = prev.findIndex((i) => i.id === activeId);
-
-        const toIndex = prev.findIndex((i) => i.id === overId);
-
-        if (fromIndex === -1) return prev;
-
-        const updated = [...prev];
-
-        const [moved] = updated.splice(fromIndex, 1);
-
-        updated.splice(toIndex === -1 ? updated.length : toIndex, 0, moved);
-
-        return updated;
-      });
-
-      return;
-    }
-
-    setCenter((prev) => {
-      const fromArr = [...prev[from as "small" | "list"]];
-      const toArr = [...prev[to as "small" | "list"]];
-
-      const fromIndex = fromArr.findIndex((i) => i.id === activeId);
-
-      const toIndex = toArr.findIndex((i) => i.id === overId);
-
-      const [moved] = fromArr.splice(fromIndex, 1);
-
-      if (from === to) {
-        fromArr.splice(toIndex, 0, moved);
-
-        return {
-          ...prev,
-          [from]: fromArr,
-        };
-      }
-
-      toArr.splice(toIndex === -1 ? toArr.length : toIndex, 0, moved);
-
-      return {
-        ...prev,
-        [from]: fromArr,
-        [to]: toArr,
-      };
-    });
-  };
-
-  function Draggable({ item, children }: any) {
-    const { setNodeRef, attributes, listeners, transform, transition } =
-      useSortable({
-        id: item.id,
-      });
-
-    return (
+  return (
+    <div className="flex w-full items-center justify-between">
       <div
         ref={setNodeRef}
         {...attributes}
         {...listeners}
         style={{
           transform: CSS.Transform.toString(transform),
-          transition: transition || "250ms cubic-bezier(0.2, 0.8, 0.2, 1)",
+          transition,
         }}
-        className="cursor-grab active:cursor-grabbing"
+        className="group relative cursor-grab overflow-hidden rounded-xl pb-5 last:border-0 active:cursor-grabbing"
       >
-        {children}
+        <div
+          className="absolute inset-0 opacity-20 blur-[40px] transition-all group-hover:opacity-40"
+          style={{
+            background:
+              variant === "cyan"
+                ? "var(--primary-soft)"
+                : variant === "purple"
+                  ? "var(--secondary-soft)"
+                  : variant === "red"
+                    ? "var(--danger-soft)"
+                    : "var(--success-soft)",
+          }}
+        />
+
+        <div className="relative z-10 flex items-center justify-between">
+          <span
+            className="rounded px-2 py-0.5 text-[9px] uppercase"
+            style={{
+              background:
+                variant === "cyan"
+                  ? "var(--primary-soft)"
+                  : variant === "purple"
+                    ? "var(--secondary-soft)"
+                    : variant === "red"
+                      ? "var(--danger-soft)"
+                      : "var(--success-soft)",
+              color:
+                variant === "cyan"
+                  ? "var(--primary)"
+                  : variant === "purple"
+                    ? "var(--secondary)"
+                    : variant === "red"
+                      ? "var(--danger)"
+                      : "var(--success)",
+            }}
+          >
+            {item.tag}
+          </span>
+
+          <span className="text-[9px] font-bold tracking-widest text-[var(--text-faint)]">
+            {item.time}
+          </span>
+        </div>
+
+        <h4 className="relative z-10 mt-1 text-[14px] font-bold leading-snug text-[var(--text-primary)] drop-shadow-[0_0_6px_var(--primary-glow)]">
+          {item.title}
+        </h4>
       </div>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          handleDelete(item.id);
+        }}
+        className="z-50 opacity-100 group-hover:opacity-100 transition pointer-events-auto p-2"
+      >
+        <Trash2 className="h-6 w-6 text-[var(--danger)]" />
+      </button>
+    </div>
+  );
+}
+
+/* ================= API ================= */
+
+const API = process.env.NEXT_PUBLIC_API_URL;
+
+async function fetchLayout(type: string) {
+  const res = await fetch(`${API}/api/layout/${type}`);
+  return res.json();
+}
+
+export async function saveLayout(type: string, components: any[]) {
+  const res = await fetch(`${API}/api/layout/${type}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ components }),
+  });
+
+  return res.json();
+}
+
+/* ================= MOCK ================= */
+
+const mockArticles = Array.from({ length: 200 }, (_, i) => ({
+  id: `article-${i}`,
+  title: `Breaking Story ${i + 1}`,
+  summary: "Signal detected across multiple sources.",
+  description: "Lorem ipsum dolor sit amet",
+  createdAt: "2026-06-09",
+  type: "NEWS",
+  imageUrl: `https://picsum.photos/800/600?random=${i}`,
+  sources: [],
+}));
+
+const BREADCRUMBS = [
+  { label: "Layout", href: "/dashboard/layout" },
+  { label: "Stories" },
+];
+
+type CenterState = {
+  hero: any;
+  small: any[];
+  list: any[];
+};
+
+/* ================= DEFAULT ================= */
+
+const buildDefaultLayout = (articles: any[]): CenterState => ({
+  hero: articles[0] ?? null,
+  small: articles.slice(1, 5),
+  list: articles.slice(5, 7),
+});
+
+/* ================= MAIN ================= */
+
+export default function StoryBuilderPage() {
+  const sensors = useSensors(useSensor(PointerSensor));
+
+  const [loading, setLoading] = useState(true);
+
+  const [left, setLeft] = useState<any[]>([]);
+  const [right, setRight] = useState<any[]>([]);
+  const [center, setCenter] = useState<CenterState>({
+    hero: null,
+    small: [],
+    list: [],
+  });
+
+  const [articles, setArticles] = React.useState(mockArticles);
+  /* ================= LOAD ================= */
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchLayout("story");
+        const comps = data?.components ?? [];
+
+        if (!comps.length) {
+          setCenter(buildDefaultLayout(articles));
+          return;
+        }
+        setArticles((a) => {
+          for (const c of comps) {
+            const config = c.config;
+            const index = a.findIndex((x) => x.id === config.id);
+            if (index) {
+              a.slice(index, 1);
+            }
+          }
+          return a;
+        });
+        setCenter({
+          hero: comps.find((c: any) => c.type === "HERO")?.config ?? null,
+          small: comps
+            .filter((c: any) => c.type === "SMALL")
+            .map((c: any) => c.config),
+          list: comps
+            .filter((c: any) => c.type === "LIST")
+            .map((c: any) => c.config),
+        });
+
+        setLeft(
+          comps
+            .filter((c: any) => c.type === "INSIGHT")
+            .map((c: any) => c.config),
+        );
+        setRight(
+          comps
+            .filter((c: any) => c.type === "HEADLINE")
+            .map((c: any) => c.config),
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
+
+  /* ================= DELETE (NEW — NO UI TOUCH) ================= */
+  const handleDelete = (id: string) => {
+    setLeft((p) => p.filter((x) => x.id !== id));
+    setRight((p) => p.filter((x) => x.id !== id));
+
+    setCenter((p) => ({
+      ...p,
+      hero: p.hero?.id === id ? null : p.hero,
+      small: p.small.filter((x) => x.id !== id),
+      list: p.list.filter((x) => x.id !== id),
+    }));
+  };
+
+  /* ================= SAVE ================= */
+
+  const buildPayload = () => {
+    const components: any[] = [];
+
+    if (center.hero) {
+      components.push({
+        type: "HERO",
+        position: "CENTER",
+        config: center.hero,
+      });
+    }
+
+    center.small.forEach((i) =>
+      components.push({
+        type: "SMALL",
+        position: "CENTER",
+        config: i,
+      }),
     );
+
+    center.list.forEach((i) =>
+      components.push({
+        type: "LIST",
+        position: "CENTER",
+        config: i,
+      }),
+    );
+
+    left.forEach((i) =>
+      components.push({
+        type: "INSIGHT",
+        position: "LEFT",
+        config: i,
+      }),
+    );
+
+    right.forEach((i) =>
+      components.push({
+        type: "HEADLINE",
+        position: "RIGHT",
+        config: i,
+      }),
+    );
+
+    return components;
+  };
+
+  const handleSave = async () => {
+    await saveLayout("story", buildPayload());
+  };
+
+  /* ================= ADD (SAFE FIX ONLY) ================= */
+
+  const handleAddComponent = (type: string) => {
+    const id = Math.floor(Math.random() * mockArticles.length);
+    const article = articles[id];
+    articles.splice(id, 1);
+
+    const item = {
+      ...article,
+      id: `${article.id}-${crypto.randomUUID()}`,
+    };
+
+    switch (type) {
+      case "INSIGHT":
+        setLeft((p) => [...p, item]);
+        break;
+
+      case "HEADLINE":
+        setRight((p) => [...p, item]);
+        break;
+
+      case "SMALL":
+        setCenter((p) => ({ ...p, small: [...p.small, item] }));
+        break;
+
+      case "LIST":
+        setCenter((p) => ({ ...p, list: [...p.list, item] }));
+        break;
+
+      case "HERO":
+        setCenter((p) => ({ ...p, hero: item }));
+        break;
+    }
+  };
+
+  /* ================= DRAG ================= */
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over) return;
+
+    const activeId = active.id as string;
+    const overId = over.id as string;
+
+    if (left.find((i) => i.id === activeId)) {
+      const old = left.findIndex((i) => i.id === activeId);
+      const neu = left.findIndex((i) => i.id === overId);
+      setLeft((p) => arrayMove(p, old, neu));
+    }
+
+    if (right.find((i) => i.id === activeId)) {
+      const old = right.findIndex((i) => i.id === activeId);
+      const neu = right.findIndex((i) => i.id === overId);
+      setRight((p) => arrayMove(p, old, neu));
+    }
+
+    if (center.small.find((i) => i.id === activeId)) {
+      const old = center.small.findIndex((i) => i.id === activeId);
+      const neu = center.small.findIndex((i) => i.id === overId);
+      setCenter((p) => ({
+        ...p,
+        small: arrayMove(p.small, old, neu),
+      }));
+    }
+
+    if (center.list.find((i) => i.id === activeId)) {
+      const old = center.list.findIndex((i) => i.id === activeId);
+      const neu = center.list.findIndex((i) => i.id === overId);
+      setCenter((p) => ({
+        ...p,
+        list: arrayMove(p.list, old, neu),
+      }));
+    }
+  };
+
+  /* ================= RETURN (UNCHANGED) ================= */
+
+  if (loading) {
+    return <div className="p-10">Loading...</div>;
   }
+
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="fixed top-28 right-10 z-[999]">
-        <AddComponentButton onSelect={handleAddComponent} />
-      </div>
+    <div>
+      <Breadcrumbs items={BREADCRUMBS} />
 
-      <StoryPageLayout
-        hero={null}
-        left={
-          <div className="space-y-4 min-h-screen">
-            <StoryLiveSignal articles={articles} />
+      {/* SAVE */}
+      <button
+        onClick={handleSave}
+        className="fixed bottom-6 right-6 z-[999] bg-black text-white px-4 py-2 rounded"
+      >
+        Save
+      </button>
 
-            {/* draggable insights */}
-          </div>
-        }
-        center={
-          <div className="space-y-10 min-h-screen">
-            {center.hero && (
-              <HeroCard
-                id={center.hero.id}
-                type={center.hero.type}
-                createdAt={new Date(center.hero.createdAt).toLocaleDateString()}
-                title={center.hero.title}
-                description={center.hero.summary}
-                sources={center.hero.sources}
-                status="LIVE"
-                imageUrl={center.hero.imageUrl}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        {/* ADD */}
+        <div className="fixed top-28 right-10 z-[999]">
+          <AddComponentButton onSelect={handleAddComponent} />
+        </div>
+
+        <StoryPageLayout
+          hero={null}
+          left={
+            <SortableContext
+              items={left.map((i) => i.id)}
+              strategy={rectSortingStrategy}
+            >
+              <div className="space-y-4">
+                {left.map((item, i) => (
+                  <Draggable
+                    key={item.id}
+                    id={item.id}
+                    handleDelete={handleDelete}
+                  >
+                    <StickyInsight
+                      variant={item.variant ?? "cyan"}
+                      title={item.title}
+                      content={item.summary}
+                    />
+                  </Draggable>
+                ))}
+              </div>
+            </SortableContext>
+          }
+          center={
+            <div className="space-y-10 min-h-screen">
+              {center.hero && (
+                <HeroCard
+                  id={center.hero.id}
+                  type={center.hero.type}
+                  createdAt={center.hero.createdAt}
+                  title={center.hero.title}
+                  description={center.hero.summary}
+                  sources={center.hero.sources}
+                  status="LIVE"
+                  imageUrl={center.hero.imageUrl}
+                />
+              )}
+
+              <StorySplitCard
+                perspectives={[
+                  {
+                    id: "cmqc3i7lx00gpjnlx1jv9bm6p",
+                    title: "Perspective 1",
+                    neutral: {
+                      title: "Neutral 1",
+                      summary: "Summary 1",
+                      description: "Description 1",
+                    },
+                    extreme: {
+                      title: "Title 2",
+                      summary: "Summary 2",
+                      description: "Description 2",
+                    },
+                    imageUrl:
+                      "https://ichef.bbci.co.uk/news/1024/branded_news/2df1/live/98ddcfe0-66c5-11f1-b59f-5fac4ee8d999.jpg",
+                    createdAt: "2026-06-13T08:30:33.477Z",
+                  },
+                ]}
               />
-            )}
 
-            <StorySplitCard perspectives={mockPerspectives} />
+              <SortableContext
+                items={center.small.map((i) => i.id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="grid grid-cols-2 gap-6">
+                  {center.small.map((item, i) => (
+                    <Draggable
+                      key={item.id}
+                      id={item.id}
+                      handleDelete={handleDelete}
+                    >
+                      <ShortCard {...item} />
+                    </Draggable>
+                  ))}
+                </div>
+              </SortableContext>
 
+              <SortableContext
+                items={center.list.map((i) => i.id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="space-y-6">
+                  {center.list.map((item, i) => (
+                    <Draggable
+                      key={item.id}
+                      id={item.id}
+                      handleDelete={handleDelete}
+                    >
+                      <ListCard {...item} />
+                    </Draggable>
+                  ))}
+                </div>
+              </SortableContext>
+            </div>
+          }
+          right={
             <SortableContext
-              items={center.small.map((i) => i.id)}
+              items={right.map((i) => i.id)}
               strategy={rectSortingStrategy}
             >
-              <div className="grid grid-cols-2 gap-6">
-                {center.small.map((item) => (
-                  <Draggable key={item.id} item={item}>
-                    <ShortCard {...item} />
-                  </Draggable>
-                ))}
-              </div>
-            </SortableContext>
+              <div className="space-y-8 min-h-screen">
+                <div className="relative w-full overflow-hidden rounded-[32px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl shadow-[var(--shadow-lg)]">
+                  <h3 className="mb-8 flex items-center gap-3 text-[12px] font-black tracking-[0.4em] uppercase text-[var(--text-primary)]">
+                    <Radio className="h-5 w-5 animate-pulse text-[var(--primary)]" />
+                    LIVE HEADLINES
+                  </h3>
 
-            <SortableContext
-              items={center.list.map((i) => i.id)}
-              strategy={rectSortingStrategy}
-            >
-              <div className="space-y-6">
-                {center.list.map((item) => (
-                  <Draggable key={item.id} item={item}>
-                    <ListCard {...item} />
-                  </Draggable>
-                ))}
+                  <div className="space-y-6">
+                    {right.map((item) => (
+                      <RightHeadlineItem
+                        key={item.id}
+                        item={item}
+                        handleDelete={handleDelete}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </SortableContext>
-          </div>
-        }
-        right={
-          <div className="space-y-8 min-h-screen">
-            <StoryRightPanel headlines={headlines} anomaly={anomaly} />
-          </div>
-        }
-      />
-    </DndContext>
+          }
+        />
+      </DndContext>
+    </div>
   );
 }

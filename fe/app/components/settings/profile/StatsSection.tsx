@@ -21,23 +21,23 @@ export default function StatsSection() {
 
       {/* GRID */}
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard title="Bias Score" value="42%" subtitle="Slightly balanced" />
+        <StatCard title="Bias Score" value="0%" subtitle="Slightly balanced" />
 
         <StatCard
           title="Sources"
-          value="31"
+          value="0"
           subtitle="Active intelligence feeds"
         />
 
         <StatCard
           title="Diversity"
-          value="86%"
+          value="0%"
           subtitle="High viewpoint spread"
         />
 
         <StatCard
           title="Extremity"
-          value="22%"
+          value="0%"
           subtitle="Low ideological skew"
         />
       </div>

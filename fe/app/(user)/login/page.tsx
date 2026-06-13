@@ -37,7 +37,7 @@ export default function SignInPage() {
 
     const run = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/auth/github", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code }),
@@ -77,7 +77,7 @@ export default function SignInPage() {
         ? { email, password }
         : { email: values.email, password: values.password };
 
-      fetch("http://localhost:8080/api/auth/login", {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

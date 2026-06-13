@@ -20,7 +20,7 @@ export default function EditCategory() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:8080/api/categories/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`)
       .then((r) => r.json())
       .then(setForm);
   }, [id]);
@@ -32,7 +32,7 @@ export default function EditCategory() {
   const submit = async () => {
     if (!form) return;
 
-    await fetch(`http://localhost:8080/api/categories/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

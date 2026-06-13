@@ -24,7 +24,7 @@ export default function AddCategory() {
   };
 
   const submit = async () => {
-    await fetch("http://localhost:8080/api/categories", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

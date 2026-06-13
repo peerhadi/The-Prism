@@ -82,7 +82,7 @@ function CropModal({
       {/* Modal */}
       <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
         <div
-          className="w-full max-w-4xl rounded-3xl border border-white/10 bg-[#0a0a0a] shadow-2xl"
+          className="w-full max-w-4xl rounded-3xl border border-white/10 bg-[var(--background)] shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {children}
@@ -134,15 +134,18 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
     const formData = new FormData();
     formData.append("file", blob, "avatar.jpg");
 
-    const uploadRes = await fetch("http://localhost:8080/api/upload", {
-      method: "POST",
-      headers: { Authorization: window.localStorage.getItem("token") ?? "" },
-      body: formData,
-    });
+    const uploadRes = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
+      {
+        method: "POST",
+        headers: { Authorization: window.localStorage.getItem("token") ?? "" },
+        body: formData,
+      },
+    );
 
     const { imageUrl } = await uploadRes.json();
 
-    await fetch(`http://localhost:8080/api/users/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -202,9 +205,9 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
 
       {/* Crop Modal */}
       <CropModal open={modalOpen} onClose={() => setModalOpen(false)}>
-        <div className="border-b border-white/10 p-5">
+        <div className="border-b border-[var(--text-primary)] p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">
+            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
               Crop Profile Image
             </h2>
 
@@ -212,7 +215,7 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
               onClick={() => setModalOpen(false)}
               className="rounded-lg p-2 transition hover:bg-white/10"
             >
-              <X className="h-5 w-5 text-white" />
+              <X className="h-5 w-5 text-[var(--text-primary)]" />
             </button>
           </div>
         </div>
@@ -244,7 +247,7 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
           <div className="mt-8 flex justify-end gap-3">
             <button
               onClick={() => setModalOpen(false)}
-              className="rounded-xl border border-white/10 px-5 py-2 text-white/70 transition hover:bg-white/5"
+              className="rounded-xl border-2 border-[var(--border)] px-5 py-2 text-[var(--text-primary)] transition hover:bg-white/5"
             >
               Cancel
             </button>

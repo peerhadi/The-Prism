@@ -52,7 +52,7 @@ export default function AddPerspective() {
   };
 
   const submit = async () => {
-    await fetch("http://localhost:8080/api/perspectives", {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

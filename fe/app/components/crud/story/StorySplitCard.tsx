@@ -8,7 +8,7 @@ export default function StorySplitCard({
 }: {
   perspectives: any[];
 }) {
-  const p = perspectives?.[perspectives.length - 2];
+  const p = perspectives?.[perspectives.length - 1];
 
   if (!p) return null;
 

@@ -34,7 +34,7 @@ export default function HeroCard({
   return (
     <Card
       className={`relative w-full overflow-hidden rounded-[32px] border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-xl transition-all duration-500 p-0 cursor-pointer
-  ${preview ? "max-h-[460px]" : "max-w-[900px] max-h-[700px]"}
+  ${preview ? "max-h-[460px]" : "max-w-[900px]"}
 `}
       data-testid="hero-card"
     >
@@ -71,7 +71,7 @@ export default function HeroCard({
       {/* Floating Info Box */}
       <div
         className={`relative z-10 my-[20] mx-6 rounded-[24px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl shadow-[var(--shadow-lg)] ${
-          preview ? "" : "max-h-[300px]"
+          preview ? "" : "max-h-[350px]"
         }`}
       >
         {/* Top Row: Genre + Date */}
@@ -97,12 +97,12 @@ export default function HeroCard({
         </p>
 
         {/* Action + Sources */}
-        <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-6">
+        <div className="flex items-center justify-between border-t border-[var(--border-subtle)] pt-6 ">
           <div className="flex -space-x-2 items-center">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-7 w-7 rounded-full border-2 border-[var(--surface)] bg-[var(--glass-bg)] backdrop-blur-sm"
+                className="h-7 w-7 rounded-full border-2 border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-sm"
               />
             ))}
             <span className="pl-4 text-[10px] tracking-widest text-[var(--text-muted)] uppercase">

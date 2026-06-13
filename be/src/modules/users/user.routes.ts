@@ -80,6 +80,7 @@ export async function userRoutes(app: FastifyInstance) {
     };
 
     const body = request.body as any;
+    console.log(body);
 
     return prisma.user.update({
       where: {

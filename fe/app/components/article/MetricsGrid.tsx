@@ -13,11 +13,34 @@ export default function MetricsGrid() {
       {items.map((item, i) => (
         <div
           key={i}
-          className="rounded-3xl border border-white/10 bg-black/30 p-5"
+          className="
+            rounded-3xl
+            border-[var(--border)]
+            bg-[var(--surface-secondary)]
+            p-5
+          "
         >
-          <item.icon className="mb-4 h-5 w-5 text-cyan-400" />
-          <div className="text-3xl font-black">{item.value}</div>
-          <div className="mt-1 text-[10px] tracking-[0.25em] text-white/30 uppercase">
+          <item.icon
+            className="mb-4 h-5 w-5"
+            style={{ color: "var(--primary)" }}
+          />
+
+          <div
+            className="text-3xl font-black"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {item.value}
+          </div>
+
+          <div
+            className="
+              mt-1
+              text-[10px]
+              uppercase
+              tracking-[0.25em]
+            "
+            style={{ color: "var(--text-faint)" }}
+          >
             {item.label}
           </div>
         </div>

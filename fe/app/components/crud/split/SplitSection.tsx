@@ -4,7 +4,7 @@ import { ArrowRight, Split } from "lucide-react";
 
 export default function SplitSection({ event }: { event: any }) {
   return (
-    <section className="relative overflow-hidden rounded-[40px] border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-2xl">
+    <section className="relative overflow-hidden border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-2xl">
       {/* LABEL */}
       <div className="absolute left-1/2 top-10 z-30 hidden -translate-x-1/2 lg:flex">
         <div
@@ -32,10 +32,10 @@ export default function SplitSection({ event }: { event: any }) {
             src={event.imageUrl}
             className="
               absolute inset-0 h-full w-full object-cover
-              opacity-30
+              opacity-60
               transition-all duration-700
               group-hover:scale-105
-              group-hover:opacity-60
+              group-hover:opacity-90
             "
           />
 
@@ -55,21 +55,6 @@ export default function SplitSection({ event }: { event: any }) {
             <p className="mt-6 max-w-2xl text-[var(--text-secondary)]">
               {event.neutral.description}
             </p>
-
-            <button
-              className="
-                mt-10 flex items-center gap-3
-                text-[10px] font-black
-                tracking-[0.3em]
-                uppercase
-                text-[var(--primary)]
-                transition-all
-                hover:translate-x-1
-              "
-            >
-              VIEW OFFICIAL FEED
-              <ArrowRight className="h-4 w-4" />
-            </button>
           </div>
         </div>
 
@@ -103,22 +88,6 @@ export default function SplitSection({ event }: { event: any }) {
             <p className="mt-6 ml-auto max-w-2xl text-[var(--text-secondary)]">
               {event.extreme.description}
             </p>
-
-            <button
-              className="
-                mt-10 flex items-center gap-3
-                text-[10px] font-black
-                tracking-[0.3em]
-                uppercase
-                text-[var(--secondary)]
-                transition-all
-                hover:translate-x-1
-                lg:ml-auto
-              "
-            >
-              VIEW LEAKED FEED
-              <ArrowRight className="h-4 w-4" />
-            </button>
           </div>
         </div>
       </div>

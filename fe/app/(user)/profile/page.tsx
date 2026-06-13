@@ -21,7 +21,7 @@ export default function ProfilePage() {
       bio: user?.bio ?? "",
     },
     onSubmit: async (values) => {
-      await fetch(`http://localhost:8080/api/users/${user.id}`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -30,7 +30,7 @@ export default function ProfilePage() {
         body: JSON.stringify(values),
       });
 
-      const updated = await fetch("http://localhost:8080/api/auth/me", {
+      const updated = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       }).then((r) => r.json());
 
@@ -44,7 +44,7 @@ export default function ProfilePage() {
     const t = window.localStorage.getItem("token") || "";
     setToken(t);
 
-    fetch("http://localhost:8080/api/auth/me", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${t}` },
     })
       .then((res) => res.json())

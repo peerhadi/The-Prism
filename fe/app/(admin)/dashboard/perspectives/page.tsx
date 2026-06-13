@@ -5,6 +5,7 @@ import Link from "next/link";
 import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { Eye } from "lucide-react";
 
 type Perspective = {
   id: string;
@@ -19,7 +20,7 @@ const PAGE = {
   title: "PERSPECTIVES GRID",
   toast: "Perspective field synced",
   createHref: "/dashboard/perspectives/add",
-  createLabel: "+ NEW PERSPECTIVE",
+  createLabel: "Generate Perspectives",
   subtitle: "neutral • extreme data layers",
 };
 
@@ -27,15 +28,26 @@ export default function PerspectivesPage() {
   const [items, setItems] = useState<Perspective[]>([]);
   const [toast, setToast] = useState(false);
 
+  const [token, setToken] = useState();
   useEffect(() => {
-    fetch("http://localhost:8080/api/perspectives")
+    if (window) {
+      setToken(window.localStorage.getItem("token"));
+    }
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`)
       .then((r) => r.json())
       .then((data) => {
         setItems(data);
         setToast(true);
       });
   }, []);
-
+  const generateFeed = () => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
   return (
     <div
       className="min-h-screen p-10"
@@ -57,17 +69,18 @@ export default function PerspectivesPage() {
           {PAGE.title}
         </h1>
 
-        <Link
-          href={PAGE.createHref}
-          className="px-5 py-2 font-bold transition rounded-lg"
+        <div
+          onClick={generateFeed}
+          className="px-5 py-2 font-bold transition rounded-lg flex gap-2"
           style={{
             border: "1px solid var(--primary-border)",
             background: "var(--primary-soft)",
             color: "var(--primary)",
           }}
         >
+          <Eye />
           {PAGE.createLabel}
-        </Link>
+        </div>
       </div>
 
       <div className="grid gap-4">

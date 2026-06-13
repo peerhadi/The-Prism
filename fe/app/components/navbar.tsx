@@ -44,7 +44,7 @@ export function Navbar() {
       console.log(t);
       if (t) {
         setToken(t);
-        fetch(`http://localhost:8080/api/auth/me`, {
+        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${t}`,
@@ -226,7 +226,7 @@ export function Navbar() {
     absolute right-0 top-[calc(100%+12px)]
     w-64 overflow-hidden rounded-3xl
     border border-[var(--primary-border)]
-    bg-[var(--surface-elevated)]
+    bg-[var(--glass-bg)]
     backdrop-blur-2xl
     shadow-[0_0_40px_var(--primary-glow)]
 
@@ -311,7 +311,7 @@ export function Navbar() {
           {/* top */}
           <div className="flex items-center justify-between border-b border-white/10 px-6 py-6">
             <div>
-              <h2 className="text-2xl font-black uppercase">The Prism</h2>
+              <h2 className="text-2xl text-white uppercase">The Prism</h2>
 
               <p className="mt-1 text-[10px] tracking-[0.3em] text-cyan-400 uppercase">
                 Intelligence Layer

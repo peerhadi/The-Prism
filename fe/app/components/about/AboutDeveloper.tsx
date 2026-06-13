@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ArrowRight, Quote } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export default function AboutDeveloper() {
   return (
@@ -51,7 +52,10 @@ export default function AboutDeveloper() {
             information with more context and less manipulation.
           </p>
 
-          <button className="group flex items-center gap-3 border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium transition-all duration-300 hover:border-[var(--accent)]/40 hover:bg-[var(--surface-hover)]">
+          <button
+            className="group flex items-center gap-3 border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium transition-all duration-300 hover:border-[var(--accent)]/40 hover:bg-[var(--surface-hover)]"
+            onClick={() => redirect("/bias")}
+          >
             Read Project Vision
             <ArrowRight
               size={16}

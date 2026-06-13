@@ -20,7 +20,8 @@ export async function methodGuard(request: any, reply: any) {
   }
 
   const isUserUpdate =
-    request.url.split("/").includes("users") && request.method === "PUT";
+    request.url.split("/").includes("users") &&
+    (request.method === "PUT" || request.method === "DELETE");
 
   if (isUserUpdate) {
     const targetId = request.params?.id;
