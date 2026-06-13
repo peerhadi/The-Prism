@@ -9,26 +9,66 @@ export default function SignalMatrix() {
   ];
 
   return (
-    <div className="rounded-[32px] border border-white/10 bg-white/[0.03] p-6 backdrop-blur-xl">
+    <div
+      className="
+        rounded-[32px]
+        border-[var(--border)]
+        bg-[var(--surface)]
+        p-6
+        backdrop-blur-xl
+      "
+    >
       <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-[11px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+        <h3
+          className="
+            text-[11px]
+            font-black
+            uppercase
+            tracking-[0.3em]
+            text-[var(--primary)]
+          "
+        >
           Signal Matrix
         </h3>
-        <Zap className="h-4 w-4 text-cyan-400" />
+
+        <Zap className="h-4 w-4" style={{ color: "var(--primary)" }} />
       </div>
 
       <div className="space-y-5">
         {signals.map(([label, val], i) => (
           <div key={i}>
-            <div className="mb-2 flex justify-between text-[10px] font-bold tracking-widest text-white/40 uppercase">
+            <div
+              className="
+                mb-2
+                flex
+                justify-between
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-widest
+              "
+              style={{ color: "var(--text-faint)" }}
+            >
               <span>{label}</span>
-              <span className="text-cyan-400">{val}</span>
+
+              <span style={{ color: "var(--primary)" }}>{val}</span>
             </div>
 
-            <div className="h-1 w-full rounded-full bg-white/5 overflow-hidden">
+            <div
+              className="
+                h-1
+                w-full
+                overflow-hidden
+                rounded-full
+                bg-[var(--border-subtle)]
+              "
+            >
               <div
-                className="h-full bg-cyan-400 shadow-[0_0_12px_#22d3ee]"
-                style={{ width: val }}
+                className="h-full bg-[var(--primary)]"
+                style={{
+                  width: val,
+                  boxShadow: `0 0 12px var(--primary-glow)`,
+                }}
               />
             </div>
           </div>

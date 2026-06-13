@@ -8,7 +8,7 @@ export default function ArchiveCategoryIndex({
   articles: any[];
 }) {
   return (
-    <div className="rounded-[40px] border border-white/10 bg-black/30 p-8">
+    <div className="rounded-[40px] border border-white/10 bg-[var(--glass-bg)] p-8">
       <h3 className="text-[10px] font-black tracking-[0.35em] text-cyan-400 uppercase">
         CATEGORY INDEX
       </h3>
@@ -24,7 +24,7 @@ export default function ArchiveCategoryIndex({
           return (
             <div key={i} className="group border-b border-white/5 pb-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-white/70 group-hover:text-white">
+                <span className="text-[var(--text-primary)]/70 group-hover:text-[var(--text-primary)]">
                   {category.name}
                 </span>
                 <span className="text-cyan-400 text-sm font-black">

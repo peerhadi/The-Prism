@@ -17,6 +17,7 @@ import { aiRoutes } from "./modules/aiRoutes/aiRoutes.routes.js";
 
 import { methodGuard } from "./middleware/methodGuard.js";
 import { uploadRoutes } from "./routes/upload.routes.js";
+import layoutRoutes from "./modules/layout/layout.routes.js";
 
 export async function buildApp() {
   const app = Fastify({ logger: true });
@@ -28,6 +29,9 @@ export async function buildApp() {
   await registerMultipart(app);
   await registerStatic(app);
 
+  await app.register(layoutRoutes, {
+    prefix: "/api/layout",
+  });
   await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(aiRoutes, { prefix: "/api/aiRoutes" });
 

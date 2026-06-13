@@ -69,7 +69,7 @@ export default function SignUpPage() {
             sources: [],
           };
 
-      fetch("http://localhost:8080/api/auth/register", {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -89,11 +89,14 @@ export default function SignUpPage() {
 
     const run = async () => {
       try {
-        const res = await fetch("http://localhost:8080/api/auth/github", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          },
+        );
 
         const data = await res.json();
 
@@ -193,7 +196,7 @@ export default function SignUpPage() {
               onCheckedChange={(val) => formik.setFieldValue("terms", val)}
               className="border-cyan-300/40 data-[state=checked]:bg-cyan-400"
             />
-            <span className="text-[9px] tracking-[0.35em] text-white/40 uppercase">
+            <span className="text-[9px] tracking-[0.35em] text-[var(--text-primary)] uppercase">
               Accept terms
             </span>
           </div>

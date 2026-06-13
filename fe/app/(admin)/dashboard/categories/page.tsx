@@ -17,7 +17,7 @@ export default function CategoriesPage() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/categories")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
       .then((r) => r.json())
       .then((data) => {
         setCategories(data);

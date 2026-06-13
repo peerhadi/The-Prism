@@ -70,3 +70,70 @@ model Archived {
   articles  Json
   createdAt DateTime @default(now())
 }
+
+enum LayoutType {
+  STORY
+  ARCHIVE
+  EXPLORE
+  SPLIT
+}
+
+enum LayoutPosition {
+  LEFT
+  CENTER
+  RIGHT
+  HERO
+}
+
+enum ComponentType {
+  HERO
+  SMALL
+  LIST
+  INSIGHT
+  HEADLINE
+
+  SPLIT_CARD
+  SPLIT_SECTION
+
+  STORY_LIVE_SIGNAL
+  STORY_RIGHT_PANEL
+
+  TRENDING_PANEL
+  DISCOVERY_NODES
+
+  ARCHIVE_LOGS
+  ARCHIVE_CATEGORY_INDEX
+
+  CTA
+}
+
+model Layout {
+  id   String     @id @default(cuid())
+  name String
+  type LayoutType
+
+  components LayoutComponent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LayoutComponent {
+  id String @id @default(cuid())
+
+  layoutId String
+  layout   Layout @relation(fields: [layoutId], references: [id], onDelete: Cascade)
+
+  type ComponentType
+
+  position LayoutPosition
+
+  order Int
+
+  config Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([layoutId])
+  @@index([layoutId, position])
+}

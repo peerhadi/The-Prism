@@ -1,8 +1,10 @@
 "use client";
 
 import { Brain, AudioWaveform, ArrowDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function ConflictCTA() {
+  const router = useRouter();
   return (
     <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
       {/* Background Glow */}
@@ -53,6 +55,7 @@ export default function ConflictCTA() {
             hover:scale-105
             hover:bg-[var(--surface-hover)]
           "
+          onClick={() => router.push("/bias")}
         >
           ENTER DEEP COMPARISON
           <ArrowDown className="h-4 w-4" />

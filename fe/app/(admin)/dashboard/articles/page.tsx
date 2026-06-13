@@ -6,6 +6,7 @@ import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { PrismLoader } from "@/app/components/loadingScreen";
+import { Sparkles } from "lucide-react";
 
 type Article = {
   id: string;
@@ -18,9 +19,13 @@ type Article = {
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [toast, setToast] = useState(false);
+  const [token, setToken] = useState();
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/articles")
+    if (window) {
+      setToken(window.localStorage.getItem("token"));
+    }
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`)
       .then((r) => r.json())
       .then((data) => {
         console.log(data);
@@ -28,7 +33,14 @@ export default function ArticlesPage() {
         setToast(true);
       });
   }, []);
-
+  const generateFeed = () => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/rss/sync`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
   return (
     <div
       className="min-h-screen p-10"
@@ -50,17 +62,18 @@ export default function ArticlesPage() {
           <span style={{ color: "var(--primary)" }}>ARTICLES</span> GRID
         </h1>
 
-        <Link
-          href="/dashboard/articles/add"
-          className="px-5 py-2 font-bold tracking-widest transition"
+        <div
+          onClick={generateFeed}
+          className="px-5 py-2 font-bold tracking-widest transition cursor-pointer flex gap-2"
           style={{
             border: "1px solid var(--primary-border)",
             background: "var(--primary-soft)",
             color: "var(--primary)",
           }}
         >
-          + NEW ENTRY
-        </Link>
+          <Sparkles />
+          Generate Feed
+        </div>
       </div>
 
       <div className="grid gap-4">

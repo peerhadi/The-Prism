@@ -59,13 +59,13 @@ export default function EditPerspective() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:8080/api/perspectives/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`)
       .then((r) => r.json())
       .then(setForm);
   }, [id]);
 
   const save = async () => {
-    await fetch(`http://localhost:8080/api/perspectives/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

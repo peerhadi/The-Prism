@@ -16,7 +16,7 @@ export default function EditArticle() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/articles/${id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`)
       .then((r) => r.json())
       .then(setForm);
   }, [id]);
@@ -26,7 +26,7 @@ export default function EditArticle() {
   };
 
   const save = async () => {
-    await fetch(`http://localhost:8080/api/articles/${id}`, {
+    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

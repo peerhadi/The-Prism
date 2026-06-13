@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   DndContext,
@@ -19,22 +19,34 @@ import {
 
 import { CSS } from "@dnd-kit/utilities";
 
+/* UI */
 import HeroCard from "@/app/(user)/components/HeroCard";
 import ShortCard from "@/app/(user)/components/SmallCard";
+import ListCard from "@/app/(user)/components/ListCard";
 
 import ExploreLayout from "@/app/components/crud/explore/ExploreLayout";
 import DiscoveryNodes from "@/app/components/crud/explore/DiscoveryNodes";
 import TrendingPanel from "@/app/components/crud/explore/TrendingPanel";
 
 import AddComponentButton from "../pallette";
+import Breadcrumbs from "@/app/components/Breadcrumb";
+import StickyInsight from "@/app/(user)/components/TickerCard";
+import { Trash2 } from "lucide-react";
+
+const BREADCRUMBS = [
+  { label: "Layout", href: "/dashboard/layout" },
+  { label: "Explore" },
+];
 
 type Article = any;
 
 type CenterState = {
   hero: Article | null;
   small: Article[];
+  list: Article[];
 };
 
+/* ---------------- MOCK ---------------- */
 const mockArticles = Array.from({ length: 30 }, (_, i) => ({
   id: `article-${i}`,
   title: `Explore Story ${i + 1}`,
@@ -49,90 +61,190 @@ const mockArticles = Array.from({ length: 30 }, (_, i) => ({
   categoryId: `cat-${i % 5}`,
 }));
 
-const mockCategories = [
-  {
-    id: "cat-0",
-    name: "Politics",
-    color: "border-cyan-500/30 bg-cyan-500/10 text-cyan-300",
-  },
-  {
-    id: "cat-1",
-    name: "Technology",
-    color: "border-purple-500/30 bg-purple-500/10 text-purple-300",
-  },
-  {
-    id: "cat-2",
-    name: "Conflict",
-    color: "border-red-500/30 bg-red-500/10 text-red-300",
-  },
-  {
-    id: "cat-3",
-    name: "Economy",
-    color: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  },
-  {
-    id: "cat-4",
-    name: "Society",
-    color: "border-yellow-500/30 bg-yellow-500/10 text-yellow-300",
-  },
-];
+/* ---------------- DRAG WRAPPER ---------------- */
+const TrashButton = ({
+  id,
+  handleDelete,
+}: {
+  id: string;
+  handleDelete: (id: string) => void;
+}) => (
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      handleDelete(id);
+    }}
+    className="absolute top-4 right-4 z-50 opacity-100 group-hover:opacity-100 transition pointer-events-auto p-2"
+  >
+    <Trash2 className="h-6 w-6 text-[var(--danger)]" />
+  </button>
+);
+function Draggable({
+  id,
+  children,
+  handleDelete,
+}: {
+  id: string;
+  children: React.ReactNode;
+  handleDelete: (id: string) => void;
+}) {
+  const { setNodeRef, attributes, listeners, transform, transition } =
+    useSortable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
+      className="relative group isolate"
+    >
+      <TrashButton id={id} handleDelete={handleDelete} />
+      <div {...listeners} className="cursor-grab isolate">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- HELPERS ---------------- */
+async function fetchLayout() {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/explore`,
+  );
+  return res.json();
+}
+
+async function saveLayout(type: string, components: any[]) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ components }),
+    },
+  );
+  return res.json();
+}
+
+const safeId = (prefix: string, id: string) =>
+  `${prefix}-${id}-${crypto.randomUUID()}`;
 
 export default function ExploreBuilderPage() {
   const sensors = useSensors(useSensor(PointerSensor));
 
   const articles = mockArticles;
 
-  const [left, setLeft] = useState<Article[]>(articles.slice(0, 5));
-
+  /* ---------------- STATE ---------------- */
+  const [left, setLeft] = useState<Article[]>([]);
   const [center, setCenter] = useState<CenterState>({
-    hero: articles[0],
-    small: articles.slice(5, 9),
+    hero: null,
+    small: [],
+    list: [],
   });
+  const [right, setRight] = useState<Article[]>([]);
 
-  const [right, setRight] = useState<Article[]>(articles.slice(10, 18));
+  /* ---------------- LOAD ---------------- */
+  useEffect(() => {
+    const load = async () => {
+      const data = await fetchLayout();
+      const comps = data?.components ?? [];
 
+      if (!comps.length) {
+        setCenter({
+          hero: articles[0],
+          small: articles.slice(1, 5).map((a) => ({
+            ...a,
+            id: safeId("small", a.id),
+          })),
+          list: [],
+        });
+
+        setLeft([]);
+        return;
+      }
+
+      setCenter({
+        hero: comps.find((c: any) => c.type === "HERO")?.config ?? null,
+        small: comps
+          .filter((c: any) => c.type === "SMALL")
+          .flatMap((c: any) =>
+            Array.isArray(c.config) ? c.config : [c.config],
+          ),
+        list: comps
+          .filter((c: any) => c.type === "LIST")
+          .flatMap((c: any) =>
+            Array.isArray(c.config) ? c.config : [c.config],
+          ),
+      });
+
+      setRight(
+        comps
+          .filter((c: any) => c.type === "INSIGHT")
+          .flatMap((c: any) =>
+            Array.isArray(c.config) ? c.config : [c.config],
+          ),
+      );
+      setLeft(
+        comps
+          .filter((c: any) => c.type === "HEADLINE")
+          .flatMap((c: any) =>
+            Array.isArray(c.config) ? c.config : [c.config],
+          ),
+      );
+    };
+
+    load();
+  }, []);
+
+  /* ---------------- ADD ---------------- */
   const handleAddComponent = (type: string) => {
-    const article = articles[Math.floor(Math.random() * articles.length)];
+    const article = {
+      ...articles[Math.floor(Math.random() * articles.length)],
+      id: crypto.randomUUID(),
+    };
 
     switch (type) {
       case "INSIGHT":
-        setLeft((prev) => [...prev, article]);
+        setRight((p) => [
+          ...p,
+          {
+            ...article,
+            id: `${article.id}-${crypto.randomUUID()}`,
+          },
+        ]);
+        break;
+      case "HEADLINE":
+        setLeft((p) => [...p, article]);
         break;
 
       case "SMALL":
-        setCenter((prev) => ({
-          ...prev,
-          small: [...prev.small, article],
-        }));
-        break;
-
-      case "HERO":
-        setCenter((prev) => ({
-          ...prev,
-          hero: article,
-        }));
+        setCenter((p) => ({ ...p, small: [...p.small, article] }));
         break;
 
       case "LIST":
-        setCenter((prev) => ({
-          ...prev,
-          small: [...prev.small, article],
-        }));
+        setCenter((p) => ({ ...p, list: [...p.list, article] }));
+        break;
+
+      case "HERO":
+        setCenter((p) => ({ ...p, hero: article }));
         break;
     }
   };
 
+  /* ---------------- FIND ---------------- */
   const findContainer = (id: string) => {
-    if (left.find((i) => i.id === id)) return "left";
-
-    if (center.small.find((i) => i.id === id)) return "small";
-
+    if (left.some((i) => i.id === id)) return "left";
+    if (center.small.some((i) => i.id === id)) return "small";
+    if (center.list.some((i) => i.id === id)) return "list";
+    if (right.some((i) => i.id === id)) return "right"; // ✅ ADD THIS
     return null;
   };
 
+  /* ---------------- DRAG ---------------- */
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-
     if (!over) return;
 
     const activeId = active.id as string;
@@ -142,17 +254,14 @@ export default function ExploreBuilderPage() {
     const to = findContainer(overId);
 
     if (!from || !to) return;
-
-    if (from === "left" || to === "left") {
-      setLeft((prev) => {
+    if (from === "right" || to === "right") {
+      setRight((prev) => {
         const fromIndex = prev.findIndex((i) => i.id === activeId);
-
         const toIndex = prev.findIndex((i) => i.id === overId);
 
         if (fromIndex === -1) return prev;
 
         const updated = [...prev];
-
         const [moved] = updated.splice(fromIndex, 1);
 
         updated.splice(toIndex === -1 ? updated.length : toIndex, 0, moved);
@@ -162,162 +271,231 @@ export default function ExploreBuilderPage() {
 
       return;
     }
+    if (from === "left" || to === "left") {
+      setLeft((prev) => {
+        const fromIndex = prev.findIndex((i) => i.id === activeId);
+        const toIndex = prev.findIndex((i) => i.id === overId);
 
-    setCenter((prev) => {
-      const updated = [...prev.small];
+        if (fromIndex === -1) return prev;
 
-      const fromIndex = updated.findIndex((i) => i.id === activeId);
+        const updated = [...prev];
+        const [moved] = updated.splice(fromIndex, 1);
+        updated.splice(toIndex === -1 ? updated.length : toIndex, 0, moved);
 
-      const toIndex = updated.findIndex((i) => i.id === overId);
+        return updated;
+      });
+      return;
+    }
 
-      if (fromIndex === -1 || toIndex === -1) {
-        return prev;
-      }
+    if (from === "small" || to === "small") {
+      setCenter((prev) => {
+        const updated = [...prev.small];
 
-      const [moved] = updated.splice(fromIndex, 1);
+        const fromIndex = updated.findIndex((i) => i.id === activeId);
+        const toIndex = updated.findIndex((i) => i.id === overId);
 
-      updated.splice(toIndex, 0, moved);
+        if (fromIndex === -1) return prev;
 
-      return {
-        ...prev,
-        small: updated,
-      };
-    });
+        const [moved] = updated.splice(fromIndex, 1);
+        updated.splice(toIndex === -1 ? updated.length : toIndex, 0, moved);
+
+        return { ...prev, small: updated };
+      });
+      return;
+    }
+
+    if (from === "list" || to === "list") {
+      setCenter((prev) => {
+        const updated = [...prev.list];
+
+        const fromIndex = updated.findIndex((i) => i.id === activeId);
+        const toIndex = updated.findIndex((i) => i.id === overId);
+
+        if (fromIndex === -1) return prev;
+
+        const [moved] = updated.splice(fromIndex, 1);
+        updated.splice(toIndex === -1 ? updated.length : toIndex, 0, moved);
+
+        return { ...prev, list: updated };
+      });
+    }
   };
 
-  function Draggable({ item, children }: any) {
-    const { setNodeRef, attributes, listeners, transform, transition } =
-      useSortable({
-        id: item.id,
-      });
+  /* ---------------- SAVE ---------------- */
+  const handleSave = async () => {
+    await saveLayout("explore", [
+      ...left.map((i) => ({
+        type: "HEADLINE",
+        config: i,
+        position: "LEFT",
+      })),
+      ...center.small.map((i) => ({
+        type: "SMALL",
+        config: i,
+        position: "CENTER",
+      })),
+      ...center.list.map((i) => ({
+        type: "LIST",
+        config: i,
+        position: "CENTER",
+      })),
+      ...(center.hero
+        ? [
+            {
+              type: "HERO",
+              config: center.hero,
+              position: "CENTER",
+            },
+          ]
+        : []),
 
-    return (
-      <div
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
-        style={{
-          transform: CSS.Transform.toString(transform),
-          transition: transition || "250ms cubic-bezier(0.2, 0.8, 0.2, 1)",
-        }}
-        className="cursor-grab active:cursor-grabbing"
-      >
-        {children}
-      </div>
-    );
-  }
+      ...right.map((i) => ({
+        type: "INSIGHT",
+        config: i,
+        position: "RIGHT",
+      })),
+    ]);
+  };
 
+  const handleDelete = (id: string) => {
+    setLeft((p) => p.filter((x) => x.id !== id));
+    setRight((p) => p.filter((x) => x.id !== id));
+
+    setCenter((p) => ({
+      ...p,
+      hero: p.hero?.id === id ? null : p.hero,
+      small: p.small.filter((x) => x.id !== id),
+      list: p.list.filter((x) => x.id !== id),
+    }));
+  };
+  /* ---------------- UI ---------------- */
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="fixed top-28 right-10 z-[999]">
-        <AddComponentButton onSelect={handleAddComponent} />
-      </div>
+    <div>
+      <Breadcrumbs items={BREADCRUMBS} />
 
-      <ExploreLayout
-        left={
-          <div className="space-y-8 min-h-screen">
-            <DiscoveryNodes
-              categories={mockCategories}
-              articles={articles}
-              setSelectedCategory={() => {}}
-            />
+      <button
+        onClick={handleSave}
+        className="fixed bottom-6 right-6 z-[999] bg-black text-white px-4 py-2 rounded"
+      >
+        Save
+      </button>
 
-            <div
-              className="rounded-[36px] p-8"
-              style={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              <h3
-                className="mb-6 text-[11px] uppercase tracking-[0.35em]"
-                style={{
-                  color: "var(--secondary)",
-                }}
-              >
-                Quick Access
-              </h3>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="fixed top-28 right-10 z-[999]">
+          <AddComponentButton onSelect={handleAddComponent} />
+        </div>
+
+        <ExploreLayout
+          left={
+            <div className="space-y-8 min-h-screen">
+              <DiscoveryNodes
+                categories={[
+                  { id: "cat-0", name: "Politics" },
+                  { id: "cat-1", name: "Tech" },
+                ]}
+                articles={articles}
+                setSelectedCategory={() => {}}
+              />
+
+              <div className="rounded-[36px] p-8 border border-white/10 bg-[var(--glass-bg)]">
+                <h3 className="mb-6 text-[11px] uppercase tracking-[0.35em]">
+                  Quick Access
+                </h3>
+
+                <SortableContext
+                  items={left.map((i) => i.id)}
+                  strategy={rectSortingStrategy}
+                >
+                  <div className="space-y-4">
+                    {left.map((item) => (
+                      <Draggable
+                        key={item.id}
+                        id={item.id}
+                        handleDelete={handleDelete}
+                      >
+                        <div className="p-4 rounded-2xl border border-white/10">
+                          <h4 className="text-sm font-bold">{item.title}</h4>
+                          <p className="text-xs opacity-70">
+                            {item.description}
+                          </p>
+                        </div>
+                      </Draggable>
+                    ))}
+                  </div>
+                </SortableContext>
+              </div>
+            </div>
+          }
+          center={
+            <div className="space-y-10 min-h-screen">
+              {center.hero && <HeroCard {...center.hero} />}
 
               <SortableContext
-                items={left.map((i) => i.id)}
+                items={center.small.map((i) => i.id)}
                 strategy={rectSortingStrategy}
               >
-                <div className="space-y-4">
-                  {left.map((item, i) => (
-                    <Draggable key={i} item={item}>
-                      <div
-                        className="rounded-2xl p-4"
-                        style={{
-                          background: "var(--surface-secondary)",
-                          border: "1px solid var(--border)",
-                        }}
-                      >
-                        <h4
-                          className="text-sm font-bold"
-                          style={{
-                            color: "var(--text-primary)",
-                          }}
-                        >
-                          {item.title}
-                        </h4>
+                <div className="grid md:grid-cols-2 gap-8">
+                  {center.small.map((item) => (
+                    <Draggable
+                      key={item.id}
+                      id={item.id}
+                      handleDelete={handleDelete}
+                    >
+                      <ShortCard {...item} />
+                    </Draggable>
+                  ))}
+                </div>
+              </SortableContext>
 
-                        <p
-                          className="mt-2 text-xs"
-                          style={{
-                            color: "var(--text-muted)",
-                          }}
-                        >
-                          {item.description}
-                        </p>
-                      </div>
+              <SortableContext
+                items={center.list.map((i) => i.id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="space-y-6">
+                  {center.list.map((item) => (
+                    <Draggable
+                      key={item.id}
+                      id={item.id}
+                      handleDelete={handleDelete}
+                    >
+                      <ListCard {...item} />
                     </Draggable>
                   ))}
                 </div>
               </SortableContext>
             </div>
-          </div>
-        }
-        center={
-          <div className="space-y-10 min-h-screen">
-            {center.hero && (
-              <HeroCard
-                {...center.hero}
-                sources={[]}
-                onActionClick={() => {}}
-              />
-            )}
-
-            <SortableContext
-              items={center.small.map((i) => i.id)}
-              strategy={rectSortingStrategy}
-            >
-              <div className="grid md:grid-cols-2 gap-8">
-                {center.small.map((item, i) => (
-                  <Draggable key={i} item={item}>
-                    <ShortCard
+          }
+          right={
+            <div className="space-y-8 min-h-screen">
+              <TrendingPanel articles={articles.slice(0, 5)} />
+              <SortableContext
+                items={right.map((i) => i.id)}
+                strategy={rectSortingStrategy}
+              >
+                <div className="space-y-4">
+                  {right.map((item) => (
+                    <Draggable
+                      key={item.id}
                       id={item.id}
-                      title={item.title}
-                      badge="DISCOVERY"
-                      sources={item.sources}
-                      description={item.description}
-                      imageUrl={item.imageUrl}
-                    />
-                  </Draggable>
-                ))}
-              </div>
-            </SortableContext>
-          </div>
-        }
-        right={
-          <div className="space-y-8 min-h-screen">
-            <TrendingPanel articles={right} />
-          </div>
-        }
-      />
-    </DndContext>
+                      handleDelete={handleDelete}
+                    >
+                      <StickyInsight
+                        variant={item.variant ?? "cyan"}
+                        title={item.title}
+                        content={item.summary}
+                      />
+                    </Draggable>
+                  ))}
+                </div>
+              </SortableContext>
+            </div>
+          }
+        />
+      </DndContext>
+    </div>
   );
 }

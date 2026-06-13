@@ -10,16 +10,16 @@ import SourcesCard from "@/app/components/settings/website/SourcesCard";
 import AIFeaturesCard from "@/app/components/settings/website/AIFeaturesCard";
 import ThemeCard from "@/app/components/settings/website/ThemeCard";
 import PrivacyCard from "@/app/components/settings/website/PrivacyCard";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [sources, setSources] = useState<string[]>([]);
   const [newSource, setNewSource] = useState("");
   const [token, setToken] = useState("");
 
   const [privacySettings, setPrivacySettings] = useState<any>({
     id: "",
-    friendRequests: true,
-    publicProfile: true,
   });
 
   const [passwordForm, setPasswordForm] = useState<any>({
@@ -46,30 +46,30 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!token) return;
 
-    fetch("http://localhost:8080/api/auth/me", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
       headers: { Authorization: "Bearer " + token },
     })
       .then((r) => r.json())
       .then((res) => {
+        setSources(res.sources);
         setPrivacySettings({
           id: res.id,
-          friendRequests: res.friendRequests,
-          publicProfile: res.publicProfile,
         });
       });
   }, [token]);
 
   useEffect(() => {
-    if (!theme) {
-      setTheme(window.localStorage.getItem("theme") || "dark");
-    }
     if (window) {
+      if (!theme) {
+        setTheme(window.localStorage.getItem("theme") || "dark");
+      } else {
+        window.localStorage.setItem("theme", theme || "");
+      }
       if (theme === "light") {
         document.getElementsByTagName("body")[0].classList.remove("dark");
       } else if (theme === "dark") {
         document.getElementsByTagName("body")[0].classList.add("dark");
       }
-      window.localStorage.setItem("theme", theme || "");
     }
   }, [theme]);
 
@@ -108,9 +108,52 @@ export default function SettingsPage() {
       "The Hindu",
     ]);
 
-  const saveSources = async () => {};
-  const changePassword = async () => {};
-  const deleteAccount = async () => {};
+  const saveSources = async () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sources,
+        }),
+      },
+    );
+  };
+  const changePassword = async (currentPassword, newPassword) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}/change-password`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword,
+          newPassword,
+        }),
+      },
+    );
+  };
+  const deleteAccount = async () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    ).then(() => {
+      window.localStorage.removeItem("token");
+      router.push("/signup");
+      window.dispatchEvent(new Event("auth-changed"));
+    });
+  };
 
   if (!privacySettings.id) return <PrismLoader />;
 

@@ -28,7 +28,7 @@ export default function RootLayout({
   React.useEffect(() => {
     const t = window.localStorage.getItem("token");
     if (t) {
-      fetch(`http://localhost:8080/api/auth/me`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
         method: "GET",
         headers: { Authorization: `Bearer ${t}` },
       })

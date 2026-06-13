@@ -11,23 +11,31 @@ import QuickAccessPanel from "@/app/components/crud/explore/QuickAccessPanel";
 import TrendingPanel from "@/app/components/crud/explore/TrendingPanel";
 import ResultsGrid from "@/app/components/crud/explore/ResultsGrid";
 import ExploreLayout from "@/app/components/crud/explore/ExploreLayout";
+import StoryLiveSignal from "@/app/components/crud/story/StoryLiveSignal";
+
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ExplorePage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [articles, setArticles] = useState<any[]>([]);
+  const [layout, setLayout] = useState<any[]>([]);
 
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+  const [heroStory, setHeroStory] = useState<any>(null);
   const [small, setSmall] = useState<any[]>([]);
   const [list, setList] = useState<any[]>([]);
-  const [heroStory, setHeroStory] = useState<any>(null);
+  const [headlines, setHeadlines] = useState<any[]>([]);
+  const [insights, setInsights] = useState<any[]>([]);
+  const [trending, setTrending] = useState<any[]>([]);
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:8080/api/categories").then((r) => r.json()),
-      fetch("http://localhost:8080/api/articles").then((r) => r.json()),
-    ]).then(([cats, arts]) => {
+      fetch(`${API}/api/categories`).then((r) => r.json()),
+      fetch(`${API}/api/articles`).then((r) => r.json()),
+      fetch(`${API}/api/layout/explore`).then((r) => r.json()),
+    ]).then(([cats, arts, layoutRes]) => {
       setCategories(
         cats.map((c: any) => ({
           ...c,
@@ -35,7 +43,10 @@ export default function ExplorePage() {
         })),
       );
 
-      let fetched = arts.filter((x: any) => {
+      // ---------------------------
+      // CLEAN + SORT (LATEST FIRST)
+      // ---------------------------
+      let clean = arts.filter((x: any) => {
         return (
           !!x.title &&
           !!x.description &&
@@ -46,20 +57,57 @@ export default function ExplorePage() {
         );
       });
 
-      fetched = fetched.reverse().slice(Math.max(0, fetched.length - 10));
+      clean = clean.sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
 
-      const heros = fetched.filter((x: any) => x.type === "HERO");
-      const smalls = fetched.filter((x: any) => x.type === "SMALL");
-      const lists = fetched.filter((x: any) => x.type === "SMALL");
+      setArticles(clean);
 
-      setHeroStory(heros[0]);
-      setSmall(smalls.slice(0, 4));
-      setList(lists.slice(0, 5));
+      const components = layoutRes?.components ?? [];
+      setLayout(components);
 
-      setArticles(fetched);
+      // ===========================
+      // CURSOR ENGINE (LAYOUT DRIVEN)
+      // ===========================
+      let cursor = 0;
+
+      const count = (type: string) =>
+        components.filter((c: any) => c.type === type).length;
+
+      const next = (n: number) => {
+        const slice = clean.slice(cursor, cursor + n);
+        cursor += n;
+        return slice;
+      };
+
+      // HERO (1)
+      const heroCount = count("HERO");
+      setHeroStory(heroCount ? next(1)[0] : null);
+
+      // INSIGHTS (LEFT)
+      const insightCount = count("INSIGHT");
+      setInsights(next(insightCount));
+
+      // SMALL
+      const smallCount = count("SMALL");
+      setSmall(next(smallCount));
+
+      // SMALL
+      const listCount = count("LIST");
+      setList(next(listCount));
+
+      setHeadlines(next(4));
+
+      // TRENDING / HEADLINES
+      const trendingCount = count("HEADLINE");
+      setTrending(next(trendingCount));
     });
   }, []);
 
+  // ---------------------------
+  // FILTERING (UNCHANGED LOGIC)
+  // ---------------------------
   const filteredArticles = useMemo(() => {
     let result = [...articles];
 
@@ -81,7 +129,7 @@ export default function ExplorePage() {
     return result;
   }, [articles, selectedCategory, search]);
 
-  if (!articles.length || !list.length || !heroStory) {
+  if (!articles.length || !heroStory) {
     return <PrismLoader />;
   }
 
@@ -113,13 +161,15 @@ export default function ExplorePage() {
           <ResultsGrid
             articles={filteredArticles}
             small={small}
+            list={list}
             heroStory={heroStory}
           />
         </div>
       }
       right={
         <div className="space-y-8">
-          <TrendingPanel articles={articles} />
+          <TrendingPanel articles={trending} />
+          <StoryLiveSignal articles={insights} />
         </div>
       }
     />

@@ -1,15 +1,28 @@
 export default function ConfidenceCard() {
   return (
-    <div className="rounded-[32px] border border-cyan-500/20 bg-cyan-500/[0.04] p-8 text-center">
-      <p className="text-[10px] font-black tracking-[0.3em] text-cyan-400 uppercase">
+    <div
+      className="rounded-[32px] border p-8 text-center"
+      style={{
+        borderColor: "var(--primary-border)",
+        background: "var(--primary-soft)",
+      }}
+    >
+      <p
+        className="text-[10px] font-black tracking-[0.3em] uppercase"
+        style={{ color: "var(--primary)" }}
+      >
         Confidence Index
       </p>
 
-      <div className="mt-4 text-7xl font-black">
-        98<span className="text-cyan-400">%</span>
+      <div
+        className="mt-4 text-7xl font-black"
+        style={{ color: "var(--text-primary)" }}
+      >
+        98
+        <span style={{ color: "var(--primary)" }}>%</span>
       </div>
 
-      <p className="mt-4 text-sm text-white/40">
+      <p className="mt-4 text-sm" style={{ color: "var(--text-muted)" }}>
         High-probability narrative manipulation confirmed.
       </p>
     </div>

@@ -28,10 +28,6 @@ export default function ArchiveHero({
               <Radar className="h-3 w-3 animate-pulse" />
               Deep Storage
             </div>
-
-            <div className="rounded-full border border-[var(--border)] bg-[var(--surface-secondary)] px-5 py-2 text-[10px] font-black tracking-[0.25em] text-[var(--text-muted)] uppercase">
-              Intelligence Repository
-            </div>
           </div>
 
           {/* Title */}
@@ -76,7 +72,7 @@ export default function ArchiveHero({
         </div>
 
         {/* RIGHT */}
-        <div className="relative overflow-hidden rounded-[40px] border border-[var(--border)] bg-[var(--surface-secondary)] p-8 backdrop-blur-xl xl:col-span-4">
+        <div className="relative overflow-hidden rounded-[40px] border border-[var(--border)] bg-[var(--surface-secondary)] p-8 backdrop-blur-xl xl:col-span-4 max-h-[380px]">
           {/* Card Glow */}
           <div className="absolute inset-0 bg-[var(--primary-soft)] opacity-30" />
 

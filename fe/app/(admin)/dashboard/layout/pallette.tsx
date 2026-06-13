@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
 
-const COMPONENTS = ["SMALL", "LIST", "INSIGHT"] as const;
+const COMPONENTS = ["SMALL", "LIST", "INSIGHT", "HEADLINE"] as const;
 
 type ComponentType = (typeof COMPONENTS)[number];
 
@@ -82,7 +82,7 @@ export default function AddComponentButton({
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-4">
                 {COMPONENTS.map((component) => (
                   <button
                     key={component}

@@ -18,7 +18,7 @@ export default function UsersPage() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/users")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`)
       .then((r) => r.json())
       .then((data) => {
         setUsers(data);
