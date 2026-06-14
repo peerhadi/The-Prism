@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Plus, X } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 
 const COMPONENTS = ["SMALL", "LIST", "INSIGHT", "HEADLINE"] as const;
 
@@ -86,9 +87,24 @@ export default function AddComponentButton({
                 {COMPONENTS.map((component) => (
                   <button
                     key={component}
-                    onClick={() => {
-                      onSelect(component);
-                      setOpen(false);
+                    onClick={async () => {
+                      try {
+                        await onSelect(component);
+
+                        toast.success(
+                          "Component added successfully",
+                          "Success",
+                        );
+
+                        setOpen(false);
+                      } catch (error) {
+                        toast.error(
+                          error instanceof Error
+                            ? error.message
+                            : "Failed to add component",
+                          "Action Failed",
+                        );
+                      }
                     }}
                     className="rounded-2xl p-6 text-left transition"
                     style={{

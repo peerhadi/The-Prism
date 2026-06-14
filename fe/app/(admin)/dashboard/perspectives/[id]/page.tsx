@@ -8,6 +8,7 @@ import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 const BREADCRUMBS = [
   { label: "Perspectives", href: "/dashboard/perspectives" },
@@ -65,21 +66,34 @@ export default function EditPerspective() {
   }, [id]);
 
   const save = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(form),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(form),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully modified perspective",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/perspectives");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update perspective");
+      }
+
+      toast.success("Successfully modified perspective", "Success");
+
+      router.push("/dashboard/perspectives");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update perspective",
+        "Update Failed",
+      );
+    }
   };
 
   if (!form) {

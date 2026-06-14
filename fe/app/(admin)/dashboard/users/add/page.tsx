@@ -10,6 +10,7 @@ import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 const USER_FIELDS = [
   {
@@ -62,21 +63,34 @@ export default function AddUser() {
   };
 
   const submit = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(form),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(form),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully added user",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/users");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to create user");
+      }
+
+      toast.success("Successfully added user", "Success");
+
+      router.push("/dashboard/users");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create user",
+        "Creation Failed",
+      );
+    }
   };
 
   return (

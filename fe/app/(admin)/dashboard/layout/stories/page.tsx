@@ -32,6 +32,7 @@ import Breadcrumbs from "@/app/components/Breadcrumb";
 import AddComponentButton from "../pallette";
 import StickyInsight from "@/app/(user)/components/TickerCard";
 import { Radio } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 const TrashButton = ({
   id,
   handleDelete,
@@ -172,13 +173,28 @@ async function fetchLayout(type: string) {
 }
 
 export async function saveLayout(type: string, components: any[]) {
-  const res = await fetch(`${API}/api/layout/${type}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ components }),
-  });
+  try {
+    const response = await fetch(`${API}/api/layout/${type}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ components }),
+    });
 
-  return res.json();
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to save layout");
+    }
+
+    toast.success("Successfully saved layout", "Success");
+
+    return data;
+  } catch (error) {
+    toast.error(
+      error instanceof Error ? error.message : "Failed to save layout",
+      "Save Failed",
+    );
+  }
 }
 
 /* ================= MOCK ================= */

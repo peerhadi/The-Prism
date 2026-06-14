@@ -7,8 +7,7 @@ import { FileText, Type, AlignLeft, Layers } from "lucide-react";
 import BreadcrumbWrapper from "@/app/components/dashboard/BreadCrumbWrapper";
 import SnackbarWrapper from "@/app/components/dashboard/SnackbarWrapper";
 import FieldInput from "@/app/components/dashboard/FieldInput";
-
-import { useToast } from "@/lib/toast/toastStore";
+import { toast as fetchToast } from "@/lib/toast/toast";
 
 export default function EditArticle() {
   const { id } = useParams();
@@ -26,26 +25,37 @@ export default function EditArticle() {
   };
 
   const save = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        biasLevel: parseInt(form.biasLevel),
-      }),
-    });
+    let isSuccessful = false;
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            ...form,
+            biasLevel: parseInt(form.biasLevel),
+          }),
+        },
+      );
+      isSuccessful = true;
+      const data = await response.json().catch(() => null);
 
-    const { addToast } = useToast.getState();
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update article");
+      }
 
-    addToast({
-      title: "Success",
-      description: "Successfully modified article",
-    });
-
-    redirect("/dashboard/articles");
+      fetchToast.success("Successfully modified article", "Success");
+    } catch (error) {
+      console.log(error);
+      fetchToast.error("Failed to update article", "Update Failed");
+    }
+    if (isSuccessful) {
+      redirect("/dashboard/articles");
+    }
   };
 
   if (!form)

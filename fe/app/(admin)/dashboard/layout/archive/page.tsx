@@ -33,6 +33,7 @@ import ArchiveCategoryIndex from "@/app/components/crud/archive/ArchiveCategoryI
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { PrismLoader } from "@/app/components/loadingScreen";
 import { Radio, Trash2 } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 
 function RightHeadlineItem({
   item,
@@ -202,11 +203,35 @@ async function fetchLayout() {
 }
 
 async function saveLayout(type: string, components: any[]) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ components }),
-  });
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ components }),
+      },
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to save layout");
+    }
+
+    toast.success("Successfully saved layout", "Success");
+
+    return data;
+  } catch (error) {
+    toast.error(
+      error instanceof Error ? error.message : "Failed to save layout",
+      "Save Failed",
+    );
+
+    throw error;
+  }
 }
 
 const safeId = (prefix: string, id: string) =>

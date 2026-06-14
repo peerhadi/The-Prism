@@ -17,7 +17,7 @@ export const useToast = create<ToastState>((set, get) => ({
   toasts: [],
 
   addToast: (toast) => {
-    const id = crypto.randomUUID();
+    const id = Math.random().toString();
 
     set({
       toasts: [...get().toasts, { id, duration: 3000, ...toast }],

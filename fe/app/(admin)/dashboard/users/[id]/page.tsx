@@ -8,6 +8,7 @@ import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 const BREADCRUMBS = [
   { label: "Users", href: "/dashboard/users" },
@@ -44,23 +45,35 @@ export default function EditUser() {
   };
 
   const save = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(form),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(form),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully modified user",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/users");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update user");
+      }
+
+      toast.success("Successfully modified user", "Success");
+
+      router.push("/dashboard/users");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update user",
+        "Update Failed",
+      );
+    }
   };
-
   if (!form) {
     return (
       <div className="p-10 animate-pulse" style={{ color: "var(--primary)" }}>

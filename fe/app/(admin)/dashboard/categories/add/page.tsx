@@ -24,24 +24,37 @@ export default function AddCategory() {
   };
 
   const submit = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        averageBias: parseInt(form.averageBias || "0"),
-      }),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            ...form,
+            averageBias: parseInt(form.averageBias || "0"),
+          }),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully added category",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/categories");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to create category");
+      }
+
+      toast.success("Successfully added category", "Success");
+
+      router.push("/dashboard/categories");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create category",
+        "Creation Failed",
+      );
+    }
   };
 
   return (

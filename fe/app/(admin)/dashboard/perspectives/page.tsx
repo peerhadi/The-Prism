@@ -40,13 +40,33 @@ export default function PerspectivesPage() {
         setToast(true);
       });
   }, []);
-  const generateFeed = () => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const generateFeed = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to generate perspectives");
+      }
+
+      toast.success("Successfully generated perspectives", "Success");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate perspectives",
+        "Generation Failed",
+      );
+    }
   };
   return (
     <div

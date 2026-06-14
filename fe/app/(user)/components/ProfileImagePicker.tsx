@@ -127,38 +127,67 @@ export default function ProfileImagePicker({ id, profileImageUrl }) {
       return;
     }
 
-    const cropped = await cropImage(imageRef.current, completedCrop);
+    try {
+      const cropped = await cropImage(imageRef.current, completedCrop);
 
-    const blob = await (await fetch(cropped)).blob();
+      const blob = await (await fetch(cropped)).blob();
 
-    const formData = new FormData();
-    formData.append("file", blob, "avatar.jpg");
+      const formData = new FormData();
+      formData.append("file", blob, "avatar.jpg");
 
-    const uploadRes = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
-      {
-        method: "POST",
-        headers: { Authorization: window.localStorage.getItem("token") ?? "" },
-        body: formData,
-      },
-    );
+      const uploadRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: window.localStorage.getItem("token") ?? "",
+          },
+          body: formData,
+        },
+      );
 
-    const { imageUrl } = await uploadRes.json();
+      const uploadData = await uploadRes.json().catch(() => null);
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + window.localStorage.getItem("token"),
-      },
-      body: JSON.stringify({
-        profileImageUrl: imageUrl,
-      }),
-    });
-    setAvatar(cropped);
-    setModalOpen(false);
+      if (!uploadRes.ok) {
+        throw new Error(uploadData?.message || "Failed to upload image");
+      }
 
-    window.location.reload();
+      const { imageUrl } = uploadData;
+
+      const updateRes = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + window.localStorage.getItem("token"),
+          },
+          body: JSON.stringify({
+            profileImageUrl: imageUrl,
+          }),
+        },
+      );
+
+      const updateData = await updateRes.json().catch(() => null);
+
+      if (!updateRes.ok) {
+        throw new Error(updateData?.message || "Failed to update avatar");
+      }
+
+      toast.success("Profile picture updated successfully", "Success");
+
+      setAvatar(cropped);
+      setModalOpen(false);
+
+      window.location.reload();
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to update profile picture",
+        "Update Failed",
+      );
+    }
   };
 
   return (

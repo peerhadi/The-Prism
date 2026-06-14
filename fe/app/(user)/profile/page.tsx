@@ -7,6 +7,7 @@ import { PrismLoader } from "@/app/components/loadingScreen";
 import ProfileHeader from "@/app/components/settings/profile/ProfileHeader";
 import IdentitySection from "@/app/components/settings/profile/IdentitySection";
 import StatsSection from "@/app/components/settings/profile/StatsSection";
+import { toast } from "@/lib/toast/toast";
 
 export default function ProfilePage() {
   const [token, setToken] = React.useState("");
@@ -21,18 +22,38 @@ export default function ProfilePage() {
       bio: user?.bio ?? "",
     },
     onSubmit: async (values) => {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${user.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + window.localStorage.getItem("token"),
-        },
-        body: JSON.stringify(values),
-      });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/users/${user.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + window.localStorage.getItem("token"),
+            },
+            body: JSON.stringify(values),
+          },
+        );
 
-      const updated = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      }).then((r) => r.json());
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok) {
+          throw new Error(data?.message || "Failed to update profile");
+        }
+
+        toast.success("Profile updated successfully", "Success");
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to update profile",
+          "Update Failed",
+        );
+      }
+      const updated = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      ).then((r) => r.json());
 
       setUser(updated);
       window.location.reload();

@@ -7,6 +7,7 @@ import { Tags, Activity } from "lucide-react";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 export default function EditCategory() {
   const { id } = useParams();
@@ -32,24 +33,37 @@ export default function EditCategory() {
   const submit = async () => {
     if (!form) return;
 
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        averageBias: parseInt(form.averageBias || "0"),
-      }),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            ...form,
+            averageBias: parseInt(form.averageBias || "0"),
+          }),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully modified category",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/categories");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update category");
+      }
+
+      toast.success("Successfully modified category", "Success");
+
+      router.push("/dashboard/categories");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update category",
+        "Update Failed",
+      );
+    }
   };
 
   if (!form) {

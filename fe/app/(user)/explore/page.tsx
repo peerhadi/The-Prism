@@ -73,16 +73,16 @@ export default function ExplorePage() {
 
       const count = (type: string) =>
         components.filter((c: any) => c.type === type).length;
-
+      let cursor = 0;
       const next = (n: number) => {
-        let cursor = Math.floor(Math.random() * 5);
         const slice = clean.slice(cursor, cursor + n);
+        cursor += n;
         return slice;
       };
 
       // HERO (1)
       const heroCount = count("HERO");
-      setHeroStory(heroCount ? next(7)[5] : null);
+      setHeroStory(heroCount ? next(9)[7] : null);
 
       // INSIGHTS (LEFT)
       const insightCount = count("INSIGHT");

@@ -17,6 +17,7 @@ import OAuthButtons from "@/app/components/auth/OAuthButtons";
 import SuccessPopup from "@/app/components/auth/SuccessPopup";
 
 import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 export default function SignInPage() {
   const { addToast } = useToast.getState();
@@ -37,11 +38,14 @@ export default function SignInPage() {
 
     const run = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        }).then((r) => r.json());
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          },
+        ).then((r) => r.json());
 
         setEmail(res.user.email);
         setPassword(res.user.node_id);
@@ -71,22 +75,39 @@ export default function SignInPage() {
     }),
 
     onSubmit: async (values) => {
-      setIsPopupVisible(true);
-
       const payload = oauthUsed
         ? { email, password }
         : { email: values.email, password: values.password };
 
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-        .then((r) => r.json())
-        .then((res) => {
-          window.localStorage.setItem("token", res.token);
-          window.dispatchEvent(new Event("auth-changed"));
-        });
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Login failed");
+        }
+
+        localStorage.setItem("token", data.token);
+        window.dispatchEvent(new Event("auth-changed"));
+        setIsPopupVisible(true);
+
+        toast.success(
+          "Successfully verified credentials",
+          "Successfully logged in",
+        );
+      } catch (error) {
+        toast.error(error.message, "Incorrect Credentials");
+      }
     },
   });
 
@@ -198,12 +219,6 @@ export default function SignInPage() {
         router={router}
         onContinue={() => {
           setIsPopupVisible(false);
-
-          addToast({
-            title: "Success",
-            description: "Logged In Successfully",
-          });
-
           window.location.href = "/stories";
         }}
       />

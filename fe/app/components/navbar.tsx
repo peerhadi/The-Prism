@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useToast } from "@/lib/toast/toastStore";
 import { PrismLoader } from "./loadingScreen";
+import { toast } from "@/lib/toast/toast";
 const STATIC_LINKS = [
   { name: "Stories", href: "/stories", desc: "Live intelligence streams" },
   { name: "Explore", href: "/explore", desc: "Narrative and bias analysis" },
@@ -110,11 +111,8 @@ export function Navbar() {
   const logout = () => {
     localStorage.removeItem("token");
 
-    const { addToast } = useToast.getState();
-    addToast({
-      title: "Success",
-      description: "Logged out Successfully",
-    });
+    toast.success("Logged out successfully", "Success");
+
     router.push("/login");
     window.location.reload();
   };

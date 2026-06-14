@@ -17,6 +17,7 @@ import AuthDivider from "@/app/components/auth/AuthDivider";
 import OAuthButtons from "@/app/components/auth/OAuthButtons";
 
 import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -47,8 +48,6 @@ export default function SignUpPage() {
     }),
 
     onSubmit: async (values) => {
-      setIsPopupVisible(true);
-
       const payload = oauthUsed
         ? {
             username,
@@ -69,14 +68,37 @@ export default function SignUpPage() {
             sources: [],
           };
 
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-        .then((r) => r.json())
-        .then((res) => console.log(res))
-        .catch((err) => console.log(err));
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Registration failed");
+        }
+
+        toast.success(
+          "Your account has been created successfully",
+          "Account Created",
+        );
+
+        setIsPopupVisible(true);
+        console.log(data);
+      } catch (error) {
+        toast.error(
+          error instanceof Error ? error.message : "Failed to create account",
+          "Registration Failed",
+        );
+      }
     },
   });
 
@@ -261,10 +283,6 @@ export default function SignUpPage() {
             <button
               onClick={() => {
                 setIsPopupVisible(false);
-                addToast({
-                  title: "Success",
-                  description: "Signed Up Successfully",
-                });
                 router.push("/login");
               }}
               className="mt-4 w-full bg-green-500/20 text-green-300 py-2 rounded"
