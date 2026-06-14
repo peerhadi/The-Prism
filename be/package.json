@@ -10,6 +10,7 @@
     "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@fastify/aws-lambda": "^6.4.0",
     "@fastify/cors": "^11.1.0",
     "@fastify/jwt": "^10.0.0",
     "@fastify/multipart": "^10.0.0",
@@ -28,8 +29,9 @@
   },
   "devDependencies": {
     "@types/node": "^22.15.21",
+    "node-fetch": "^3.3.2",
     "prisma": "^6.8.2",
-    "tsup": "^8.5.0",
+    "tsup": "^8.5.1",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
