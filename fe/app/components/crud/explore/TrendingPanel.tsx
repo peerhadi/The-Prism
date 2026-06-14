@@ -2,7 +2,7 @@
 
 import { TrendingUp } from "lucide-react";
 
-export default function TrendingPanel({ articles }: any) {
+export default function TrendingPanel({ articles }: { articles: { id: string; title: string; category?: { name: string } }[] }) {
   return (
     <div className="relative overflow-hidden rounded-[36px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl">
       {/* Glow */}
@@ -30,7 +30,7 @@ export default function TrendingPanel({ articles }: any) {
 
         {/* Stories */}
         <div className="space-y-4">
-          {articles.slice(0, 8).map((a: any, i: number) => (
+          {articles.slice(0, 8).map((a: { id: string; title: string; category?: { name: string } }, i: number) => (
             <div
               key={a.id}
               className="

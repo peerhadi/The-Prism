@@ -22,6 +22,18 @@ export const RSS_FEEDS = [
   "https://www.aljazeera.com/",
 ];
 
+interface SourcesCardProps {
+  sources: string[];
+  newSource: string;
+  setNewSource: (value: string) => void;
+  addSource: () => void;
+  moveSourceUp: (index: number) => void;
+  moveSourceDown: (index: number) => void;
+  removeSource: (source: string) => void;
+  resetSources: () => void;
+  saveSources: () => void;
+}
+
 export default function SourcesCard({
   sources,
   newSource,
@@ -32,7 +44,7 @@ export default function SourcesCard({
   removeSource,
   resetSources,
   saveSources,
-}: any) {
+}: SourcesCardProps) {
   return (
     <CyberCard title="Sources" icon={Globe}>
       {/* ADD SOURCE */}

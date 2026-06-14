@@ -49,7 +49,7 @@ export default function HowItWorks() {
             </h3>
 
             <p className="mt-3 text-sm" style={{ color: "var(--text-muted)" }}>
-              Evaluated by Prism's editorial intelligence system.
+              Evaluated by Prism&rsquo;s editorial intelligence system.
             </p>
           </div>
         ))}

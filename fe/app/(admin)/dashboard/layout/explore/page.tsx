@@ -32,13 +32,25 @@ import AddComponentButton from "../pallette";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import StickyInsight from "@/app/(user)/components/TickerCard";
 import { Trash2 } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 
 const BREADCRUMBS = [
   { label: "Layout", href: "/dashboard/layout" },
   { label: "Explore" },
 ];
 
-type Article = any;
+type Article = {
+  id: string;
+  title: string;
+  summary: string;
+  description: string;
+  createdAt: string;
+  type: string;
+  imageUrl: string;
+  sources: unknown[];
+  categoryId: string;
+  variant?: string;
+};
 
 type CenterState = {
   hero: Article | null;
@@ -88,7 +100,7 @@ function Draggable({
   children: React.ReactNode;
   handleDelete: (id: string) => void;
 }) {
-  const { setNodeRef, attributes, listeners, transform, transition } =
+  const { setNodeRef, listeners, transform, transition } =
     useSortable({ id });
 
   return (
@@ -116,17 +128,42 @@ async function fetchLayout() {
   return res.json();
 }
 
-async function saveLayout(type: string, components: any[]) {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ components }),
-    },
-  );
-  return res.json();
+async function saveLayout(type: string, components: { type: string; config: Article; position: string }[]) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ components }),
+      },
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to save layout");
+    }
+
+    toast.success("Successfully saved layout", "Success");
+
+    return data;
+  } catch (error) {
+    toast.error(
+      error instanceof Error ? error.message : "Failed to save layout",
+      "Save Failed",
+    );
+
+    throw error;
+  }
 }
+
+type ComponentConfig = {
+  type: string;
+  config: Article;
+};
 
 const safeId = (prefix: string, id: string) =>
   `${prefix}-${id}-${crypto.randomUUID()}`;
@@ -166,37 +203,37 @@ export default function ExploreBuilderPage() {
       }
 
       setCenter({
-        hero: comps.find((c: any) => c.type === "HERO")?.config ?? null,
+        hero: comps.find((c: ComponentConfig) => c.type === "HERO")?.config ?? null,
         small: comps
-          .filter((c: any) => c.type === "SMALL")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "SMALL")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
         list: comps
-          .filter((c: any) => c.type === "LIST")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "LIST")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       });
 
       setRight(
         comps
-          .filter((c: any) => c.type === "INSIGHT")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "INSIGHT")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
       setLeft(
         comps
-          .filter((c: any) => c.type === "HEADLINE")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "HEADLINE")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
     };
 
     load();
-  }, []);
+  }, [articles]);
 
   /* ---------------- ADD ---------------- */
   const handleAddComponent = (type: string) => {
@@ -432,7 +469,18 @@ export default function ExploreBuilderPage() {
           }
           center={
             <div className="space-y-10 min-h-screen">
-              {center.hero && <HeroCard {...center.hero} />}
+              {center.hero && (
+                <HeroCard
+                  id={center.hero.id}
+                  type={center.hero.type}
+                  createdAt={center.hero.createdAt}
+                  title={center.hero.title}
+                  description={center.hero.description}
+                  sources={(center.hero.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
+                  status="LIVE"
+                  imageUrl={center.hero.imageUrl}
+                />
+              )}
 
               <SortableContext
                 items={center.small.map((i) => i.id)}
@@ -445,7 +493,14 @@ export default function ExploreBuilderPage() {
                       id={item.id}
                       handleDelete={handleDelete}
                     >
-                      <ShortCard {...item} />
+                      <ShortCard
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        imageUrl={item.imageUrl}
+                        sources={item.sources as string[]}
+                        badge="EXPLORE"
+                      />
                     </Draggable>
                   ))}
                 </div>
@@ -462,7 +517,13 @@ export default function ExploreBuilderPage() {
                       id={item.id}
                       handleDelete={handleDelete}
                     >
-                      <ListCard {...item} />
+                      <ListCard
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        imageUrl={item.imageUrl}
+                        sources={(item.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
+                      />
                     </Draggable>
                   ))}
                 </div>
@@ -484,7 +545,7 @@ export default function ExploreBuilderPage() {
                       handleDelete={handleDelete}
                     >
                       <StickyInsight
-                        variant={item.variant ?? "cyan"}
+                        variant={(item.variant ?? "cyan") as "cyan" | "amber" | "purple" | "red"}
                         title={item.title}
                         content={item.summary}
                       />

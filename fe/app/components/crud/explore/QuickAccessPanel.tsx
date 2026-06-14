@@ -1,6 +1,6 @@
 "use client";
 
-export default function QuickAccessPanel({ list }: any) {
+export default function QuickAccessPanel({ list }: { list: { id: string; title: string; description: string }[] }) {
   return (
     <div className="relative overflow-hidden rounded-[36px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl">
       {/* Glow */}
@@ -14,7 +14,7 @@ export default function QuickAccessPanel({ list }: any) {
         </h3>
 
         <div className="space-y-4">
-          {list.map((a: any) => (
+          {list.map((a: { id: string; title: string; description: string }) => (
             <div
               key={a.id}
               className="

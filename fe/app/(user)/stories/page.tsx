@@ -13,19 +13,42 @@ import HeroCard from "../components/HeroCard";
 import { getBiasColor } from "@/app/utils/getbiascolor";
 import StoryRightPanel from "@/app/components/crud/story/StoryRightPanel";
 
+interface Topic {
+  id: string;
+  name: string;
+  averageBias: number;
+  label?: string;
+  color?: string;
+}
+
+interface Article {
+  id: string;
+  title: string;
+  description: string;
+  summary?: string;
+  imageUrl: string;
+  sources: { url?: string }[];
+  type: string;
+  createdAt: string;
+}
+
+interface LayoutComponent {
+  type: string;
+}
+
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function StoriesPage() {
-  const [topics, setTopics] = useState<any[]>([]);
-  const [perspectives, setPerspectives] = useState<any[]>([]);
-  const [articles, setArticles] = useState<any[]>([]);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [perspectives, setPerspectives] = useState<unknown[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
 
-  const [hero, setHero] = useState<any>(null);
-  const [insights, setInsights] = useState<any[]>([]);
-  const [small, setSmall] = useState<any[]>([]);
-  const [list, setList] = useState<any[]>([]);
-  const [headlines, setHeadlines] = useState<any[]>([]);
-  const [anomaly, setAnomaly] = useState<any>(null);
+  const [hero, setHero] = useState<Article | null>(null);
+  const [insights, setInsights] = useState<Article[]>([]);
+  const [small, setSmall] = useState<Article[]>([]);
+  const [list, setList] = useState<Article[]>([]);
+  const [headlines, setHeadlines] = useState<Article[]>([]);
+  const [anomaly, setAnomaly] = useState<Article | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -36,11 +59,11 @@ export default function StoriesPage() {
         fetch(`${API}/api/layout/story`).then((r) => r.json()),
       ]);
 
-      // -------------------------
-      // TOPICS + PERSPECTIVES
-      // -------------------------
       setTopics(
-        catRes.map((c: any) => ({
+        catRes.map((c: Topic) => ({
+          id: c.id,
+          name: c.name,
+          averageBias: c.averageBias,
           label: c.name,
           color: getBiasColor(c.averageBias),
         })),
@@ -48,13 +71,10 @@ export default function StoriesPage() {
 
       setPerspectives(persRes);
 
-      // -------------------------
-      // CLEAN + SORT ARTICLES
-      // -------------------------
       const clean = artRes
-        .filter((x: any) => x.title && x.description && x.imageUrl)
+        .filter((x: Article) => x.title && x.description && x.imageUrl)
         .sort(
-          (a: any, b: any) =>
+          (a: Article, b: Article) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
 
@@ -62,9 +82,6 @@ export default function StoriesPage() {
 
       const components = layoutRes?.components ?? [];
 
-      // -------------------------
-      // CURSOR ENGINE (ONLY PLACE THAT ALLOCATES)
-      // -------------------------
       let cursor = 0;
 
       const next = (n: number) => {
@@ -73,34 +90,28 @@ export default function StoriesPage() {
         return slice;
       };
 
-      // HERO (always 1)
-      const heroCount = components.filter((c: any) => c.type === "HERO").length;
+      const heroCount = components.filter((c: LayoutComponent) => c.type === "HERO").length;
       const heroArticle = heroCount ? next(5)[2] : null;
       setHero(heroArticle);
 
-      // INSIGHTS (LEFT PANEL)
       const insightCount = components.filter(
-        (c: any) => c.type === "INSIGHT",
+        (c: LayoutComponent) => c.type === "INSIGHT",
       ).length;
       setInsights(next(insightCount));
 
-      // SMALL (CENTER)
       const smallCount = components.filter(
-        (c: any) => c.type === "SMALL",
+        (c: LayoutComponent) => c.type === "SMALL",
       ).length;
       setSmall(next(smallCount));
 
-      // LIST (CENTER)
-      const listCount = components.filter((c: any) => c.type === "LIST").length;
+      const listCount = components.filter((c: LayoutComponent) => c.type === "LIST").length;
       setList(next(listCount));
 
-      // HEADLINES (RIGHT)
       const headlineCount = components.filter(
-        (c: any) => c.type === "HEADLINE",
+        (c: LayoutComponent) => c.type === "HEADLINE",
       ).length;
       setHeadlines(next(headlineCount));
 
-      // ANOMALY fallback
       const anom = heroArticle;
       console.log(anom, "Anomly");
       setAnomaly(anom);
@@ -126,28 +137,34 @@ export default function StoriesPage() {
           ]}
         />
       }
-      left={<StoryLiveSignal articles={insights} />}
+      left={<StoryLiveSignal articles={insights.map((a) => ({ id: a.id, title: a.title, summary: a.summary ?? "" }))} />}
       center={
         <>
           {hero && (
             <HeroCard
               id={hero.id}
               type={hero.type}
-              createdAt={new Date(hero.createdAt).toLocaleDateString()}
+              createdAt={new Date(hero.createdAt ?? "").toLocaleDateString()}
               title={hero.title}
-              description={hero.summary}
-              sources={hero.sources}
+              description={hero.summary ?? ""}
+              sources={hero.sources.map((s) => ({ source: s.url ?? "", title: s.url ?? "", url: s.url ?? "" }))}
               status="LIVE"
               imageUrl={hero.imageUrl}
             />
           )}
 
-          <StorySplitCard perspectives={perspectives} />
+          <StorySplitCard perspectives={perspectives as { neutral: { title: string; description: string }; extreme: { title: string; description: string } }[]} />
 
-          <StoryLiveStream small={small} list={list} />
+          <StoryLiveStream
+            small={small.map((a) => ({ id: a.id, title: a.title, description: a.description, imageUrl: a.imageUrl, sources: a.sources.map((s) => s.url ?? "") }))}
+            list={list.map((a) => ({ id: a.id, title: a.title, description: a.description, imageUrl: a.imageUrl, sources: a.sources.map((s) => ({ source: s.url ?? "", title: s.url ?? "", url: s.url ?? "" })) }))}
+          />
         </>
       }
-      right={<StoryRightPanel headlines={headlines} anomaly={anomaly} />}
+      right={<StoryRightPanel
+        headlines={headlines.map((h) => ({ id: h.id, title: h.title, tag: h.type, time: new Date(h.createdAt).toLocaleDateString(), sources: h.sources.map((s) => ({ source: s.url ?? "", title: s.url ?? "", url: s.url ?? "" })), variant: undefined }))}
+        anomaly={anomaly ? { id: anomaly.id, title: anomaly.title, description: anomaly.description, sources: anomaly.sources.map((s) => ({ source: s.url ?? "", title: s.url ?? "", url: s.url ?? "" })), biasLevel: "", imageUrl: anomaly.imageUrl } : null}
+      />}
     />
   );
 }

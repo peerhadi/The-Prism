@@ -47,14 +47,14 @@ export default function ForensicSpecimenPage() {
       />
 
       <main className="relative z-10 mx-auto max-w-[1600px] px-6 py-10">
-        <ForensicHero title={article.title} imageUrl={article.imageUrl || ""} />
+        <ForensicHero title={article.title} imageUrl={article.imageUrl ?? ""} />
 
         <section className="mt-10 grid gap-10 xl:grid-cols-[280px_1fr_320px]">
           <aside className="space-y-6">
-            <HeadlineCard title="LIVE HEADLINES" data={articles.slice(0, 8)} />
+            <HeadlineCard title="LIVE HEADLINES" data={articles.slice(0, 8).map((a) => ({ id: a.id, tag: a.type, sources: a.sources.map((s) => ({ source: s, title: s, url: s })), time: new Date(a.createdAt).toLocaleDateString(), title: a.title, variant: "cyan" as const }))} />
           </aside>
 
-          <ArticleBody article={article} />
+          <ArticleBody article={{ ...article, imageUrl: article.imageUrl ?? undefined, sources: article.sources.map((s) => ({ url: s, source: s })) }} />
 
           <aside className="space-y-6">
             <LiveFeed feed={articles.slice(8, 16)} />

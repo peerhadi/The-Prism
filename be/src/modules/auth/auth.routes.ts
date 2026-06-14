@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 import bcrypt from "bcryptjs";
-import { githubAuth } from "./auth.controller.js";
 import { prisma } from "../../shared/prisma.js";
 import { githubAuth } from "./auth.controller.js";
 
@@ -46,15 +45,18 @@ export async function authRoutes(app: FastifyInstance) {
         email: body.email,
       },
     });
-
     if (!user) {
-      return reply.code(403);
+      return reply.code(403).send({
+        message: "Invalid email or password",
+      });
     }
 
     const valid = await bcrypt.compare(body.password, user.password);
 
     if (!valid) {
-      return reply.code(403);
+      return reply.code(403).send({
+        message: "Invalid email or password",
+      });
     }
 
     const token = await reply.jwtSign({

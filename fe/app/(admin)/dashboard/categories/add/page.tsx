@@ -6,7 +6,8 @@ import { Tags, Activity } from "lucide-react";
 
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import FieldInput from "@/app/components/dashboard/FieldInput";
-import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
+
 
 export default function AddCategory() {
   const router = useRouter();
@@ -19,29 +20,42 @@ export default function AddCategory() {
     averageBias: "",
   });
 
-  const update = (k: string, v: any) => {
+  const update = (k: string, v: string) => {
     setForm((prev) => ({ ...prev, [k]: v }));
   };
 
   const submit = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        averageBias: parseInt(form.averageBias || "0"),
-      }),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            ...form,
+            averageBias: parseInt(form.averageBias || "0"),
+          }),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully added category",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/categories");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to create category");
+      }
+
+      toast.success("Successfully added category", "Success");
+
+      router.push("/dashboard/categories");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create category",
+        "Creation Failed",
+      );
+    }
   };
 
   return (
@@ -80,14 +94,14 @@ export default function AddCategory() {
             label="Category Name"
             icon={Tags}
             value={form.name}
-            onChange={(e: any) => update("name", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("name", e.target.value)}
           />
 
           <FieldInput
             label="Average Bias"
             icon={Activity}
             value={form.averageBias}
-            onChange={(e: any) => update("averageBias", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("averageBias", e.target.value)}
           />
 
           <button

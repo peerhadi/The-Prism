@@ -3,9 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Sparkles, ArrowRight, Radio } from "lucide-react";
 
-import StoryPageLayout from "@/app/components/crud/story/StoryPageLayout";
-import { getBiasColor } from "@/app/utils/getbiascolor";
-
 /* =========================================================
    TYPES
 ========================================================= */
@@ -17,9 +14,11 @@ type Article = {
   summary?: string;
   tag?: string;
   imageUrl?: string;
-  sources: any[];
+  sources: { url: string }[];
   createdAt?: string;
 };
+
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 /* =========================================================
    STICKY INSIGHT CARD (LEFT / RIGHT)
@@ -30,14 +29,14 @@ function StickyCard({ article, i }: { article: Article; i: number }) {
   const colors = ["cyan", "amber", "purple", "red"] as const;
   const variant = colors[i % colors.length];
 
-  const glowMap: any = {
+  const glowMap: Record<string, string> = {
     cyan: "bg-cyan-400/10",
     amber: "bg-amber-400/10",
     purple: "bg-purple-400/10",
     red: "bg-red-400/10",
   };
 
-  const textMap: any = {
+  const textMap: Record<string, string> = {
     cyan: "text-cyan-300",
     amber: "text-amber-300",
     purple: "text-purple-300",
@@ -163,7 +162,7 @@ export function FeedCard({ article }: { article: Article }) {
         id={article.id}
         open={openSources}
         setOpen={setOpenSources}
-        sources={article.sources}
+        sources={article.sources.map((s) => ({ source: s.url, title: s.url, url: s.url }))}
       />
     </div>
   );
@@ -174,18 +173,15 @@ export function FeedCard({ article }: { article: Article }) {
 ========================================================= */
 
 export default function FeedPage() {
-  const API = process.env.NEXT_PUBLIC_API_URL;
-
   const [articles, setArticles] = useState<Article[]>([]);
   const [left, setLeft] = useState<Article[]>([]);
   const [right, setRight] = useState<Article[]>([]);
-  const [token, setToken] = useState<string>();
-  const [sources, setSources] = useState<any[]>([]);
+  const [sources, setSources] = useState<string[]>([]);
+
   useEffect(() => {
     if (window) {
       const t = window.localStorage.getItem("token");
       if (!t) redirect("/login");
-      setToken(t);
 
       fetch(`${API}/api/auth/me`, {
         headers: {
@@ -198,27 +194,28 @@ export default function FeedPage() {
         });
     }
   }, []);
+
   useEffect(() => {
     const load = async () => {
       const res = await fetch(`${API}/api/articles`);
       const data = await res.json();
 
       const clean = data
-        .filter((a: any) => a.title && a.description)
+        .filter((a: Article) => a.title && a.description)
         .sort(
-          (a: any, b: any) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          (a: Article, b: Article) =>
+            new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime(),
         );
       const uniqueByTitle = Array.from(
-        new Map(clean.map((a) => [a.title, a])).values(),
-      ).filter(
-        (x) =>
-          !!sources.find((y) => {
-            console.log(x.sources[0].url, y, x.sources[0].url.startsWith(y));
-            return x.sources[0].url.startsWith(y);
-          }),
+        new Map(clean.map((a: Article) => [a.title, a])).values(),
+      ) as Article[];
+      const filtered = uniqueByTitle.filter((x: Article) =>
+        !!sources.find((y: string) => {
+          console.log(x.sources[0].url, y, x.sources[0].url.startsWith(y));
+          return x.sources[0].url.startsWith(y);
+        }),
       );
-      setArticles(uniqueByTitle);
+      setArticles(filtered);
       console.log(sources);
       // SPLIT (real uneven feel)
       setLeft(clean.slice(0, 3));
@@ -244,7 +241,7 @@ export default function FeedPage() {
           {/* Description */}
           <p className="mt-4 text-[var(--text-secondary)] leading-relaxed">
             Your feed is currently empty because no news sources have been
-            added. Connect a few sources and we'll start building your
+            added. Connect a few sources and we&apos;ll start building your
             personalized information stream.
           </p>
 

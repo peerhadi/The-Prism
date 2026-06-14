@@ -92,7 +92,7 @@ export default function SourcesPopup({ open, setOpen, sources, id }: Props) {
                 >
                   {/* ICON */}
                   {favicon ? (
-                    <img src={favicon} className="h-6 w-6 rounded" />
+                    <img src={favicon} alt="" className="h-6 w-6 rounded" />
                   ) : (
                     <div className="h-6 w-6 rounded bg-[var(--surface-hover)] flex items-center justify-center">
                       <Globe className="h-3 w-3 text-[var(--primary)]" />
@@ -122,7 +122,7 @@ export default function SourcesPopup({ open, setOpen, sources, id }: Props) {
               className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 hover:bg-[var(--surface-hover)] transition group"
             >
               {/* ICON */}
-              <img src={"/logo.png"} className="h-6 w-6 rounded" />
+              <img src={"/logo.png"} alt="" className="h-6 w-6 rounded" />
 
               {/* TITLE ONLY */}
               <div className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--primary)] transition">

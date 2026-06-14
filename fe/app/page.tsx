@@ -15,9 +15,8 @@ import {
   Radar,
   Orbit,
   ScanLine,
-  Waves,
 } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function HomePage() {
   const router = useRouter();

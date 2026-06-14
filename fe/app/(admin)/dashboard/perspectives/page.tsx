@@ -6,12 +6,13 @@ import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { Eye } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 
 type Perspective = {
   id: string;
   title: string;
-  neutral: any;
-  extreme: any;
+  neutral: { title: string; summary: string; description: string };
+  extreme: { title: string; summary: string; description: string };
 };
 
 const BREADCRUMBS = [{ label: "Perspectives" }];
@@ -26,27 +27,48 @@ const PAGE = {
 
 export default function PerspectivesPage() {
   const [items, setItems] = useState<Perspective[]>([]);
-  const [toast, setToast] = useState(false);
+  const [showToast, setShowToast] = useState(false);
 
-  const [token, setToken] = useState();
+  const [token] = useState(() =>
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("token") || ""
+      : "",
+  );
   useEffect(() => {
-    if (window) {
-      setToken(window.localStorage.getItem("token"));
-    }
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`)
       .then((r) => r.json())
       .then((data) => {
         setItems(data);
-        setToast(true);
+        setShowToast(true);
       });
   }, []);
-  const generateFeed = () => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const generateFeed = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to generate perspectives");
+      }
+
+      toast.success("Successfully generated perspectives", "Success");
+    } catch (error) {
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate perspectives",
+        "Generation Failed",
+      );
+    }
   };
   return (
     <div
@@ -59,9 +81,9 @@ export default function PerspectivesPage() {
       <Breadcrumbs items={BREADCRUMBS} />
 
       <Snackbar
-        open={toast}
+        open={showToast}
         message={PAGE.toast}
-        onClose={() => setToast(false)}
+        onClose={() => setShowToast(false)}
       />
 
       <div className="flex justify-between items-center mb-10">

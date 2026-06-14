@@ -35,13 +35,13 @@ vi.mock("@/lib/toast/toastStore", () => ({
 // --------------------
 
 vi.mock("@/app/components/auth/AuthShell", () => ({
-  default: ({ children }: any) => (
+  default: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="auth-shell">{children}</div>
   ),
 }));
 
 vi.mock("@/app/components/auth/AuthField", () => ({
-  default: ({ value, onChange }: any) => (
+  default: ({ value, onChange }: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
     <input
       data-testid="email-input"
       value={value}
@@ -52,7 +52,7 @@ vi.mock("@/app/components/auth/AuthField", () => ({
 }));
 
 vi.mock("@/app/components/auth/PasswordField", () => ({
-  default: ({ value, onChange }: any) => (
+  default: ({ value, onChange }: { value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
     <input
       data-testid="password-input"
       value={value}
@@ -67,7 +67,7 @@ vi.mock("@/app/components/auth/AuthDivider", () => ({
 }));
 
 vi.mock("@/app/components/auth/OAuthButtons", () => ({
-  default: ({ onGoogle, onGithub }: any) => (
+  default: ({ onGoogle, onGithub }: { onGoogle: () => void; onGithub: () => void }) => (
     <div>
       <button data-testid="google-btn" onClick={onGoogle}>
         Google
@@ -81,12 +81,12 @@ vi.mock("@/app/components/auth/OAuthButtons", () => ({
 }));
 
 vi.mock("@/app/components/auth/SuccessPopup", () => ({
-  default: ({ open }: any) =>
+  default: ({ open }: { open?: boolean }) =>
     open ? <div data-testid="success-popup">Popup</div> : null,
 }));
 
 vi.mock("@/components/ui/button", () => ({
-  Button: ({ children, ...props }: any) => (
+  Button: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
     <button {...props}>{children}</button>
   ),
 }));
@@ -102,19 +102,19 @@ vi.mock("@/components/ui/checkbox", () => ({
 beforeEach(() => {
   vi.clearAllMocks();
 
-  global.fetch = vi.fn((url: any) => {
+  global.fetch = vi.fn((url: string) => {
     if (url.includes("/login")) {
       return Promise.resolve({
         json: () =>
           Promise.resolve({
             token: "test-token",
           }),
-      } as any);
+      } as unknown as Response);
     }
 
     return Promise.resolve({
       json: () => Promise.resolve({}),
-    } as any);
+    } as unknown as Response);
   });
 });
 

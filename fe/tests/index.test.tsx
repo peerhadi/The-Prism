@@ -15,9 +15,13 @@ vi.mock("next/navigation", () => ({
 
 /* ---------------- MOCK lucide-react (safe proxy) ---------------- */
 vi.mock("lucide-react", () => {
-  const createIcon = (name: string) => (props: any) => (
-    <div data-testid={`icon-${name}`} {...props} />
-  );
+  const createIcon = (name: string) => {
+    const Icon = (props: Record<string, unknown>) => (
+      <div data-testid={`icon-${name}`} {...props} />
+    );
+    Icon.displayName = name;
+    return Icon;
+  };
 
   return {
     // add EVERY icon your app might use

@@ -16,7 +16,7 @@ vi.mock("@/app/components/crud/split/SplitHero", () => ({
 }));
 
 vi.mock("@/app/components/crud/split/SplitSection", () => ({
-  default: ({ event }: any) => (
+  default: ({ event }: { event: { neutral: { title: string }; extreme: { title: string } } }) => (
     <div data-testid="split-section">
       {event.neutral.title} | {event.extreme.title}
     </div>
@@ -63,11 +63,11 @@ const mockData = [
   },
 ];
 
-function mockFetch(data: any) {
+function mockFetch(data: unknown) {
   global.fetch = vi.fn(() =>
     Promise.resolve({
       json: () => Promise.resolve(data),
-    } as any),
+    } as unknown as Response),
   );
 }
 

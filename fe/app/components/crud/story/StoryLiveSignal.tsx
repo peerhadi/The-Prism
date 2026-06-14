@@ -3,7 +3,7 @@
 import StickyInsight from "@/app/(user)/components/TickerCard";
 import React from "react";
 
-export default function StoryLiveSignal({ articles }: { articles: any[] }) {
+export default function StoryLiveSignal({ articles }: { articles: { id: string; title: string; summary: string }[] }) {
   if (!articles?.length) return null;
 
   // deterministic slice (NO RANDOM INDEXING)

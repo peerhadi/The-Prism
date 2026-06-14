@@ -1,6 +1,6 @@
 "use client";
 
-export default function FormCard({ title, children }: any) {
+export default function FormCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div
       className="w-full max-w-2xl p-10 rounded-2xl

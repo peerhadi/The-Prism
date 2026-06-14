@@ -7,12 +7,18 @@ import { FileText, Type, AlignLeft, Layers } from "lucide-react";
 import BreadcrumbWrapper from "@/app/components/dashboard/BreadCrumbWrapper";
 import SnackbarWrapper from "@/app/components/dashboard/SnackbarWrapper";
 import FieldInput from "@/app/components/dashboard/FieldInput";
+import { toast as fetchToast } from "@/lib/toast/toast";
 
-import { useToast } from "@/lib/toast/toastStore";
+type ArticleForm = {
+  title: string;
+  description: string;
+  summary: string;
+  biasLevel: string;
+};
 
 export default function EditArticle() {
   const { id } = useParams();
-  const [form, setForm] = useState<any>(null);
+  const [form, setForm] = useState<ArticleForm | null>(null);
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
@@ -21,31 +27,44 @@ export default function EditArticle() {
       .then(setForm);
   }, [id]);
 
-  const update = (k: string, v: any) => {
+  const update = (k: string, v: string) => {
+    if (!form) return;
     setForm({ ...form, [k]: v });
   };
 
   const save = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        ...form,
-        biasLevel: parseInt(form.biasLevel),
-      }),
-    });
+    let isSuccessful = false;
+    try {
+      if (!form) return;
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            ...form,
+            biasLevel: parseInt(form.biasLevel),
+          }),
+        },
+      );
+      isSuccessful = true;
+      const data = await response.json().catch(() => null);
 
-    const { addToast } = useToast.getState();
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update article");
+      }
 
-    addToast({
-      title: "Success",
-      description: "Successfully modified article",
-    });
-
-    redirect("/dashboard/articles");
+      fetchToast.success("Successfully modified article", "Success");
+    } catch (error) {
+      console.log(error);
+      fetchToast.error("Failed to update article", "Update Failed");
+    }
+    if (isSuccessful) {
+      redirect("/dashboard/articles");
+    }
   };
 
   if (!form)
@@ -66,7 +85,7 @@ export default function EditArticle() {
       <BreadcrumbWrapper
         items={[
           { label: "Articles", href: "/dashboard/articles" },
-          { label: "Edit" },
+          { label: "Edit", href: "#" },
         ]}
       />
 
@@ -96,28 +115,28 @@ export default function EditArticle() {
             label="Title"
             icon={Type}
             value={form.title}
-            onChange={(e: any) => update("title", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("title", e.target.value)}
           />
 
           <FieldInput
             label="Description"
             icon={AlignLeft}
             value={form.description}
-            onChange={(e: any) => update("description", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("description", e.target.value)}
           />
 
           <FieldInput
             label="Summary"
             icon={FileText}
             value={form.summary}
-            onChange={(e: any) => update("summary", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("summary", e.target.value)}
           />
 
           <FieldInput
             label="Bias Level"
             icon={Layers}
             value={form.biasLevel}
-            onChange={(e: any) => update("biasLevel", e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("biasLevel", e.target.value)}
           />
 
           <button

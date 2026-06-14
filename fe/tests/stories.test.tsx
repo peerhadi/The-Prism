@@ -14,7 +14,7 @@ vi.mock("@/app/components/loadingScreen", () => ({
 
 // Layout
 vi.mock("@/app/components/crud/story/StoryPageLayout", () => ({
-  default: ({ hero, left, center, right }: any) => (
+  default: ({ hero, left, center, right }: { hero?: React.ReactNode; left?: React.ReactNode; center?: React.ReactNode; right?: React.ReactNode }) => (
     <div>
       <div data-testid="hero">{hero}</div>
       <div data-testid="left">{left}</div>
@@ -26,7 +26,7 @@ vi.mock("@/app/components/crud/story/StoryPageLayout", () => ({
 
 // Hero header
 vi.mock("@/app/components/crud/story/StoryHeroHeader", () => ({
-  default: ({ stats }: any) => (
+  default: ({ stats }: { stats?: Array<{ value: string }> }) => (
     <div>
       <div data-testid="stats-count">{stats?.[0]?.value}</div>
     </div>
@@ -43,7 +43,7 @@ vi.mock("@/app/components/crud/story/StorySplitCard", () => ({
 }));
 
 vi.mock("@/app/components/crud/story/StoryLiveStream", () => ({
-  default: ({ small, list }: any) => (
+  default: ({ small, list }: { small: unknown[]; list: unknown[] }) => (
     <div>
       <div data-testid="small-count">{small.length}</div>
       <div data-testid="list-count">{list.length}</div>
@@ -52,7 +52,7 @@ vi.mock("@/app/components/crud/story/StoryLiveStream", () => ({
 }));
 
 vi.mock("@/app/components/crud/story/StoryRightPanel", () => ({
-  default: ({ headlines, anomaly }: any) => (
+  default: ({ headlines, anomaly }: { headlines: unknown[]; anomaly?: { title?: string } }) => (
     <div>
       <div data-testid="headlines">{headlines.length}</div>
       <div data-testid="anomaly">{anomaly?.title || "none"}</div>
@@ -61,7 +61,7 @@ vi.mock("@/app/components/crud/story/StoryRightPanel", () => ({
 }));
 
 vi.mock("@/app/components/HeroCard", () => ({
-  default: (props: any) => <div data-testid="hero-card">{props.title}</div>,
+  default: (props: { title?: string }) => <div data-testid="hero-card">{props.title}</div>,
 }));
 
 // ----------------------
@@ -122,7 +122,7 @@ const mockArticles = [
 beforeEach(() => {
   vi.clearAllMocks();
 
-  (fetch as any)
+  (fetch as vi.Mock)
     // categories
     .mockResolvedValueOnce({
       json: async () => mockCategories,

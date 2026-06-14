@@ -4,7 +4,7 @@ import React from "react";
 import CyberCard from "./CyberCard";
 import { Palette } from "lucide-react";
 
-export default function ThemeCard({ theme, setTheme }: any) {
+export default function ThemeCard({ theme, setTheme }: { theme: "dark" | "light"; setTheme: (theme: "dark" | "light") => void }) {
   return (
     <CyberCard title="Theme" icon={Palette}>
       <div className="grid gap-4 md:grid-cols-2">

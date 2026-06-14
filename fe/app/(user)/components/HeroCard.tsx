@@ -5,12 +5,18 @@ import { Calendar, ArrowUpRight, Sparkles } from "lucide-react";
 import NarrativePopup from "./features/NarrativeButton";
 import SourcesPopup from "./features/SourcesPopup";
 
+type Source = {
+  source: string;
+  title: string;
+  url: string;
+};
+
 interface HeroCardProps {
   type: string;
   createdAt: string;
   title: string;
   description: string;
-  sources: any;
+  sources: Source[];
   status: string;
   imageUrl: string;
   onActionClick?: () => void;

@@ -13,7 +13,7 @@ export type Article = {
   summary: string;
   biasLevel: number;
   imageUrl?: string | null;
-  sources: any; // Prisma Json
+  sources: string[]; // Prisma Json
   type: ArticleType;
   createdAt: string;
 };

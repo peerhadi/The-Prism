@@ -1,11 +1,23 @@
 "use client";
 
+interface ArchiveCategory {
+  id: string;
+  name: string;
+}
+
+interface ArchiveArticle {
+  id: string;
+  categoryId?: string | null;
+  title?: string;
+  summary?: string;
+}
+
 export default function ArchiveCategoryIndex({
   categories,
   articles,
 }: {
-  categories: any[];
-  articles: any[];
+  categories: ArchiveCategory[];
+  articles: ArchiveArticle[];
 }) {
   return (
     <div className="rounded-[40px] border border-white/10 bg-[var(--glass-bg)] p-8">
@@ -18,7 +30,7 @@ export default function ArchiveCategoryIndex({
       <div className="mt-6 space-y-5">
         {categories.map((category, i) => {
           const count = articles.filter(
-            (a) => a.category?.id === category.id,
+            (a) => a.categoryId === category.id,
           ).length;
 
           return (

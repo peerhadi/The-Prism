@@ -1,8 +1,8 @@
 export type Perspective = {
   id: string;
   title: string;
-  neutral: any; // Prisma Json
-  extreme: any; // Prisma Json
+  neutral: Record<string, unknown>; // Prisma Json
+  extreme: Record<string, unknown>; // Prisma Json
   imageUrl?: string | null;
   createdAt: string;
 };

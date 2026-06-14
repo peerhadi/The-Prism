@@ -1,5 +1,5 @@
 export type Archived = {
   id: string;
-  articles: any; // Prisma Json
+  articles: Record<string, unknown>; // Prisma Json
   createdAt: string;
 };

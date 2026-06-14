@@ -1,8 +1,8 @@
 "use client";
 
-import { ArrowRight, Split } from "lucide-react";
+import { Split } from "lucide-react";
 
-export default function SplitSection({ event }: { event: any }) {
+export default function SplitSection({ event }: { event: { imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } } }) {
   return (
     <section className="relative overflow-hidden border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-2xl">
       {/* LABEL */}
@@ -30,6 +30,7 @@ export default function SplitSection({ event }: { event: any }) {
         <div className="group relative flex items-end overflow-hidden">
           <img
             src={event.imageUrl}
+            alt=""
             className="
               absolute inset-0 h-full w-full object-cover
               opacity-60
@@ -62,6 +63,7 @@ export default function SplitSection({ event }: { event: any }) {
         <div className="group relative flex items-end overflow-hidden border-t border-[var(--border)] lg:border-l lg:border-t-0">
           <img
             src={event.imageUrl}
+            alt=""
             className="
               absolute inset-0 h-full w-full object-cover
               opacity-30 grayscale

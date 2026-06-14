@@ -11,36 +11,39 @@ import AIFeaturesCard from "@/app/components/settings/website/AIFeaturesCard";
 import ThemeCard from "@/app/components/settings/website/ThemeCard";
 import PrivacyCard from "@/app/components/settings/website/PrivacyCard";
 import { useRouter } from "next/navigation";
+import { toast } from "@/lib/toast/toast";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [sources, setSources] = useState<string[]>([]);
   const [newSource, setNewSource] = useState("");
-  const [token, setToken] = useState("");
+  const [token] = useState(() => typeof window !== "undefined" ? window.localStorage.getItem("token") || "" : "");
 
-  const [privacySettings, setPrivacySettings] = useState<any>({
+  const [privacySettings, setPrivacySettings] = useState<{ id: string }>({
     id: "",
   });
 
-  const [passwordForm, setPasswordForm] = useState<any>({
+  const [passwordForm, setPasswordForm] = useState<{
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }>({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
 
-  const [aiSettings, setAiSettings] = useState<any>({
+  const [aiSettings, setAiSettings] = useState<{
+    summaryLength: string;
+    showBiasAnalysis: boolean;
+    isVerified: boolean;
+  }>({
     summaryLength: "medium",
     showBiasAnalysis: true,
     isVerified: true,
   });
 
-  const [theme, setTheme] = useState<"dark" | "light">();
-
-  /* ---------------- TOKEN LOAD ---------------- */
-  useEffect(() => {
-    const t = window.localStorage.getItem("token");
-    if (t) setToken(t);
-  }, []);
+  const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (window.localStorage.getItem("theme") as "dark" | "light") || "dark" : "dark"));
 
   /* ---------------- FETCH USER ---------------- */
   useEffect(() => {
@@ -59,17 +62,12 @@ export default function SettingsPage() {
   }, [token]);
 
   useEffect(() => {
-    if (window) {
-      if (!theme) {
-        setTheme(window.localStorage.getItem("theme") || "dark");
-      } else {
-        window.localStorage.setItem("theme", theme || "");
-      }
-      if (theme === "light") {
-        document.getElementsByTagName("body")[0].classList.remove("dark");
-      } else if (theme === "dark") {
-        document.getElementsByTagName("body")[0].classList.add("dark");
-      }
+    if (!theme) return;
+    window.localStorage.setItem("theme", theme);
+    if (theme === "light") {
+      document.getElementsByTagName("body")[0].classList.remove("dark");
+    } else if (theme === "dark") {
+      document.getElementsByTagName("body")[0].classList.add("dark");
     }
   }, [theme]);
 
@@ -109,50 +107,95 @@ export default function SettingsPage() {
     ]);
 
   const saveSources = async () => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            sources,
+          }),
         },
-        body: JSON.stringify({
-          sources,
-        }),
-      },
-    );
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update sources");
+      }
+
+      toast.success("Successfully updated sources", "Success");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update sources",
+        "Update Failed",
+      );
+    }
   };
-  const changePassword = async (currentPassword, newPassword) => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}/change-password`,
-      {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}/change-password`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+          }),
         },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-      },
-    );
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to change password");
+      }
+
+      toast.success("Password changed successfully", "Success");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to change password",
+        "Update Failed",
+      );
+    }
   };
   const deleteAccount = async () => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      },
-    ).then(() => {
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to delete account");
+      }
+
+      toast.success("Account deleted successfully", "Success");
+
       window.localStorage.removeItem("token");
       router.push("/signup");
       window.dispatchEvent(new Event("auth-changed"));
-    });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to delete account",
+        "Deletion Failed",
+      );
+    }
   };
 
   if (!privacySettings.id) return <PrismLoader />;

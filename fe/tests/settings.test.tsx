@@ -35,7 +35,7 @@ vi.mock("@/app/components/settings/website/AIFeaturesCard", () => ({
 }));
 
 vi.mock("@/app/components/settings/website/ThemeCard", () => ({
-  default: ({ setTheme }: any) => (
+  default: ({ setTheme }: { setTheme: (theme: string) => void }) => (
     <div data-testid="theme-card">
       <button data-testid="dark-theme" onClick={() => setTheme("dark")}>
         Dark
@@ -60,7 +60,7 @@ vi.mock("@/app/components/settings/website/SourcesCard", () => ({
     addSource,
     removeSource,
     resetSources,
-  }: any) => (
+  }: { sources: string[]; newSource: string; setNewSource: (v: string) => void; addSource: () => void; removeSource: (s: string) => void; resetSources: () => void }) => (
     <div data-testid="sources-card">
       <input
         data-testid="source-input"
@@ -96,7 +96,7 @@ beforeEach(() => {
 
   document.body.className = "";
 
-  global.fetch = vi.fn((url: any) => {
+  global.fetch = vi.fn((url: string) => {
     if (String(url).includes("/auth/me")) {
       return Promise.resolve({
         json: async () => ({
@@ -110,7 +110,7 @@ beforeEach(() => {
     return Promise.resolve({
       json: async () => ({}),
     });
-  }) as any;
+  }) as vi.Mock;
 });
 
 // --------------------

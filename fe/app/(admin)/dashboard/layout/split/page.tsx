@@ -26,6 +26,7 @@ import ConflictCTA from "@/app/components/crud/split/ConflictCTA";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { Trash2 } from "lucide-react";
 import AddSplitComponentButton from "./add-button";
+import { toast } from "@/lib/toast/toast";
 
 /* ================= BREADCRUMBS ================= */
 const BREADCRUMBS = [
@@ -80,8 +81,14 @@ const TrashButton = ({
   </button>
 );
 
-function DraggableItem({ item, handleDelete }: any) {
-  const { setNodeRef, attributes, listeners, transform, transition } =
+function DraggableItem({
+  item,
+  handleDelete,
+}: {
+  item: { id: string; imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } };
+  handleDelete: (id: string) => void;
+}) {
+  const { setNodeRef, listeners, transform, transition } =
     useSortable({ id: item.id });
 
   return (
@@ -110,26 +117,46 @@ async function fetchLayout() {
   return res.json();
 }
 
-async function saveLayout(components: any[]) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ components }),
-  });
+async function saveLayout(components: { type: string; position: string; order: number; config: { id: string; imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } } }[]) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ components }),
+      },
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to save layout");
+    }
+
+    toast.success("Successfully saved layout", "Success");
+
+    return data;
+  } catch (error) {
+    toast.error(
+      error instanceof Error ? error.message : "Failed to save layout",
+      "Save Failed",
+    );
+  }
 }
 
 /* ================= HYDRATE / SERIALIZE ================= */
-function hydrateLayout(components: any[]) {
+function hydrateLayout(components: { id: string; type: string; order: number; config: { id: string; imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } } }[]) {
   return components
     .filter((c) => c.type === "SPLIT_SECTION")
     .sort((a, b) => a.order - b.order)
     .map((c) => ({
-      id: c.id,
       ...c.config,
+      id: c.id,
     }));
 }
 
-function serializeLayout(events: any[]) {
+function serializeLayout(events: { id: string; imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } }[]) {
   return events.map((e, i) => ({
     type: "SPLIT_SECTION",
     position: "CENTER",
@@ -147,7 +174,7 @@ export default function Page() {
   );
 
   /* ================= STATE (MOCK FALLBACK INCLUDED) ================= */
-  const [events, setEvents] = useState<any[]>(mockEvents);
+  const [events, setEvents] = useState(mockEvents);
 
   /* ================= LOAD ================= */
   useEffect(() => {
@@ -162,7 +189,7 @@ export default function Page() {
         }
 
         setEvents(hydrateLayout(comps));
-      } catch (err) {
+      } catch {
         setEvents(mockEvents);
       }
     };

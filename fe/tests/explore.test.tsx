@@ -1,5 +1,5 @@
 import ExplorePage from "@/app/(user)/explore/page";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 // ------------------------
 // MOCKS
@@ -13,7 +13,7 @@ vi.mock("@/app/components/loadingScreen", () => ({
 }));
 
 vi.mock("@/app/components/crud/explore/ExploreLayout", () => ({
-  default: ({ hero, left, center, right }: any) => (
+  default: ({ hero, left, center, right }: { hero?: React.ReactNode; left?: React.ReactNode; center?: React.ReactNode; right?: React.ReactNode }) => (
     <div>
       <div data-testid="hero">{hero}</div>
       <div data-testid="left">{left}</div>
@@ -40,7 +40,7 @@ vi.mock("@/app/components/crud/explore/TrendingPanel", () => ({
 }));
 
 vi.mock("@/app/components/crud/explore/ResultsGrid", () => ({
-  default: ({ articles, heroStory }: any) => (
+  default: ({ articles, heroStory }: { articles: unknown[]; heroStory?: { title?: string } }) => (
     <div>
       <div data-testid="hero-card">{heroStory?.title}</div>
       <div data-testid="results-count">{articles.length}</div>
@@ -107,7 +107,7 @@ const mockArticles = [
 beforeEach(() => {
   vi.clearAllMocks();
 
-  (fetch as any)
+  (fetch as vi.Mock)
     .mockResolvedValueOnce({
       json: async () => mockCategories,
     })

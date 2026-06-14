@@ -7,7 +7,16 @@ export default function ExploreHero({
   categories,
   filteredCount,
   smallCount,
-}: any) {
+  selectedCategory,
+  setSelectedCategory,
+}: {
+  articles: { length: number };
+  categories: { id: string; name?: string; label?: string; color?: string }[];
+  filteredCount: number;
+  smallCount: number;
+  selectedCategory?: string | null;
+  setSelectedCategory?: (c: string | null) => void;
+}) {
   return (
     <section className="relative overflow-hidden rounded-[50px] border border-[var(--border)] bg-[var(--glass-bg)] p-10 backdrop-blur-2xl">
       {/* Glow */}

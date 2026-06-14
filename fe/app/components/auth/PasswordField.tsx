@@ -6,6 +6,17 @@ import { Label } from "@/components/ui/label";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+interface PasswordFieldProps {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  error?: string | false;
+}
+
 export default function PasswordField({
   label,
   name,
@@ -15,7 +26,7 @@ export default function PasswordField({
   show,
   setShow,
   error,
-}: any) {
+}: PasswordFieldProps) {
   return (
     <div className="space-y-1">
       <Label className="text-[9px] tracking-[0.4em] text-[var(--text-faint)] uppercase">

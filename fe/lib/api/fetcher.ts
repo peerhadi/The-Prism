@@ -4,11 +4,11 @@ type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type FetchOptions = {
   method?: HttpMethod;
-  body?: any;
+  body?: unknown;
   headers?: Record<string, string>;
 };
 
-export async function fetcher<T = any>(
+export async function fetcher<T = unknown>(
   url: string,
   options: FetchOptions = {},
 ): Promise<{ data: T | null; error: string | null }> {
@@ -40,10 +40,10 @@ export async function fetcher<T = any>(
       data,
       error: null,
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     return {
       data: null,
-      error: err?.message || "Network error",
+      error: err instanceof Error ? err.message : "Network error",
     };
   }
 }

@@ -6,7 +6,7 @@ import React from "react";
 export default function StorySplitCard({
   perspectives,
 }: {
-  perspectives: any[];
+  perspectives: { neutral: { title: string; description: string }; extreme: { title: string; description: string } }[];
 }) {
   const p = perspectives?.[perspectives.length - 1];
 

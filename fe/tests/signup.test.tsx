@@ -10,7 +10,7 @@ const pushMock = vi.fn();
 const addToastMock = vi.fn();
 
 let mockCode: string | null = null;
-let googleLoginHandler: any;
+let googleLoginHandler: (() => void) | undefined;
 
 // --------------------
 // NEXT
@@ -31,7 +31,7 @@ vi.mock("next/navigation", () => ({
 // --------------------
 
 vi.mock("@react-oauth/google", () => ({
-  useGoogleLogin: (config: any) => {
+  useGoogleLogin: (config: Record<string, unknown>) => {
     googleLoginHandler = () =>
       config.onSuccess({
         access_token: "google-token",
@@ -58,13 +58,13 @@ vi.mock("@/lib/toast/toastStore", () => ({
 // --------------------
 
 vi.mock("@/components/ui/button", () => ({
-  Button: ({ children, ...props }: any) => (
+  Button: ({ children, ...props }: { children?: React.ReactNode; [key: string]: unknown }) => (
     <button {...props}>{children}</button>
   ),
 }));
 
 vi.mock("@/components/ui/checkbox", () => ({
-  Checkbox: ({ checked, onCheckedChange }: any) => (
+  Checkbox: ({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (checked: boolean) => void }) => (
     <input
       data-testid="terms"
       type="checkbox"
@@ -75,7 +75,7 @@ vi.mock("@/components/ui/checkbox", () => ({
 }));
 
 vi.mock("next/link", () => ({
-  default: ({ children }: any) => <>{children}</>,
+  default: ({ children }: { children?: React.ReactNode }) => <>{children}</>,
 }));
 
 vi.mock("lucide-react", () => ({
@@ -83,7 +83,7 @@ vi.mock("lucide-react", () => ({
 }));
 
 vi.mock("@/app/components/auth/AuthShell", () => ({
-  default: ({ children }: any) => (
+  default: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="auth-shell">{children}</div>
   ),
 }));
@@ -93,7 +93,7 @@ vi.mock("@/app/components/auth/AuthDivider", () => ({
 }));
 
 vi.mock("@/app/components/auth/OAuthButtons", () => ({
-  default: ({ onGoogle, onGithub }: any) => (
+  default: ({ onGoogle, onGithub }: { onGoogle: () => void; onGithub: () => void }) => (
     <>
       <button onClick={onGoogle}>Google OAuth</button>
       <button onClick={onGithub}>Github OAuth</button>
@@ -102,13 +102,13 @@ vi.mock("@/app/components/auth/OAuthButtons", () => ({
 }));
 
 vi.mock("@/app/components/auth/AuthField", () => ({
-  default: ({ name, value, onChange }: any) => (
+  default: ({ name, value, onChange }: { name: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
     <input data-testid={name} name={name} value={value} onChange={onChange} />
   ),
 }));
 
 vi.mock("@/app/components/auth/PasswordField", () => ({
-  default: ({ name, value, onChange }: any) => (
+  default: ({ name, value, onChange }: { name: string; value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void }) => (
     <input data-testid={name} name={name} value={value} onChange={onChange} />
   ),
 }));
@@ -143,7 +143,7 @@ beforeEach(() => {
     },
   });
 
-  global.fetch = vi.fn((url: any) => {
+  global.fetch = vi.fn((url: string) => {
     // GOOGLE USER
     if (String(url).includes("googleapis")) {
       return Promise.resolve({
@@ -180,7 +180,7 @@ beforeEach(() => {
     return Promise.resolve({
       json: async () => ({}),
     });
-  }) as any;
+  }) as vi.Mock;
 });
 
 // --------------------

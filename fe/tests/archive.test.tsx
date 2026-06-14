@@ -1,5 +1,5 @@
 import ArchivePage from "@/app/(user)/archive/page";
-import { Article } from "@/lib/api/articles/types";
+import { Article, ArticleType } from "@/lib/api/articles/types";
 import { render, screen, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 
@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
    MOCK CHILD COMPONENTS (keep minimal)
 ------------------------------*/
 vi.mock("@/app/components/crud/archive/ArchiveLayout", () => ({
-  default: ({ hero, left, center, right }: any) => (
+  default: ({ hero, left, center, right }: { hero?: React.ReactNode; left?: React.ReactNode; center?: React.ReactNode; right?: React.ReactNode }) => (
     <div>
       <div data-testid="hero">{hero}</div>
       <div data-testid="left">{left}</div>
@@ -31,21 +31,21 @@ vi.mock("@/app/components/loadingScreen", () => ({
 }));
 
 vi.mock("../components/HeroCard", () => ({
-  default: (props: any) => <div data-testid="hero-card">{props.title}</div>,
+  default: (props: { title?: string }) => <div data-testid="hero-card">{props.title}</div>,
 }));
 
 vi.mock("@/app/components/SmallCard", () => ({
-  default: (props: any) => <div data-testid="small-card">{props.title}</div>,
+  default: (props: { title?: string }) => <div data-testid="small-card">{props.title}</div>,
 }));
 
 vi.mock("@/app/components/ListCard", () => ({
-  default: (props: any) => <div data-testid="list-card">{props.title}</div>,
+  default: (props: { title?: string }) => <div data-testid="list-card">{props.title}</div>,
 }));
 
 vi.mock("../components/HeadlineCard", () => ({
-  HeadlineCard: (props: any) => (
+  HeadlineCard: (props: { data?: Array<{ title: string }> }) => (
     <div data-testid="headline-card">
-      {props.data?.map((d: any, i: number) => (
+      {props.data?.map((d: { title: string }, i: number) => (
         <div key={i}>{d.title}</div>
       ))}
     </div>
@@ -85,7 +85,7 @@ const mockArticles: Article[] = Array.from({ length: 10 }).map((_, i) => ({
   biasLevel: i,
   imageUrl: null,
   sources: [],
-  type: "NEWS" as any,
+  type: ArticleType.SHORT,
   createdAt: new Date(2025, 0, i + 1).toISOString(),
 }));
 
@@ -101,7 +101,7 @@ describe("ArchivePage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (fetch as any).mockImplementation((url: string) => {
+    (fetch as vi.Mock).mockImplementation((url: string) => {
       if (url.includes("categories")) {
         return Promise.resolve({
           json: () => Promise.resolve(mockCategories),

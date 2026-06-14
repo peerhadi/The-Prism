@@ -7,7 +7,7 @@ import Breadcrumbs from "@/app/components/Breadcrumb";
 import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
-import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 const BREADCRUMBS = [
   { label: "Perspectives", href: "/dashboard/perspectives" },
@@ -39,16 +39,17 @@ export default function EditPerspective() {
   const { id } = useParams();
   const router = useRouter();
 
-  const [form, setForm] = useState<any>(null);
+  const [form, setForm] = useState<Record<string, unknown> | null>(null);
 
-  const update = (path: string, value: any) => {
-    setForm((prev: any) => {
-      const copy = structuredClone(prev);
+  const update = (path: string, value: string) => {
+    setForm((prev) => {
+      if (!prev) return prev;
+      const copy = structuredClone(prev) as Record<string, unknown>;
       const keys = path.split(".");
-      let obj = copy;
+      let obj: Record<string, unknown> = copy;
 
       for (let i = 0; i < keys.length - 1; i++) {
-        obj = obj[keys[i]];
+        obj = obj[keys[i]] as Record<string, unknown>;
       }
 
       obj[keys[keys.length - 1]] = value;
@@ -65,21 +66,34 @@ export default function EditPerspective() {
   }, [id]);
 
   const save = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(form),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(form),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully modified perspective",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/perspectives");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update perspective");
+      }
+
+      toast.success("Successfully modified perspective", "Success");
+
+      router.push("/dashboard/perspectives");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update perspective",
+        "Update Failed",
+      );
+    }
   };
 
   if (!form) {
@@ -104,8 +118,8 @@ export default function EditPerspective() {
         <div className="mb-8">
           <FieldInput
             label="Perspective Title"
-            value={form.title}
-            onChange={(e: any) => update("title", e.target.value)}
+            value={form.title as string}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => update("title", e.target.value)}
           />
         </div>
 
@@ -130,8 +144,8 @@ export default function EditPerspective() {
               <FieldInput
                 key={field.key}
                 label={field.label}
-                value={form[section.key][field.key]}
-                onChange={(e: any) =>
+                value={(form[section.key] as Record<string, string>)?.[field.key] ?? ""}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   update(`${section.key}.${field.key}`, e.target.value)
                 }
               />

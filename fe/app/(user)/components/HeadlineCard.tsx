@@ -1,15 +1,20 @@
 "use client";
 
 import React from "react";
-import { Radio, ChevronRight } from "lucide-react";
+import { Radio } from "lucide-react";
 import SourcesPopup from "./features/SourcesPopup";
-import { Article } from "@/lib/api/articles/types";
 
 type HeadlineVariant = "cyan" | "purple" | "red" | "emerald";
 
+type Source = {
+  source: string;
+  title: string;
+  url: string;
+};
+
 interface HeadlineItem {
   tag: string;
-  sources: any;
+  sources: Source[];
   time: string;
   title: string;
   id: string;
@@ -22,12 +27,6 @@ interface HeadlineCardProps {
   onActionClick?: () => void;
 }
 
-const variantStyles: Record<HeadlineVariant, { bg: string; text: string }> = {
-  cyan: { bg: "bg-cyan-500/10", text: "text-cyan-400" },
-  purple: { bg: "bg-purple-500/10", text: "text-purple-400" },
-  red: { bg: "bg-red-500/10", text: "text-red-400" },
-  emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400" },
-};
 
 export const HeadlineCard: React.FC<HeadlineCardProps> = ({ title, data }) => {
   console.log(data);
@@ -48,7 +47,6 @@ export const HeadlineCard: React.FC<HeadlineCardProps> = ({ title, data }) => {
       <div className="space-y-6">
         {data.map((item, idx) => {
           const variant = item.variant ?? "cyan";
-          const styles = variantStyles[variant];
           return (
             <div
               key={idx}

@@ -8,8 +8,8 @@ export default function StoryLiveStream({
   small,
   list,
 }: {
-  small: any[];
-  list: any[];
+  small: { id: string; title: string; description: string; imageUrl: string; sources: string[] }[];
+  list: { id: string; title: string; description: string; imageUrl: string; sources: { source: string; title: string; url: string }[] }[];
 }) {
   console.log(small, list);
   return (
@@ -22,13 +22,13 @@ export default function StoryLiveStream({
 
       <div className="grid gap-8 md:grid-cols-2">
         {small.map((s) => (
-          <ShortCard key={s.id} {...s} />
+          <ShortCard key={s.id} id={s.id} badge="STREAM" title={s.title} description={s.description} imageUrl={s.imageUrl} sources={s.sources} />
         ))}
       </div>
 
       <div className="space-y-6">
         {list.map((l, i) => (
-          <ListCard key={i} {...l} />
+          <ListCard key={i} id={l.id} title={l.title} description={l.description} imageUrl={l.imageUrl} sources={l.sources} />
         ))}
       </div>
     </div>

@@ -5,9 +5,8 @@ import Link from "next/link";
 import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
-import { PrismLoader } from "@/app/components/loadingScreen";
 import { Sparkles } from "lucide-react";
-
+import { toast as fetchToast } from "@/lib/toast/toast";
 type Article = {
   id: string;
   title: string;
@@ -19,12 +18,13 @@ type Article = {
 export default function ArticlesPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [toast, setToast] = useState(false);
-  const [token, setToken] = useState();
+  const [token] = useState(() =>
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("token") || ""
+      : "",
+  );
 
   useEffect(() => {
-    if (window) {
-      setToken(window.localStorage.getItem("token"));
-    }
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`)
       .then((r) => r.json())
       .then((data) => {
@@ -33,13 +33,34 @@ export default function ArticlesPage() {
         setToast(true);
       });
   }, []);
-  const generateFeed = () => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/rss/sync`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const generateFeed = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/articles/rss/sync`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const data = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to generate feed");
+      }
+
+      fetchToast.success(
+        "Your feed has been generated successfully",
+        "Feed Generated",
+      );
+    } catch (error) {
+      fetchToast.error(
+        error instanceof Error ? error.message : "Failed to generate feed",
+        "Generation Failed",
+      );
+    }
   };
   return (
     <div

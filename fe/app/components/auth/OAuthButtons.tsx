@@ -5,12 +5,19 @@ import GoogleIcon from "@mui/icons-material/Google";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { Button } from "@/components/ui/button";
 
+interface OAuthButtonsProps {
+  onGoogle: () => void;
+  onGithub: () => void;
+  googleLabel: string;
+  githubLabel: string;
+}
+
 export default function OAuthButtons({
   onGoogle,
   onGithub,
   googleLabel,
   githubLabel,
-}: any) {
+}: OAuthButtonsProps) {
   return (
     <div className="space-y-3">
       <Button

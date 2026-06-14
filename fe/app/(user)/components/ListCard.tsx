@@ -2,9 +2,15 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { BarChart3, ArrowRight, Sparkles, ArrowUpRight } from "lucide-react";
+import { ArrowRight, Sparkles, ArrowUpRight } from "lucide-react";
 import NarrativeOverlay from "./features/NarrativeButton";
 import SourcesPopup from "./features/SourcesPopup";
+
+type Source = {
+  source: string;
+  title: string;
+  url: string;
+};
 
 export interface ListCardProps {
   title: string;
@@ -12,7 +18,7 @@ export interface ListCardProps {
   imageUrl: string;
   actionLabel?: string;
   onActionClick?: () => void;
-  sources: any;
+  sources: Source[];
   id: string;
 }
 

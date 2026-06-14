@@ -2,12 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 
+interface SuccessPopupProps {
+  open: boolean;
+  onContinue: () => void;
+}
+
 export default function SuccessPopup({
   open,
   onContinue,
-  addToast,
-  router,
-}: any) {
+}: SuccessPopupProps) {
   if (!open) return null;
 
   return (

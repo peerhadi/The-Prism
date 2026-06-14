@@ -5,7 +5,7 @@ import CyberCard from "./CyberCard";
 import SettingRow from "./SettingRow";
 import { BrainCircuit } from "lucide-react";
 
-export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
+export default function AIFeaturesCard({ aiSettings, setAiSettings }: { aiSettings: { summaryLength: string; showBiasAnalysis: boolean; isVerified: boolean }; setAiSettings: React.Dispatch<React.SetStateAction<{ summaryLength: string; showBiasAnalysis: boolean; isVerified: boolean }>> }) {
   return (
     <CyberCard title="AI Features" icon={BrainCircuit}>
       {/* INFO BANNER */}
@@ -41,7 +41,7 @@ export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
           <select
             value={aiSettings.summaryLength}
             onChange={(e) =>
-              setAiSettings((prev: any) => ({
+              setAiSettings((prev) => ({
                 ...prev,
                 summaryLength: e.target.value,
               }))
@@ -65,10 +65,10 @@ export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
           description="Display source bias and narrative analysis."
           checked={aiSettings.showBiasAnalysis}
           onCheckedChange={(checked) =>
-            setAiSettings((prev: any) => ({
-              ...prev,
-              showBiasAnalysis: checked,
-            }))
+setAiSettings((prev) => ({
+                ...prev,
+                showBiasAnalysis: checked,
+              }))
           }
         />
 
@@ -77,10 +77,10 @@ export default function AIFeaturesCard({ aiSettings, setAiSettings }: any) {
           description="Prefer verified information and sources."
           checked={aiSettings.isVerified}
           onCheckedChange={(checked) =>
-            setAiSettings((prev: any) => ({
-              ...prev,
-              isVerified: checked,
-            }))
+setAiSettings((prev) => ({
+                ...prev,
+                isVerified: checked,
+              }))
           }
         />
       </div>

@@ -7,7 +7,7 @@ import StoryBuilderPage from "@/app/(admin)/dashboard/layout/stories/page";
 /* ================= MOCKS ================= */
 
 vi.mock("@dnd-kit/core", () => ({
-  DndContext: ({ children }: any) => <div>{children}</div>,
+  DndContext: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   PointerSensor: vi.fn(),
   useSensor: vi.fn(),
   useSensors: vi.fn(() => []),
@@ -15,7 +15,7 @@ vi.mock("@dnd-kit/core", () => ({
 }));
 
 vi.mock("@dnd-kit/sortable", () => ({
-  SortableContext: ({ children }: any) => <div>{children}</div>,
+  SortableContext: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
   useSortable: () => ({
     setNodeRef: vi.fn(),
     attributes: {},
@@ -37,19 +37,19 @@ vi.mock("@dnd-kit/utilities", () => ({
 /* ================= CHILD COMPONENTS ================= */
 
 vi.mock("@/app/(user)/components/HeroCard", () => ({
-  default: ({ title }: any) => <div>{title}</div>,
+  default: ({ title }: { title?: string }) => <div>{title}</div>,
 }));
 
 vi.mock("@/app/(user)/components/SmallCard", () => ({
-  default: ({ title }: any) => <div>{title}</div>,
+  default: ({ title }: { title?: string }) => <div>{title}</div>,
 }));
 
 vi.mock("@/app/(user)/components/ListCard", () => ({
-  default: ({ title }: any) => <div>{title}</div>,
+  default: ({ title }: { title?: string }) => <div>{title}</div>,
 }));
 
 vi.mock("@/app/components/crud/story/StoryPageLayout", () => ({
-  default: ({ left, center, right }: any) => (
+  default: ({ left, center, right }: { left?: React.ReactNode; center?: React.ReactNode; right?: React.ReactNode }) => (
     <div>
       {left}
       {center}
@@ -72,7 +72,7 @@ vi.mock("@/app/components/crud/story/StorySplitCard", () => ({
 
 /* IMPORTANT ONE */
 vi.mock("../pallette", () => ({
-  default: ({ onSelect }: any) => (
+  default: ({ onSelect }: { onSelect: (val: string) => void }) => (
     <button onClick={() => onSelect("SMALL")}>Add Component</button>
   ),
 }));

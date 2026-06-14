@@ -1,6 +1,12 @@
 import { Send } from "lucide-react";
 
-export default function ChatInput({ input, setInput, onSend }: any) {
+interface ChatInputProps {
+  input: string;
+  setInput: (value: string) => void;
+  onSend: () => void;
+}
+
+export default function ChatInput({ input, setInput, onSend }: ChatInputProps) {
   return (
     <div
       className="p-4 flex gap-4 border-t"

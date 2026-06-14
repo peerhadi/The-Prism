@@ -3,7 +3,12 @@ export default function ExploreStats({
   categories,
   filtered,
   small,
-}: any) {
+}: {
+  articles: { length: number };
+  categories: { length: number };
+  filtered: { length: number };
+  small: { length: number };
+}) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       <div className="p-5 border rounded-3xl">

@@ -4,6 +4,12 @@ import * as React from "react";
 import { Dna, ArrowUpRight } from "lucide-react";
 import SourcesPopup from "./features/SourcesPopup";
 
+type Source = {
+  source: string;
+  title: string;
+  url: string;
+};
+
 interface AnomalyProps {
   id: string;
   title: string;
@@ -12,7 +18,7 @@ interface AnomalyProps {
   intensity: string;
   color: string;
   img: string;
-  sources: any;
+  sources: Source[];
 }
 
 export const AnomalyCard = ({

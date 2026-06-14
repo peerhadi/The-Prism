@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { Article } from "@/lib/api/articles/types";
+import { Category } from "@/lib/api/categories/types";
 import ArchiveLayout from "@/app/components/crud/archive/ArchiveLayout";
 import { PrismLoader } from "@/app/components/loadingScreen";
 
@@ -13,20 +15,19 @@ import { HeadlineCard } from "../components/HeadlineCard";
 import ArchiveHero from "@/app/components/crud/archive/ArchiveHero";
 import ArchiveCategoryIndex from "@/app/components/crud/archive/ArchiveCategoryIndex";
 import ArchiveLogs from "@/app/components/crud/archive/ArchiveLogs";
-import ArchiveStickyGrid from "@/app/components/crud/archive/ArchiveStickyGrid";
 import StoryLiveSignal from "@/app/components/crud/story/StoryLiveSignal";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function ArchivePage() {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
-  const [heroStory, setHeroStory] = useState<any>(null);
-  const [featured, setFeatured] = useState<any[]>([]);
-  const [stream, setStream] = useState<any[]>([]);
-  const [headlines, setHeadlines] = useState<any[]>([]);
-  const [insights, setInsights] = useState<any[]>([]);
+  const [heroStory, setHeroStory] = useState<Article | null>(null);
+  const [featured, setFeatured] = useState<Article[]>([]);
+  const [stream, setStream] = useState<Article[]>([]);
+  const [headlines, setHeadlines] = useState<Article[]>([]);
+  const [insights, setInsights] = useState<Article[]>([]);
 
   useEffect(() => {
     const load = async () => {
@@ -41,9 +42,9 @@ export default function ArchivePage() {
       // CLEAN + SORT (LATEST FIRST)
       // ---------------------------
       const clean = artRes
-        .filter((x: any) => x.title && x.description && x.imageUrl)
+        .filter((x: Article) => x.title && x.description && x.imageUrl)
         .sort(
-          (a: any, b: any) =>
+          (a: Article, b: Article) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
 
@@ -57,16 +58,16 @@ export default function ArchivePage() {
       let cursor = 0;
       const next = (n: number) => clean.slice(cursor, (cursor += n));
 
-      const heroCount = components.filter((c: any) => c.type === "HERO").length;
+      const heroCount = components.filter((c: { type: string }) => c.type === "HERO").length;
       const smallCount = components.filter(
-        (c: any) => c.type === "SMALL",
+        (c: { type: string }) => c.type === "SMALL",
       ).length;
-      const listCount = components.filter((c: any) => c.type === "LIST").length;
+      const listCount = components.filter((c: { type: string }) => c.type === "LIST").length;
       const insightCount = components.filter(
-        (c: any) => c.type === "INSIGHT",
+        (c: { type: string }) => c.type === "INSIGHT",
       ).length;
       const headlineCount = components.filter(
-        (c: any) => c.type === "HEADLINE",
+        (c: { type: string }) => c.type === "HEADLINE",
       ).length;
 
       // HERO
@@ -103,17 +104,52 @@ export default function ArchivePage() {
   // ---------------------------
   const center = (
     <div className="space-y-10">
-      {heroStory && <HeroCard {...heroStory} status="ARCHIVED" />}
+      {heroStory && (
+        <HeroCard
+          id={heroStory.id}
+          type={heroStory.type}
+          createdAt={heroStory.createdAt ?? ""}
+          title={heroStory.title}
+          description={heroStory.summary ?? heroStory.description}
+          sources={heroStory.sources.map((s) => ({ source: s, title: s, url: s }))}
+          status="ARCHIVED"
+          imageUrl={heroStory.imageUrl ?? ""}
+        />
+      )}
 
       <div className="grid grid-cols-2 gap-8">
         {featured.map((s) => (
-          <ShortCard key={s.id} {...s} />
+          <ShortCard
+            key={s.id}
+            id={s.id}
+            badge="FEATURED"
+            title={s.title}
+            description={s.description}
+            imageUrl={s.imageUrl ?? ""}
+            sources={s.sources}
+          />
         ))}
       </div>
 
       <div className="space-y-8">
-        {stream[0] && <ListCard {...stream[0]} />}
-        {stream[1] && <ListCard {...stream[1]} />}
+        {stream[0] && (
+          <ListCard
+            id={stream[0].id}
+            title={stream[0].title}
+            description={stream[0].description}
+            imageUrl={stream[0].imageUrl ?? ""}
+            sources={stream[0].sources.map((s) => ({ source: s, title: s, url: s }))}
+          />
+        )}
+        {stream[1] && (
+          <ListCard
+            id={stream[1].id}
+            title={stream[1].title}
+            description={stream[1].description}
+            imageUrl={stream[1].imageUrl ?? ""}
+            sources={stream[1].sources.map((s) => ({ source: s, title: s, url: s }))}
+          />
+        )}
       </div>
     </div>
   );
@@ -126,11 +162,12 @@ export default function ArchivePage() {
       <HeadlineCard
         title="Recovered Headlines"
         data={headlines.map((a) => ({
-          sources: a.sources,
+          id: a.id,
+          sources: a.sources.map((s) => ({ source: s, title: s, url: s })),
           tag: "ARCHIVE",
           time: new Date(a.createdAt).getFullYear().toString(),
           title: a.title,
-          variant: "cyan",
+          variant: "cyan" as const,
         }))}
       />
 

@@ -10,8 +10,8 @@ export default function IdentitySection({
   user,
   formik,
 }: {
-  user: any;
-  formik: any;
+  user: { id: number; username: string; email: string; bio: string; profileImageUrl?: string };
+  formik: { handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void; handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; values: { username: string; email: string; bio: string } };
 }) {
   return (
     <section

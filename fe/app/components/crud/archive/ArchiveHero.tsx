@@ -4,11 +4,18 @@ import * as React from "react";
 import { Radar } from "lucide-react";
 import { getBiasColor } from "@/app/utils/getbiascolor";
 
+interface ArchiveCategory {
+  id: string;
+  name?: string;
+  label?: string;
+  averageBias: number;
+}
+
 export default function ArchiveHero({
   categories,
   fileCount,
 }: {
-  categories: any[];
+  categories: ArchiveCategory[];
   fileCount: number;
 }) {
   return (

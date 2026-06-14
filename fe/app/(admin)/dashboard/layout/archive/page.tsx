@@ -23,7 +23,6 @@ import { CSS } from "@dnd-kit/utilities";
 import HeroCard from "@/app/(user)/components/HeroCard";
 import ShortCard from "@/app/(user)/components/SmallCard";
 import ListCard from "@/app/(user)/components/ListCard";
-import { HeadlineCard } from "@/app/(user)/components/HeadlineCard";
 
 import ArchiveLayout from "@/app/components/crud/archive/ArchiveLayout";
 import StickyInsight from "@/app/(user)/components/TickerCard";
@@ -33,13 +32,14 @@ import ArchiveCategoryIndex from "@/app/components/crud/archive/ArchiveCategoryI
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { PrismLoader } from "@/app/components/loadingScreen";
 import { Radio, Trash2 } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 
 function RightHeadlineItem({
   item,
   handleDelete,
 }: {
-  item: any;
-  handleDelete: any;
+  item: { id: string; title: string; tag: string; time: string; variant?: string };
+  handleDelete: (id: string) => void;
 }) {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id: item.id });
@@ -124,7 +124,16 @@ const BREADCRUMBS = [
   { label: "Archive" },
 ];
 
-type Article = any;
+type Article = {
+  id: string;
+  title: string;
+  summary: string;
+  description: string;
+  type: string;
+  createdAt: string;
+  imageUrl: string;
+  sources: unknown[];
+};
 
 type CenterState = {
   hero: Article | null;
@@ -173,7 +182,7 @@ function Draggable({
   children: React.ReactNode;
   handleDelete: (id: string) => void;
 }) {
-  const { setNodeRef, attributes, listeners, transform, transition } =
+  const { setNodeRef, listeners, transform, transition } =
     useSortable({ id });
 
   return (
@@ -201,13 +210,42 @@ async function fetchLayout() {
   return res.json();
 }
 
-async function saveLayout(type: string, components: any[]) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ components }),
-  });
+async function saveLayout(type: string, components: { type: string; position: string; config: Article }[]) {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ components }),
+      },
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to save layout");
+    }
+
+    toast.success("Successfully saved layout", "Success");
+
+    return data;
+  } catch (error) {
+    toast.error(
+      error instanceof Error ? error.message : "Failed to save layout",
+      "Save Failed",
+    );
+
+    throw error;
+  }
 }
+
+type ComponentConfig = {
+  type: string;
+  config: Article;
+};
 
 const safeId = (prefix: string, id: string) =>
   `${prefix}-${id}-${crypto.randomUUID()}`;
@@ -250,38 +288,38 @@ export default function ArchivePage() {
         return;
       }
       setCenter({
-        hero: comps.find((c: any) => c.type === "HERO").config,
+        hero: comps.find((c: ComponentConfig) => c.type === "HERO").config,
         small: comps
-          .filter((c: any) => c.type === "SMALL")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "SMALL")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
         list: comps
-          .filter((c: any) => c.type === "LIST")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "LIST")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       });
 
       setLeft(
         comps
-          .filter((c: any) => c.type === "INSIGHT")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "INSIGHT")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
 
       setRight(
         comps
-          .filter((c: any) => c.type === "HEADLINE")
-          .flatMap((c: any) =>
+          .filter((c: ComponentConfig) => c.type === "HEADLINE")
+          .flatMap((c: ComponentConfig) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
     };
 
     load();
-  }, []);
+  }, [articles]);
 
   /* ================= ADD ================= */
   const handleAddComponent = (type: string) => {
@@ -458,9 +496,14 @@ export default function ArchivePage() {
           center={
             <div className="space-y-10 min-h-screen">
               <HeroCard
-                {...center.hero}
+                id={center.hero.id}
+                type={center.hero.type}
+                createdAt={center.hero.createdAt}
+                title={center.hero.title}
+                description={center.hero.description}
+                sources={(center.hero.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
                 status="ARCHIVED"
-                imageUrl="https://picsum.photos/800/500"
+                imageUrl={center.hero.imageUrl}
               />
               <SortableContext
                 items={center.small.map((i) => i.id)}
@@ -473,7 +516,14 @@ export default function ArchivePage() {
                       id={item.id}
                       handleDelete={handleDelete}
                     >
-                      <ShortCard {...item} />
+                      <ShortCard
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        imageUrl={item.imageUrl}
+                        sources={item.sources as string[]}
+                        badge="ARCHIVE"
+                      />
                     </Draggable>
                   ))}
                 </div>
@@ -490,7 +540,13 @@ export default function ArchivePage() {
                       id={item.id}
                       handleDelete={handleDelete}
                     >
-                      <ListCard {...item} />
+                      <ListCard
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        imageUrl={item.imageUrl}
+                        sources={(item.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
+                      />
                     </Draggable>
                   ))}
                 </div>
@@ -517,7 +573,7 @@ export default function ArchivePage() {
                         return (
                           <RightHeadlineItem
                             key={item.id}
-                            item={item}
+                            item={{ id: item.id, title: item.title, tag: "ARCHIVE", time: new Date(item.createdAt).toLocaleTimeString(), variant: "cyan" }}
                             handleDelete={handleDelete}
                           />
                         );
@@ -529,8 +585,8 @@ export default function ArchivePage() {
 
               <ArchiveCategoryIndex
                 categories={articles.slice(0, 5).map((x) => ({
-                  title: x.title,
-                  averageBias: 0.5,
+                  id: x.id,
+                  name: x.title,
                 }))}
                 articles={articles.slice(0, 5)}
               />

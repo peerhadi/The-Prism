@@ -7,17 +7,9 @@ import SplitHero from "@/app/components/crud/split/SplitHero";
 import SplitSection from "@/app/components/crud/split/SplitSection";
 import ConflictCTA from "@/app/components/crud/split/ConflictCTA";
 
-/* ================= API ================= */
-async function fetchLayout() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`,
-  );
-  return res.json();
-}
-
 /* ================= PAGE ================= */
 export default function NarrativeSplitPage() {
-  const [events, setEvents] = React.useState<any[]>([]);
+  const [events, setEvents] = React.useState<{ id: string; neutral: { title: string; description: string }; extreme: { title: string; description: string }; imageUrl: string }[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
@@ -39,7 +31,7 @@ export default function NarrativeSplitPage() {
         // -------------------------------
         let cursor = 0;
 
-        const next = (n: number, source: any[]) => {
+        const next = (n: number, source: { id: string; neutral: { title: string; description: string }; extreme: { title: string; description: string }; imageUrl: string }[]) => {
           const slice = source.slice(cursor, cursor + n);
           cursor += n;
           return slice;
@@ -48,20 +40,20 @@ export default function NarrativeSplitPage() {
         // fallback dataset (always real API data)
         const clean = perspectivesRes
           .filter(
-            (x: any) =>
+            (x: { neutral?: { title?: string }; extreme?: { title?: string }; imageUrl?: string }) =>
               x?.neutral?.title && x?.extreme?.title && x?.imageUrl?.length,
           )
           .slice(0, 10);
 
         // determine counts from layout ONLY
         const count = layout.filter(
-          (c: any) => c.type === "SPLIT_SECTION",
+          (c: { type: string }) => c.type === "SPLIT_SECTION",
         ).length;
 
         const final = next(count || 4, clean);
 
         setEvents(final);
-      } catch (err) {
+      } catch {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`,
         );
@@ -69,7 +61,7 @@ export default function NarrativeSplitPage() {
 
         const clean = raw
           .filter(
-            (x: any) =>
+            (x: { neutral?: { title?: string }; extreme?: { title?: string }; imageUrl?: string }) =>
               x?.neutral?.title && x?.extreme?.title && x?.imageUrl?.length,
           )
           .slice(0, 4);

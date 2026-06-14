@@ -26,12 +26,12 @@ import ShortCard from "@/app/(user)/components/SmallCard";
 import ListCard from "@/app/(user)/components/ListCard";
 import StoryPageLayout from "@/app/components/crud/story/StoryPageLayout";
 import StorySplitCard from "@/app/components/crud/story/StorySplitCard";
-import StoryLiveSignal from "@/app/components/crud/story/StoryLiveSignal";
-import StoryRightPanel from "@/app/components/crud/story/StoryRightPanel";
+
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import AddComponentButton from "../pallette";
 import StickyInsight from "@/app/(user)/components/TickerCard";
 import { Radio } from "lucide-react";
+import { toast } from "@/lib/toast/toast";
 const TrashButton = ({
   id,
   handleDelete,
@@ -58,7 +58,7 @@ function Draggable({
   children: React.ReactNode;
   handleDelete: (id: string) => void;
 }) {
-  const { setNodeRef, attributes, listeners, transform, transition } =
+  const { setNodeRef, listeners, transform, transition } =
     useSortable({ id });
 
   return (
@@ -81,8 +81,8 @@ function RightHeadlineItem({
   item,
   handleDelete,
 }: {
-  item: any;
-  handleDelete: any;
+  item: { id: string; title: string; tag: string; time: string; variant?: string };
+  handleDelete: (id: string) => void;
 }) {
   const { setNodeRef, attributes, listeners, transform, transition } =
     useSortable({ id: item.id });
@@ -171,14 +171,29 @@ async function fetchLayout(type: string) {
   return res.json();
 }
 
-export async function saveLayout(type: string, components: any[]) {
-  const res = await fetch(`${API}/api/layout/${type}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ components }),
-  });
+export async function saveLayout(type: string, components: { type: string; position: string; config: Article }[]) {
+  try {
+    const response = await fetch(`${API}/api/layout/${type}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ components }),
+    });
 
-  return res.json();
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(data?.message || "Failed to save layout");
+    }
+
+    toast.success("Successfully saved layout", "Success");
+
+    return data;
+  } catch (error) {
+    toast.error(
+      error instanceof Error ? error.message : "Failed to save layout",
+      "Save Failed",
+    );
+  }
 }
 
 /* ================= MOCK ================= */
@@ -194,20 +209,39 @@ const mockArticles = Array.from({ length: 200 }, (_, i) => ({
   sources: [],
 }));
 
+type ComponentConfig = {
+  type: string;
+  config: Article;
+};
+
 const BREADCRUMBS = [
   { label: "Layout", href: "/dashboard/layout" },
   { label: "Stories" },
 ];
 
+type Article = {
+  id: string;
+  title: string;
+  summary: string;
+  description: string;
+  createdAt: string;
+  type: string;
+  imageUrl: string;
+  sources: unknown[];
+  variant?: string;
+  tag?: string;
+  time?: string;
+};
+
 type CenterState = {
-  hero: any;
-  small: any[];
-  list: any[];
+  hero: Article | null;
+  small: Article[];
+  list: Article[];
 };
 
 /* ================= DEFAULT ================= */
 
-const buildDefaultLayout = (articles: any[]): CenterState => ({
+const buildDefaultLayout = (articles: Article[]): CenterState => ({
   hero: articles[0] ?? null,
   small: articles.slice(1, 5),
   list: articles.slice(5, 7),
@@ -220,8 +254,8 @@ export default function StoryBuilderPage() {
 
   const [loading, setLoading] = useState(true);
 
-  const [left, setLeft] = useState<any[]>([]);
-  const [right, setRight] = useState<any[]>([]);
+  const [left, setLeft] = useState<Article[]>([]);
+  const [right, setRight] = useState<Article[]>([]);
   const [center, setCenter] = useState<CenterState>({
     hero: null,
     small: [],
@@ -252,24 +286,24 @@ export default function StoryBuilderPage() {
           return a;
         });
         setCenter({
-          hero: comps.find((c: any) => c.type === "HERO")?.config ?? null,
+          hero: comps.find((c: ComponentConfig) => c.type === "HERO")?.config ?? null,
           small: comps
-            .filter((c: any) => c.type === "SMALL")
-            .map((c: any) => c.config),
+            .filter((c: ComponentConfig) => c.type === "SMALL")
+            .map((c: ComponentConfig) => c.config),
           list: comps
-            .filter((c: any) => c.type === "LIST")
-            .map((c: any) => c.config),
+            .filter((c: ComponentConfig) => c.type === "LIST")
+            .map((c: ComponentConfig) => c.config),
         });
 
         setLeft(
           comps
-            .filter((c: any) => c.type === "INSIGHT")
-            .map((c: any) => c.config),
+            .filter((c: ComponentConfig) => c.type === "INSIGHT")
+            .map((c: ComponentConfig) => c.config),
         );
         setRight(
           comps
-            .filter((c: any) => c.type === "HEADLINE")
-            .map((c: any) => c.config),
+            .filter((c: ComponentConfig) => c.type === "HEADLINE")
+            .map((c: ComponentConfig) => c.config),
         );
       } finally {
         setLoading(false);
@@ -277,7 +311,7 @@ export default function StoryBuilderPage() {
     };
 
     load();
-  }, []);
+  }, [articles]);
 
   /* ================= DELETE (NEW — NO UI TOUCH) ================= */
   const handleDelete = (id: string) => {
@@ -295,7 +329,7 @@ export default function StoryBuilderPage() {
   /* ================= SAVE ================= */
 
   const buildPayload = () => {
-    const components: any[] = [];
+    const components: { type: string; position: string; config: Article }[] = [];
 
     if (center.hero) {
       components.push({
@@ -455,14 +489,14 @@ export default function StoryBuilderPage() {
               strategy={rectSortingStrategy}
             >
               <div className="space-y-4">
-                {left.map((item, i) => (
+                {left.map((item) => (
                   <Draggable
                     key={item.id}
                     id={item.id}
                     handleDelete={handleDelete}
                   >
                     <StickyInsight
-                      variant={item.variant ?? "cyan"}
+                      variant={(item.variant ?? "cyan") as "cyan" | "amber" | "purple" | "red"}
                       title={item.title}
                       content={item.summary}
                     />
@@ -480,7 +514,7 @@ export default function StoryBuilderPage() {
                   createdAt={center.hero.createdAt}
                   title={center.hero.title}
                   description={center.hero.summary}
-                  sources={center.hero.sources}
+                  sources={(center.hero.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
                   status="LIVE"
                   imageUrl={center.hero.imageUrl}
                 />
@@ -489,21 +523,14 @@ export default function StoryBuilderPage() {
               <StorySplitCard
                 perspectives={[
                   {
-                    id: "cmqc3i7lx00gpjnlx1jv9bm6p",
-                    title: "Perspective 1",
                     neutral: {
                       title: "Neutral 1",
-                      summary: "Summary 1",
                       description: "Description 1",
                     },
                     extreme: {
                       title: "Title 2",
-                      summary: "Summary 2",
                       description: "Description 2",
                     },
-                    imageUrl:
-                      "https://ichef.bbci.co.uk/news/1024/branded_news/2df1/live/98ddcfe0-66c5-11f1-b59f-5fac4ee8d999.jpg",
-                    createdAt: "2026-06-13T08:30:33.477Z",
                   },
                 ]}
               />
@@ -513,13 +540,20 @@ export default function StoryBuilderPage() {
                 strategy={rectSortingStrategy}
               >
                 <div className="grid grid-cols-2 gap-6">
-                  {center.small.map((item, i) => (
+                  {center.small.map((item) => (
                     <Draggable
                       key={item.id}
                       id={item.id}
                       handleDelete={handleDelete}
                     >
-                      <ShortCard {...item} />
+                      <ShortCard
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        imageUrl={item.imageUrl}
+                        sources={item.sources as string[]}
+                        badge="SMALL"
+                      />
                     </Draggable>
                   ))}
                 </div>
@@ -530,13 +564,19 @@ export default function StoryBuilderPage() {
                 strategy={rectSortingStrategy}
               >
                 <div className="space-y-6">
-                  {center.list.map((item, i) => (
+                  {center.list.map((item) => (
                     <Draggable
                       key={item.id}
                       id={item.id}
                       handleDelete={handleDelete}
                     >
-                      <ListCard {...item} />
+                      <ListCard
+                        id={item.id}
+                        title={item.title}
+                        description={item.description}
+                        imageUrl={item.imageUrl}
+                        sources={(item.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
+                      />
                     </Draggable>
                   ))}
                 </div>
@@ -559,7 +599,7 @@ export default function StoryBuilderPage() {
                     {right.map((item) => (
                       <RightHeadlineItem
                         key={item.id}
-                        item={item}
+                        item={{ id: item.id, title: item.title, tag: item.tag ?? "HEADLINE", time: item.time ?? new Date(item.createdAt).toLocaleDateString(), variant: item.variant }}
                         handleDelete={handleDelete}
                       />
                     ))}

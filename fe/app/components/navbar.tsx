@@ -9,12 +9,10 @@ import {
   User,
   Settings,
   LogOut,
-  ChevronDown,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { useToast } from "@/lib/toast/toastStore";
 import { PrismLoader } from "./loadingScreen";
+import { toast } from "@/lib/toast/toast";
 const STATIC_LINKS = [
   { name: "Stories", href: "/stories", desc: "Live intelligence streams" },
   { name: "Explore", href: "/explore", desc: "Narrative and bias analysis" },
@@ -30,57 +28,52 @@ const STATIC_LINKS = [
 ];
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+  const [authenticated, setAuthenticated] = useState<boolean | null>(() => typeof window !== "undefined" ? !!localStorage.getItem("token") : null);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [token, setToken] = useState("");
-  const [isAdmin, setIsAdmin] = useState(null);
-  const [userImage, setUserImage] = useState("");
-  const [loaded, setLoaded] = useState(false);
-  const [links, setLinks] = useState(STATIC_LINKS);
-  useEffect(() => {
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(() => {
     if (typeof window !== "undefined") {
-      const t = window.localStorage.getItem("token");
-      setLoaded(true);
-      console.log(t);
-      if (t) {
-        setToken(t);
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${t}`,
-          },
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            setUserImage(res.profileImageUrl);
-            setIsAdmin(res.role === "ADMIN");
-            console.log(res.role === "ADMIN");
-            if (res.role === "ADMIN") {
-              setLinks((prevLinks) => {
-                // Prevent duplicate dashboards if useEffect triggers twice in StrictMode
-                if (prevLinks.some((l) => l.href === "/dashboard"))
-                  return prevLinks;
-                return [
-                  ...prevLinks,
-                  {
-                    name: "Dashboard",
-                    href: "/dashboard",
-                    desc: "The admin dashboard",
-                  },
-                ];
-              });
-            }
-          })
-          .catch((e) => {
-            console.log(e);
-          });
-      } else {
-        setIsAdmin(false);
-      }
+      const token = localStorage.getItem("token");
+      if (!token) return false;
     }
-  }, [loaded]);
+    return null;
+  });
+  const [userImage, setUserImage] = useState("");
+  const [links, setLinks] = useState(STATIC_LINKS);
   const router = useRouter();
   const profileRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const t = window.localStorage.getItem("token");
+    if (t) {
+      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${t}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          setUserImage(res.profileImageUrl);
+          setIsAdmin(res.role === "ADMIN");
+          if (res.role === "ADMIN") {
+            setLinks((prevLinks) => {
+              if (prevLinks.some((l) => l.href === "/dashboard"))
+                return prevLinks;
+              return [
+                ...prevLinks,
+                {
+                  name: "Dashboard",
+                  href: "/dashboard",
+                  desc: "The admin dashboard",
+                },
+              ];
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    }
+  }, []);
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -98,7 +91,6 @@ export function Navbar() {
     };
   }, []);
   useEffect(() => {
-    setAuthenticated(!!localStorage.getItem("token"));
     const update = () => {
       setAuthenticated(!!localStorage.getItem("token"));
     };
@@ -110,11 +102,8 @@ export function Navbar() {
   const logout = () => {
     localStorage.removeItem("token");
 
-    const { addToast } = useToast.getState();
-    addToast({
-      title: "Success",
-      description: "Logged out Successfully",
-    });
+    toast.success("Logged out successfully", "Success");
+
     router.push("/login");
     window.location.reload();
   };

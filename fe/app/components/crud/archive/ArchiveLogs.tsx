@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Activity, Clock3 } from "lucide-react";
 
-export default function ArchiveLogs({ articles }: { articles: any[] }) {
+export default function ArchiveLogs({ articles }: { articles: { id: string; title?: string; summary?: string }[] }) {
   return (
     <div className="relative overflow-hidden rounded-[40px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl">
       {/* Glow */}

@@ -7,7 +7,7 @@ import Breadcrumbs from "@/app/components/Breadcrumb";
 import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
-import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
 const BREADCRUMBS = [
   { label: "Users", href: "/dashboard/users" },
@@ -26,7 +26,7 @@ export default function EditUser() {
   const { id } = useParams();
   const router = useRouter();
 
-  const [form, setForm] = useState<any>(null);
+  const [form, setForm] = useState<Record<string, unknown> | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -36,31 +36,43 @@ export default function EditUser() {
       .then(setForm);
   }, [id]);
 
-  const update = (k: string, v: any) => {
-    setForm((prev: any) => ({
+  const update = (k: string, v: string) => {
+    setForm((prev) => ({
       ...prev,
       [k]: v,
     }));
   };
 
   const save = async () => {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${window.localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify(form),
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(form),
+        },
+      );
 
-    useToast.getState().addToast({
-      title: "Success",
-      description: "Successfully modified user",
-    });
+      const data = await response.json().catch(() => null);
 
-    router.push("/dashboard/users");
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update user");
+      }
+
+      toast.success("Successfully modified user", "Success");
+
+      router.push("/dashboard/users");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update user",
+        "Update Failed",
+      );
+    }
   };
-
   if (!form) {
     return (
       <div className="p-10 animate-pulse" style={{ color: "var(--primary)" }}>
@@ -85,8 +97,8 @@ export default function EditUser() {
             <FieldInput
               key={field.key}
               label={field.label}
-              value={form[field.key] ?? ""}
-              onChange={(e: any) => update(field.key, e.target.value)}
+              value={(form[field.key] as string) ?? ""}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => update(field.key, e.target.value)}
             />
           ))}
 

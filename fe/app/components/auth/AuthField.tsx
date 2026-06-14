@@ -4,6 +4,17 @@ import * as React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+interface AuthFieldProps {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+  placeholder: string;
+  error?: string | false;
+  uppercase?: boolean;
+}
+
 export default function AuthField({
   label,
   name,
@@ -13,7 +24,7 @@ export default function AuthField({
   placeholder,
   error,
   uppercase = true,
-}: any) {
+}: AuthFieldProps) {
   return (
     <div className="space-y-1">
       <Label

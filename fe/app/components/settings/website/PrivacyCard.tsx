@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import CyberCard from "./CyberCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -21,7 +21,12 @@ export default function PrivacyCard({
   setPasswordForm,
   changePassword,
   deleteAccount,
-}: any) {
+}: {
+  passwordForm: { currentPassword: string; newPassword: string; confirmPassword: string };
+  setPasswordForm: React.Dispatch<React.SetStateAction<{ currentPassword: string; newPassword: string; confirmPassword: string }>>;
+  changePassword: (current: string, newPwd: string) => Promise<void>;
+  deleteAccount: () => Promise<void>;
+}) {
   return (
     <div className="flex flex-col gap-6">
       <CyberCard title="Privacy & Account" icon={Shield}>
@@ -53,7 +58,7 @@ export default function PrivacyCard({
               type="password"
               value={passwordForm.currentPassword}
               onChange={(e) =>
-                setPasswordForm((p: any) => ({
+                setPasswordForm((p) => ({
                   ...p,
                   currentPassword: e.target.value,
                 }))
@@ -71,7 +76,7 @@ export default function PrivacyCard({
               type="password"
               value={passwordForm.newPassword}
               onChange={(e) =>
-                setPasswordForm((p: any) => ({
+                setPasswordForm((p) => ({
                   ...p,
                   newPassword: e.target.value,
                 }))
@@ -89,7 +94,7 @@ export default function PrivacyCard({
               type="password"
               value={passwordForm.confirmPassword}
               onChange={(e) =>
-                setPasswordForm((p: any) => ({
+                setPasswordForm((p) => ({
                   ...p,
                   confirmPassword: e.target.value,
                 }))

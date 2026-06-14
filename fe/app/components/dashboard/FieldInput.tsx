@@ -1,6 +1,11 @@
 "use client";
 
-export default function FieldInput({ label, icon: Icon, ...props }: any) {
+interface FieldInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label: string;
+  icon?: React.ComponentType<{ size?: number }>;
+}
+
+export default function FieldInput({ label, icon: Icon, ...props }: FieldInputProps) {
   return (
     <div className="space-y-2">
       <label
@@ -10,12 +15,9 @@ export default function FieldInput({ label, icon: Icon, ...props }: any) {
         }}
       >
         {Icon && (
-          <Icon
-            size={14}
-            style={{
-              color: "var(--primary)",
-            }}
-          />
+          <span style={{ color: "var(--primary)" }}>
+            <Icon size={14} />
+          </span>
         )}
 
         {label}

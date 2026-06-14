@@ -3,7 +3,7 @@ import { Article } from "@/lib/api/articles/types";
 import { Activity } from "lucide-react";
 import React from "react";
 
-export default function LiveFeed({ feed }) {
+export default function LiveFeed({ feed }: { feed: Article[] }) {
   const [sourceOpen, setSourceOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<Article>();
 
@@ -63,7 +63,7 @@ export default function LiveFeed({ feed }) {
       {selected && (
         <SourcesPopup
           id={selected.id}
-          sources={selected.sources}
+          sources={selected.sources.map((s) => ({ source: s, title: s, url: s }))}
           open={sourceOpen}
           setOpen={setSourceOpen}
         />

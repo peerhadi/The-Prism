@@ -6,7 +6,11 @@ export default function DiscoveryNodes({
   categories,
   articles,
   setSelectedCategory,
-}: any) {
+}: {
+  categories: { id: string; name: string }[];
+  articles: { categoryId?: string | null }[];
+  setSelectedCategory: (id: string) => void;
+}) {
   return (
     <div className="relative overflow-hidden rounded-[36px] border border-[var(--border)] bg-[var(--glass-bg)] p-8 backdrop-blur-2xl">
       {/* Glow */}
@@ -34,9 +38,9 @@ export default function DiscoveryNodes({
 
         {/* Categories */}
         <div className="space-y-4">
-          {categories.map((c: any) => {
+          {categories.map((c: { id: string; name: string }) => {
             const count = articles.filter(
-              (a: any) => a.categoryId === c.id,
+              (a: { categoryId?: string | null }) => a.categoryId === c.id,
             ).length;
 
             return (

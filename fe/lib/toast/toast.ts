@@ -4,7 +4,7 @@ export const toast = {
   success(message: string, title?: string) {
     useToast.getState().addToast({
       type: "success",
-      message,
+      description: message,
       title,
     });
   },
@@ -12,7 +12,7 @@ export const toast = {
   error(message: string, title?: string) {
     useToast.getState().addToast({
       type: "error",
-      message,
+      description: message,
       title,
     });
   },
@@ -20,7 +20,7 @@ export const toast = {
   warning(message: string, title?: string) {
     useToast.getState().addToast({
       type: "warning",
-      message,
+      description: message,
       title,
     });
   },
@@ -28,7 +28,7 @@ export const toast = {
   info(message: string, title?: string) {
     useToast.getState().addToast({
       type: "info",
-      message,
+      description: message,
       title,
     });
   },

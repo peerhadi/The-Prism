@@ -22,14 +22,14 @@ Object.defineProperty(window, "location", {
 // FORMIK MOCK
 // --------------------
 
-let latestFormik: any;
+let latestFormik: Record<string, unknown>;
 
 vi.mock("formik", () => ({
-  useFormik: (config: any) => {
+  useFormik: (config: Record<string, unknown>) => {
     latestFormik = {
       values: config.initialValues,
       handleChange: vi.fn(),
-      handleSubmit: (e?: any) => {
+      handleSubmit: (e?: { preventDefault?: () => void }) => {
         e?.preventDefault?.();
 
         return config.onSubmit({
@@ -57,7 +57,7 @@ vi.mock("@/app/components/settings/profile/ProfileHeader", () => ({
 }));
 
 vi.mock("@/app/components/settings/profile/IdentitySection", () => ({
-  default: ({ user, formik }: any) => (
+  default: ({ user, formik }: { user: { username: string }; formik: { handleSubmit: () => void } }) => (
     <div data-testid="identity-section">
       <div>{user.username}</div>
 
@@ -91,7 +91,7 @@ Object.defineProperty(window, "localStorage", {
 beforeEach(() => {
   vi.clearAllMocks();
 
-  global.fetch = vi.fn((url: any, options?: any) => {
+  global.fetch = vi.fn((url: string, options?: RequestInit) => {
     // AUTH ME
     if (String(url).includes("/auth/me")) {
       return Promise.resolve({
@@ -116,7 +116,7 @@ beforeEach(() => {
     return Promise.resolve({
       json: async () => ({}),
     });
-  }) as any;
+  }) as vi.Mock;
 });
 
 // --------------------

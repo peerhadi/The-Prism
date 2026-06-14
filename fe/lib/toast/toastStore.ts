@@ -2,9 +2,10 @@ import { create } from "zustand";
 
 export type Toast = {
   id: string;
-  title: string;
+  title?: string;
   description: string;
   duration?: number;
+  type?: "success" | "error" | "warning" | "info";
 };
 
 interface ToastState {
@@ -17,7 +18,7 @@ export const useToast = create<ToastState>((set, get) => ({
   toasts: [],
 
   addToast: (toast) => {
-    const id = crypto.randomUUID();
+    const id = Math.random().toString();
 
     set({
       toasts: [...get().toasts, { id, duration: 3000, ...toast }],

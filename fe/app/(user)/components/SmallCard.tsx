@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Card } from "@/components/ui/card";
-import { ArrowRight, ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import NarrativeOverlay from "./features/NarrativeButton";
 import SourcesPopup from "./features/SourcesPopup";
 
@@ -14,7 +14,7 @@ export interface ShortStoryCardProps {
   imageUrl: string;
   actionLabel?: string;
   onActionClick?: () => void;
-  sources: any;
+  sources: string[];
 }
 
 export default function ShortCard<T extends ShortStoryCardProps>({
@@ -93,7 +93,7 @@ export default function ShortCard<T extends ShortStoryCardProps>({
           id={id}
           open={sourceOpen}
           setOpen={setSourceOpen}
-          sources={sources}
+          sources={sources.map((s: string) => ({ source: s, title: s, url: s }))}
         />
       </Card>
     </div>

@@ -30,9 +30,9 @@ vi.mock("@/app/components/ai/SideRightPanel", () => ({
 }));
 
 vi.mock("@/app/components/ai/ChatWindow", () => ({
-  default: ({ messages }: any) => (
+  default: ({ messages }: { messages: Array<{ text: string }> }) => (
     <div data-testid="chat-window">
-      {messages.map((m: any, i: number) => (
+      {messages.map((m: { text: string }, i: number) => (
         <div key={i}>{m.text}</div>
       ))}
     </div>
@@ -40,7 +40,7 @@ vi.mock("@/app/components/ai/ChatWindow", () => ({
 }));
 
 vi.mock("@/app/components/ai/ChatInput", () => ({
-  default: ({ input, setInput, onSend }: any) => (
+  default: ({ input, setInput, onSend }: { input: string; setInput: (val: string) => void; onSend: () => void }) => (
     <div>
       <input
         role="textbox"

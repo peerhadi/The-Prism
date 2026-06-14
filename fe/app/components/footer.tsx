@@ -1,13 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Activity,
-  Fingerprint,
-  Globe,
-  Shield,
-  ChevronRight,
-} from "lucide-react";
+import { Activity, Globe, Shield, ChevronRight } from "lucide-react";
 
 export function Footer() {
   return (

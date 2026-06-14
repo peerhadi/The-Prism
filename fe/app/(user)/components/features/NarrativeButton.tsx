@@ -28,7 +28,7 @@ export default function NarrativeOverlay({
   const [loading, setLoading] = useState(false);
 
   // ensure client mount
-  useEffect(() => setMounted(true), []);
+  useEffect(() => { requestAnimationFrame(() => setMounted(true)); }, []);
 
   // AUTO FIRST MESSAGE
   useEffect(() => {
@@ -101,7 +101,7 @@ Description: ${description}
     };
 
     run();
-  }, [open]);
+  }, [open, title, description]);
 
   const send = async () => {
     if (!input.trim()) return;

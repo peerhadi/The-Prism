@@ -1,14 +1,13 @@
 "use client";
 
-import { getBiasColor } from "@/app/utils/getbiascolor";
 import React from "react";
 
 export default function StoryHeroHeader({
   topics,
   stats,
 }: {
-  topics: any[];
-  stats: any[];
+  topics: { id?: string; name?: string; label?: string; color?: string }[];
+  stats: { label: string; value: number | string }[];
 }) {
   return (
     <section className="relative overflow-hidden rounded-[50px] border border-[var(--border)] bg-[var(--glass-bg)] p-10 backdrop-blur-2xl">

@@ -2,12 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import AuthShell from "@/app/components/auth/AuthShell";
 import AuthField from "@/app/components/auth/AuthField";
@@ -16,11 +17,9 @@ import AuthDivider from "@/app/components/auth/AuthDivider";
 import OAuthButtons from "@/app/components/auth/OAuthButtons";
 import SuccessPopup from "@/app/components/auth/SuccessPopup";
 
-import { useToast } from "@/lib/toast/toastStore";
+import { toast } from "@/lib/toast/toast";
 
-export default function SignInPage() {
-  const { addToast } = useToast.getState();
-  const router = useRouter();
+function SignInContent() {
   const searchParams = useSearchParams();
 
   const [showPassword, setShowPassword] = React.useState(false);
@@ -29,19 +28,70 @@ export default function SignInPage() {
   const [password, setPassword] = React.useState("");
   const [isPopupVisible, setIsPopupVisible] = React.useState(false);
 
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+
+    validationSchema: Yup.object({
+      email: Yup.string().email("Invalid format").required(),
+      password: Yup.string().min(6).required(),
+    }),
+
+    onSubmit: async (values) => {
+      const payload = oauthUsed
+        ? { email, password }
+        : { email: values.email, password: values.password };
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Login failed");
+        }
+
+        localStorage.setItem("token", data.token);
+        window.dispatchEvent(new Event("auth-changed"));
+        setIsPopupVisible(true);
+
+        toast.success(
+          "Successfully verified credentials",
+          "Successfully logged in",
+        );
+      } catch (error: unknown) {
+        toast.error(error instanceof Error ? error.message : "Login failed", "Incorrect Credentials");
+      }
+    },
+  });
+
   React.useEffect(() => {
     const code = searchParams.get("code");
     if (!code) return;
 
-    setOauthUsed(true);
-
     const run = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ code }),
-        }).then((r) => r.json());
+        setOauthUsed(true);
+
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code }),
+          },
+        ).then((r) => r.json());
 
         setEmail(res.user.email);
         setPassword(res.user.node_id);
@@ -57,38 +107,7 @@ export default function SignInPage() {
     };
 
     run();
-  }, [searchParams]);
-
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-      password: "",
-    },
-
-    validationSchema: Yup.object({
-      email: Yup.string().email("Invalid format").required(),
-      password: Yup.string().min(6).required(),
-    }),
-
-    onSubmit: async (values) => {
-      setIsPopupVisible(true);
-
-      const payload = oauthUsed
-        ? { email, password }
-        : { email: values.email, password: values.password };
-
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-        .then((r) => r.json())
-        .then((res) => {
-          window.localStorage.setItem("token", res.token);
-          window.dispatchEvent(new Event("auth-changed"));
-        });
-    },
-  });
+  }, [searchParams, formik]);
 
   const loginWithGithub = () => {
     sessionStorage.setItem("oauth_intent", "login");
@@ -194,19 +213,19 @@ export default function SignInPage() {
 
       <SuccessPopup
         open={isPopupVisible}
-        addToast={addToast}
-        router={router}
         onContinue={() => {
           setIsPopupVisible(false);
-
-          addToast({
-            title: "Success",
-            description: "Logged In Successfully",
-          });
-
           window.location.href = "/stories";
         }}
       />
     </>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInContent />
+    </Suspense>
   );
 }

@@ -3,7 +3,12 @@
 import { useEffect } from "react";
 import { useToast } from "./toastStore";
 import { CheckCircle, X } from "lucide-react";
-
+const colors = {
+  success: "bg-green-600",
+  error: "bg-red-600",
+  warning: "bg-warning-600",
+  info: "bg-blue-600",
+};
 export default function ToastContainer() {
   const { toasts, removeToast } = useToast();
 
@@ -22,7 +27,7 @@ export default function ToastContainer() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className="relative w-[320px] flex items-start gap-3 bg-green-600 text-white rounded-lg p-3 shadow-lg animate-in fade-in slide-in-from-right"
+          className={`relative w-[320px] flex items-start gap-3 ${colors[t.type ?? "info"]} text-white rounded-lg p-3 shadow-lg animate-in fade-in slide-in-from-right`}
         >
           {/* ICON */}
           <div className="mt-0.5">
@@ -44,21 +49,8 @@ export default function ToastContainer() {
           </button>
 
           {/* AUTO PROGRESS BAR */}
-          <div className="absolute bottom-0 left-0 h-[3px] bg-white/40 w-full animate-[shrink_3s_linear_forwards]" />
         </div>
       ))}
-
-      {/* animation */}
-      <style jsx>{`
-        @keyframes shrink {
-          from {
-            width: 100%;
-          }
-          to {
-            width: 0%;
-          }
-        }
-      `}</style>
     </div>
   );
 }

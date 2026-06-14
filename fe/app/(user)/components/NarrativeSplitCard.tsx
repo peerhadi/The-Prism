@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Split, Binary, GitBranch, Activity } from "lucide-react";
+import { Split, GitBranch, Activity } from "lucide-react";
 
 // Dynamic Image Helper
 const getRandomImage = (seed: string) =>

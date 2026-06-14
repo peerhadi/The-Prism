@@ -17,7 +17,7 @@ export default function Snackbar({
   useEffect(() => {
     if (!open) return;
 
-    setMounted(true);
+    requestAnimationFrame(() => setMounted(true));
 
     const t = setTimeout(() => {
       setMounted(false);

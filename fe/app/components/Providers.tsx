@@ -1,18 +1,15 @@
 "use client";
 
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState("light");
+  const [theme] = useState(() =>
+    typeof window !== "undefined" ? localStorage.getItem("theme") || "light" : "light",
+  );
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.body.classList.toggle("dark", savedTheme === "dark");
-    }
-  }, []);
+    document.body.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   return children;
 }
