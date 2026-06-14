@@ -87,6 +87,7 @@ export default function StoryHeroHeader({
                 text-[11px] font-black tracking-[0.2em]
                 text-[var(--text-secondary)]
                 uppercase
+                ${cat.color}
                 transition-all duration-300
                 hover:scale-105
                 hover:bg-[var(--surface-hover)]

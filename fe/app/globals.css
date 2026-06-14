@@ -344,7 +344,7 @@ body {
   /* =========================
      GLASS
   ========================= */
-  --glass-bg: rgba(15, 23, 42, 0.7);
+  --glass-bg: rgba(15, 23, 42, 1);
   --glass-hover: rgba(30, 41, 59, 0.8);
   --glass-border: rgba(255, 255, 255, 0.08);
   --glass-highlight: rgba(255, 255, 255, 0.04);
