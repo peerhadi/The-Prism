@@ -1,0 +1,30 @@
+"use client";
+
+import { NarrativeSplitCard } from "@/app/(user)/components/NarrativeSplitCard";
+import React from "react";
+
+export default function StorySplitCard({
+  perspectives,
+}: {
+  perspectives: { neutral: { title: string; description: string }; extreme: { title: string; description: string } }[];
+}) {
+  const p = perspectives?.[perspectives.length - 1];
+
+  if (!p) return null;
+
+  return (
+    <NarrativeSplitCard
+      seedId="NODE-X44"
+      versionA={{
+        label: "Verified Narrative",
+        title: p.neutral.title,
+        description: p.neutral.description,
+      }}
+      versionB={{
+        label: "Shadow Narrative",
+        title: p.extreme.title,
+        description: p.extreme.description,
+      }}
+    />
+  );
+}
