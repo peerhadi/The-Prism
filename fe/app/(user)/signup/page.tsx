@@ -18,6 +18,7 @@ import AuthDivider from "@/app/components/auth/AuthDivider";
 import OAuthButtons from "@/app/components/auth/OAuthButtons";
 
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 function SignUpContent() {
   const router = useRouter();
@@ -69,21 +70,16 @@ function SignUpContent() {
           };
 
       try {
-        const response = await fetch(
+        const { data, error } = await fetcher(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+            body: payload,
           },
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Registration failed");
+        if (error || !data) {
+          throw new Error(error || "Registration failed");
         }
 
         toast.success(
@@ -111,16 +107,16 @@ function SignUpContent() {
       try {
         setOauthUsed(true);
 
-        const res = await fetch(
+        const { data, error } = await fetcher<{ user: { login: string; email: string; node_id: string } }>(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
+            body: { code },
           },
         );
 
-        const data = await res.json();
+        if (error) { toast.error(error, "GitHub Auth Failed"); return; }
+        if (!data) return;
 
         setUsername(data.user.login);
         setEmail(data.user.email);

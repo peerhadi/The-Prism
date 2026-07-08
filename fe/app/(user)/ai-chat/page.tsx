@@ -9,6 +9,8 @@ import SidePanelLeft from "@/app/components/ai/SideLeftPanel";
 import ChatWindow from "@/app/components/ai/ChatWindow";
 import ChatInput from "@/app/components/ai/ChatInput";
 import SidePanelRight from "@/app/components/ai/SideRightPanel";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 export default function NeuralAIConsole() {
   const [messages, setMessages] = useState<Msg[]>([
@@ -25,15 +27,16 @@ export default function NeuralAIConsole() {
 
     const user: Msg = { role: "user", text: input };
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
+    const { data, error } = await fetcher<{ response: string }>(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`,
+      {
+        method: "POST",
+        body: input,
+      },
+    );
 
-    const data = await res.json();
-
-    const ai: Msg = { role: "ai", text: data.response };
+    if (error) { toast.error(error, "AI Request Failed"); return; }
+    const ai: Msg = { role: "ai", text: data?.response ?? "" };
 
     setMessages((prev) => [...prev, user, ai]);
     setInput("");

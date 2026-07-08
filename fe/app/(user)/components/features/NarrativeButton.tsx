@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import { X, Sparkles } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 interface Message {
   role: "user" | "ai";
@@ -38,11 +40,12 @@ export default function NarrativeOverlay({
       setMessages([]);
       setLoading(true);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: `
+      const { data, error } = await fetcher<{ response: string }>(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`,
+        {
+          method: "POST",
+          body: {
+            prompt: `
 You are Prism Narrative Engine.
 
 You MUST output valid Markdown בלבד (ONLY Markdown).
@@ -90,11 +93,11 @@ Format MUST be:
 Title: ${title}
 Description: ${description}
           `,
-        }),
-      });
+          },
+        },
+      );
 
-      const data = await res.json();
-
+      if (error) { toast.error(error, "Narrative Load Failed"); setLoading(false); return; }
       setMessages([{ role: "ai", content: data?.response || "No response" }]);
 
       setLoading(false);
@@ -112,11 +115,12 @@ Description: ${description}
     setInput("");
     setLoading(true);
 
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: `
+    const { data, error } = await fetcher<{ response: string }>(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/aiRoutes`,
+      {
+        method: "POST",
+        body: {
+          prompt: `
 Context:
 ${title}
 ${description}
@@ -127,11 +131,11 @@ ${messages.map((m) => `${m.role}: ${m.content}`).join("\n")}
 User:
 ${input}
         `,
-      }),
-    });
+        },
+      },
+    );
 
-    const data = await res.json();
-
+    if (error) { toast.error(error, "Chat Failed"); setLoading(false); return; }
     setMessages((p) => [
       ...p,
       { role: "ai", content: data?.response || "No response" },

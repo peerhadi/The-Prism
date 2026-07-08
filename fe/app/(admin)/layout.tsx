@@ -19,6 +19,8 @@ if (typeof window !== "undefined") {
 }
 import React from "react";
 import { redirect } from "next/navigation";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 export default function RootLayout({
   children,
@@ -28,19 +30,15 @@ export default function RootLayout({
   React.useEffect(() => {
     const t = window.localStorage.getItem("token");
     if (t) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+      fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
         method: "GET",
         headers: { Authorization: `Bearer ${t}` },
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          if (res.role === "USER") {
-            redirect("/stories");
-          }
-        })
-        .catch(() => {
+      }).then(({ data, error }) => {
+        if (error) { toast.error(error, "Auth Check Failed"); return; }
+        if (data && (data as { role: string }).role === "USER") {
           redirect("/stories");
-        });
+        }
+      });
     }
   }, []);
   return children;

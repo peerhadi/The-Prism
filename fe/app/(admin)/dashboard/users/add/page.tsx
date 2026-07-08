@@ -10,6 +10,7 @@ import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 const USER_FIELDS = [
   {
@@ -63,22 +64,19 @@ export default function AddUser() {
 
   const submit = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
-          body: JSON.stringify(form),
+          body: form,
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to create user");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully added user", "Success");

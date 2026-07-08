@@ -18,6 +18,7 @@ import OAuthButtons from "@/app/components/auth/OAuthButtons";
 import SuccessPopup from "@/app/components/auth/SuccessPopup";
 
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 function SignInContent() {
   const searchParams = useSearchParams();
@@ -45,21 +46,16 @@ function SignInContent() {
         : { email: values.email, password: values.password };
 
       try {
-        const response = await fetch(
+        const { data, error } = await fetcher<{ token: string }>(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
           {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(payload),
+            body: payload,
           },
         );
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Login failed");
+        if (error || !data) {
+          throw new Error(error || "Login failed");
         }
 
         localStorage.setItem("token", data.token);
@@ -84,20 +80,22 @@ function SignInContent() {
       try {
         setOauthUsed(true);
 
-        const res = await fetch(
+        const { data, error } = await fetcher<{ user: { email: string; node_id: string } }>(
           `${process.env.NEXT_PUBLIC_API_URL}/api/auth/github`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code }),
+            body: { code },
           },
-        ).then((r) => r.json());
+        );
 
-        setEmail(res.user.email);
-        setPassword(res.user.node_id);
+        if (error) { toast.error(error, "GitHub Auth Failed"); return; }
+        if (!data) return;
 
-        formik.setFieldValue("email", res.user.email);
-        formik.setFieldValue("password", res.user.node_id);
+        setEmail(data.user.email);
+        setPassword(data.user.node_id);
+
+        formik.setFieldValue("email", data.user.email);
+        formik.setFieldValue("password", data.user.node_id);
 
         window.history.replaceState({}, "", "/login");
         sessionStorage.removeItem("oauth_intent");

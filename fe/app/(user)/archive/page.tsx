@@ -16,6 +16,8 @@ import ArchiveHero from "@/app/components/crud/archive/ArchiveHero";
 import ArchiveCategoryIndex from "@/app/components/crud/archive/ArchiveCategoryIndex";
 import ArchiveLogs from "@/app/components/crud/archive/ArchiveLogs";
 import StoryLiveSignal from "@/app/components/crud/story/StoryLiveSignal";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -32,16 +34,22 @@ export default function ArchivePage() {
   useEffect(() => {
     const load = async () => {
       const [catRes, artRes, layoutRes] = await Promise.all([
-        fetch(`${API}/api/categories`).then((r) => r.json()),
-        fetch(`${API}/api/articles`).then((r) => r.json()),
-        fetch(`${API}/api/layout/archive`).then((r) => r.json()),
+        fetcher<any[]>(`${API}/api/categories`),
+        fetcher<any[]>(`${API}/api/articles`),
+        fetcher<{ components: any[] }>(`${API}/api/layout/archive`),
       ]);
-      setCategories(catRes);
 
-      // ---------------------------
-      // CLEAN + SORT (LATEST FIRST)
-      // ---------------------------
-      const clean = artRes
+      const errors = [catRes, artRes, layoutRes].map(r => r.error).filter(Boolean);
+      if (errors.length) { toast.error(errors.join(", "), "Load Error"); return; }
+
+      const cats = catRes.data;
+      const arts = artRes.data;
+      const layout = layoutRes.data;
+
+      if (cats) setCategories(cats);
+
+      const raw = arts ?? [];
+      const clean = raw
         .filter((x: Article) => x.title && x.description && x.imageUrl)
         .sort(
           (a: Article, b: Article) =>
@@ -50,11 +58,8 @@ export default function ArchivePage() {
 
       setArticles(clean);
 
-      const components = layoutRes?.components ?? [];
+      const components = layout?.components ?? [];
 
-      // ---------------------------
-      // CURSOR ENGINE (ONLY LOGIC)
-      // ---------------------------
       let cursor = 0;
       const next = (n: number) => clean.slice(cursor, (cursor += n));
 
@@ -70,17 +75,10 @@ export default function ArchivePage() {
         (c: { type: string }) => c.type === "HEADLINE",
       ).length;
 
-      // HERO
       setHeroStory(heroCount ? next(1)[0] : null);
-
-      // FEATURED (SMALL CARDS)
       setFeatured(next(smallCount));
-
-      // STREAM (LIST CARDS)
       setStream(next(listCount));
       setInsights(next(insightCount));
-
-      // HEADLINES
       setHeadlines(next(headlineCount));
     };
 

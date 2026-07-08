@@ -8,6 +8,7 @@ import BreadcrumbWrapper from "@/app/components/dashboard/BreadCrumbWrapper";
 import SnackbarWrapper from "@/app/components/dashboard/SnackbarWrapper";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 import { toast as fetchToast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 type ArticleForm = {
   title: string;
@@ -22,9 +23,12 @@ export default function EditArticle() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`)
-      .then((r) => r.json())
-      .then(setForm);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`).then(
+      ({ data, error }) => {
+        if (error) { fetchToast.error(error, "Load Failed"); return; }
+        if (data) setForm(data as ArticleForm);
+      },
+    );
   }, [id]);
 
   const update = (k: string, v: string) => {
@@ -36,25 +40,23 @@ export default function EditArticle() {
     let isSuccessful = false;
     try {
       if (!form) return;
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
+          body: {
             ...form,
             biasLevel: parseInt(form.biasLevel),
-          }),
+          },
         },
       );
       isSuccessful = true;
-      const data = await response.json().catch(() => null);
 
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to update article");
+      if (error) {
+        throw new Error(error);
       }
 
       fetchToast.success("Successfully modified article", "Success");

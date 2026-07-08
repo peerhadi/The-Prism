@@ -5,6 +5,7 @@ import Link from "next/link";
 import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { fetcher } from "@/lib/api/fetcher";
 
 type User = {
   id: string;
@@ -18,12 +19,13 @@ export default function UsersPage() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users`)
-      .then((r) => r.json())
-      .then((data) => {
-        setUsers(data);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/users`).then(
+      ({ data, error }) => {
+        if (error) return;
+        if (data) setUsers(data as User[]);
         setToast(true);
-      });
+      },
+    );
   }, []);
 
   return (

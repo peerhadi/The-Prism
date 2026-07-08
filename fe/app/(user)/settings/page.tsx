@@ -12,6 +12,7 @@ import ThemeCard from "@/app/components/settings/website/ThemeCard";
 import PrivacyCard from "@/app/components/settings/website/PrivacyCard";
 import { useRouter } from "next/navigation";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -49,16 +50,18 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!token) return;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
       headers: { Authorization: "Bearer " + token },
-    })
-      .then((r) => r.json())
-      .then((res) => {
+    }).then(({ data, error }) => {
+      if (error) { toast.error(error, "Load Failed"); return; }
+      if (data) {
+        const res = data as { sources: string[]; id: string };
         setSources(res.sources);
         setPrivacySettings({
           id: res.id,
         });
-      });
+      }
+    });
   }, [token]);
 
   useEffect(() => {
@@ -108,24 +111,19 @@ export default function SettingsPage() {
 
   const saveSources = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            sources,
-          }),
+          body: { sources },
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to update sources");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully updated sources", "Success");
@@ -138,25 +136,19 @@ export default function SettingsPage() {
   };
   const changePassword = async (currentPassword: string, newPassword: string) => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}/change-password`,
         {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            currentPassword,
-            newPassword,
-          }),
+          body: { currentPassword, newPassword },
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to change password");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Password changed successfully", "Success");
@@ -169,7 +161,7 @@ export default function SettingsPage() {
   };
   const deleteAccount = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}`,
         {
           method: "DELETE",
@@ -179,10 +171,8 @@ export default function SettingsPage() {
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to delete account");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Account deleted successfully", "Success");

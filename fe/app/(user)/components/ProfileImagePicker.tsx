@@ -8,6 +8,7 @@ import ReactCrop, {
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 import { User, Edit3, X } from "lucide-react";
 
@@ -155,24 +156,19 @@ export default function ProfileImagePicker({ id, profileImageUrl }: { id: number
 
       const { imageUrl } = uploadData;
 
-      const updateRes = await fetch(
+      const { error: updateError } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: "Bearer " + window.localStorage.getItem("token"),
           },
-          body: JSON.stringify({
-            profileImageUrl: imageUrl,
-          }),
+          body: { profileImageUrl: imageUrl },
         },
       );
 
-      const updateData = await updateRes.json().catch(() => null);
-
-      if (!updateRes.ok) {
-        throw new Error(updateData?.message || "Failed to update avatar");
+      if (updateError) {
+        throw new Error(updateError);
       }
 
       toast.success("Profile picture updated successfully", "Success");

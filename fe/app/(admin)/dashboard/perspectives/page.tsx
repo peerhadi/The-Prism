@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { Eye } from "lucide-react";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 type Perspective = {
   id: string;
@@ -35,16 +36,17 @@ export default function PerspectivesPage() {
       : "",
   );
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`)
-      .then((r) => r.json())
-      .then((data) => {
-        setItems(data);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`).then(
+      ({ data, error }) => {
+        if (error) return;
+        if (data) setItems(data as Perspective[]);
         setShowToast(true);
-      });
+      },
+    );
   }, []);
   const generateFeed = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`,
         {
           method: "POST",
@@ -54,10 +56,8 @@ export default function PerspectivesPage() {
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to generate perspectives");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully generated perspectives", "Success");

@@ -12,6 +12,8 @@ import TrendingPanel from "@/app/components/crud/explore/TrendingPanel";
 import ResultsGrid from "@/app/components/crud/explore/ResultsGrid";
 import ExploreLayout from "@/app/components/crud/explore/ExploreLayout";
 import StoryLiveSignal from "@/app/components/crud/story/StoryLiveSignal";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 interface Category {
   id: string;
@@ -55,18 +57,27 @@ export default function ExplorePage() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`${API}/api/categories`).then((r) => r.json()),
-      fetch(`${API}/api/articles`).then((r) => r.json()),
-      fetch(`${API}/api/layout/explore`).then((r) => r.json()),
-    ]).then(([cats, arts, layoutRes]) => {
-      setCategories(
-        cats.map((c: Category) => ({
-          ...c,
-          color: getBiasColor(c.averageBias),
-        })),
-      );
+      fetcher<any[]>(`${API}/api/categories`),
+      fetcher<any[]>(`${API}/api/articles`),
+      fetcher<{ components: any[] }>(`${API}/api/layout/explore`),
+    ]).then(([catRes, artRes, layoutRes]) => {
+      const errors = [catRes, artRes, layoutRes].map(r => r.error).filter(Boolean);
+      if (errors.length) { toast.error(errors.join(", "), "Load Error"); return; }
 
-      let clean = arts.filter((x: Article) => {
+      const cats = catRes.data;
+      const arts = artRes.data;
+      const layout = layoutRes.data;
+
+      if (cats) {
+        setCategories(
+          cats.map((c: Category) => ({
+            ...c,
+            color: getBiasColor(c.averageBias),
+          })),
+        );
+      }
+
+      let clean = (arts ?? []).filter((x: Article) => {
         return (
           !!x.title &&
           !!x.description &&
@@ -84,8 +95,8 @@ export default function ExplorePage() {
 
       setArticles(clean);
 
-      const components = layoutRes?.components ?? [];
-      setLayout(components);
+      const components = layout?.components ?? [];
+      setLayout(components as LayoutComponent[]);
 
       const count = (type: string) =>
         components.filter((c: LayoutComponent) => c.type === type).length;
@@ -112,7 +123,7 @@ export default function ExplorePage() {
 
       const trendingCount = count("HEADLINE");
       setTrending(next(trendingCount));
-    });
+    }).catch(() => toast.error("Failed to load explore data", "Load Error"));
   }, []);
 
   const filteredArticles = useMemo(() => {

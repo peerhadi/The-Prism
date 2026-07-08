@@ -8,6 +8,7 @@ import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 const BREADCRUMBS = [
   { label: "Users", href: "/dashboard/users" },
@@ -31,9 +32,12 @@ export default function EditUser() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`)
-      .then((r) => r.json())
-      .then(setForm);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`).then(
+      ({ data, error }) => {
+        if (error) { toast.error(error, "Load Failed"); return; }
+        if (data) setForm(data as Record<string, unknown>);
+      },
+    );
   }, [id]);
 
   const update = (k: string, v: string) => {
@@ -45,22 +49,19 @@ export default function EditUser() {
 
   const save = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users/${id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
-          body: JSON.stringify(form),
+          body: form,
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to update user");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully modified user", "Success");
