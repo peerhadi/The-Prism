@@ -8,6 +8,7 @@ import ProfileHeader from "@/app/components/settings/profile/ProfileHeader";
 import IdentitySection from "@/app/components/settings/profile/IdentitySection";
 import StatsSection from "@/app/components/settings/profile/StatsSection";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 interface ProfileUser {
   id: number;
@@ -31,22 +32,19 @@ export default function ProfilePage() {
     },
     onSubmit: async (values) => {
       try {
-        const response = await fetch(
+        const { error } = await fetcher(
           `${process.env.NEXT_PUBLIC_API_URL}/api/users/${user.id}`,
           {
             method: "PUT",
             headers: {
-              "Content-Type": "application/json",
               Authorization: "Bearer " + window.localStorage.getItem("token"),
             },
-            body: JSON.stringify(values),
+            body: values,
           },
         );
 
-        const data = await response.json().catch(() => null);
-
-        if (!response.ok) {
-          throw new Error(data?.message || "Failed to update profile");
+        if (error) {
+          throw new Error(error);
         }
 
         toast.success("Profile updated successfully", "Success");
@@ -56,25 +54,27 @@ export default function ProfilePage() {
           "Update Failed",
         );
       }
-      const updated = await fetch(
+      const { data: updated, error: refreshErr } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
-      ).then((r) => r.json());
+      );
 
-      setUser(updated);
+      if (refreshErr) { toast.error(refreshErr, "Refresh Failed"); return; }
+      if (updated) setUser(updated as ProfileUser);
       window.location.reload();
     },
   });
 
   /* ---------------- AUTH LOAD ---------------- */
   React.useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then(setUser);
+    }).then(({ data, error }) => {
+      if (error) { toast.error(error, "Load Failed"); return; }
+      if (data) setUser(data as ProfileUser);
+    });
   }, [token]);
 
   if (!user.id) return <PrismLoader />;

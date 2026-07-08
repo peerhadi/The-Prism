@@ -7,6 +7,7 @@ import { Tags, Activity } from "lucide-react";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 
 export default function AddCategory() {
@@ -26,25 +27,22 @@ export default function AddCategory() {
 
   const submit = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
+          body: {
             ...form,
             averageBias: parseInt(form.averageBias || "0"),
-          }),
+          },
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to create category");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully added category", "Success");

@@ -33,6 +33,7 @@ import Breadcrumbs from "@/app/components/Breadcrumb";
 import { PrismLoader } from "@/app/components/loadingScreen";
 import { Radio, Trash2 } from "lucide-react";
 import { toast } from "@/lib/toast/toast";
+import { getLayout, saveLayout } from "@/lib/api/layout";
 
 function RightHeadlineItem({
   item,
@@ -202,46 +203,6 @@ function Draggable({
   );
 }
 
-/* ================= API (EXPLORER LOGIC) ================= */
-async function fetchLayout() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/archive`,
-  );
-  return res.json();
-}
-
-async function saveLayout(type: string, components: { type: string; position: string; config: Article }[]) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ components }),
-      },
-    );
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(data?.message || "Failed to save layout");
-    }
-
-    toast.success("Successfully saved layout", "Success");
-
-    return data;
-  } catch (error) {
-    toast.error(
-      error instanceof Error ? error.message : "Failed to save layout",
-      "Save Failed",
-    );
-
-    throw error;
-  }
-}
-
 type ComponentConfig = {
   type: string;
   config: Article;
@@ -267,7 +228,7 @@ export default function ArchivePage() {
   /* ================= LOAD ================= */
   useEffect(() => {
     const load = async () => {
-      const data = await fetchLayout();
+      const { data } = await getLayout("archive");
       const comps = data?.components ?? [];
 
       if (!comps.length) {
@@ -288,31 +249,31 @@ export default function ArchivePage() {
         return;
       }
       setCenter({
-        hero: comps.find((c: ComponentConfig) => c.type === "HERO").config,
+        hero: (comps.find((c) => c.type === "HERO")?.config as Article) ?? null,
         small: comps
-          .filter((c: ComponentConfig) => c.type === "SMALL")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "SMALL")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
         list: comps
-          .filter((c: ComponentConfig) => c.type === "LIST")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "LIST")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       });
 
       setLeft(
         comps
-          .filter((c: ComponentConfig) => c.type === "INSIGHT")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "INSIGHT")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
 
       setRight(
         comps
-          .filter((c: ComponentConfig) => c.type === "HEADLINE")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "HEADLINE")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
@@ -415,7 +376,7 @@ export default function ArchivePage() {
 
   /* ================= SAVE ================= */
   const handleSave = async () => {
-    await saveLayout("archive", [
+    const { error } = await saveLayout("archive", [
       ...left.map((i) => ({ type: "INSIGHT", position: "LEFT", config: i })),
       ...center.small.map((i) => ({
         type: "SMALL",
@@ -432,6 +393,12 @@ export default function ArchivePage() {
         : []),
       ...right.map((i) => ({ type: "HEADLINE", position: "RIGHT", config: i })),
     ]);
+
+    if (error) {
+      toast.error(error, "Save Failed");
+    } else {
+      toast.success("Successfully saved layout", "Success");
+    }
   };
 
   const handleDelete = (id: string) => {

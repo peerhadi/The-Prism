@@ -5,6 +5,7 @@ import Link from "next/link";
 import Snackbar from "@/app/components/Snackbar";
 import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import { fetcher } from "@/lib/api/fetcher";
 
 type Category = {
   id: string;
@@ -17,12 +18,13 @@ export default function CategoriesPage() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`)
-      .then((r) => r.json())
-      .then((data) => {
-        setCategories(data);
+    fetcher<Category[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`).then(
+      ({ data, error }) => {
+        if (error) return;
+        if (data) setCategories(data);
         setToast(true);
-      });
+      },
+    );
   }, []);
 
   return (

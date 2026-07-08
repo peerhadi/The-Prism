@@ -32,6 +32,7 @@ import AddComponentButton from "../pallette";
 import StickyInsight from "@/app/(user)/components/TickerCard";
 import { Radio } from "lucide-react";
 import { toast } from "@/lib/toast/toast";
+import { getLayout, saveLayout } from "@/lib/api/layout";
 const TrashButton = ({
   id,
   handleDelete,
@@ -162,40 +163,6 @@ function RightHeadlineItem({
   );
 }
 
-/* ================= API ================= */
-
-const API = process.env.NEXT_PUBLIC_API_URL;
-
-async function fetchLayout(type: string) {
-  const res = await fetch(`${API}/api/layout/${type}`);
-  return res.json();
-}
-
-export async function saveLayout(type: string, components: { type: string; position: string; config: Article }[]) {
-  try {
-    const response = await fetch(`${API}/api/layout/${type}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ components }),
-    });
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(data?.message || "Failed to save layout");
-    }
-
-    toast.success("Successfully saved layout", "Success");
-
-    return data;
-  } catch (error) {
-    toast.error(
-      error instanceof Error ? error.message : "Failed to save layout",
-      "Save Failed",
-    );
-  }
-}
-
 /* ================= MOCK ================= */
 
 const mockArticles = Array.from({ length: 200 }, (_, i) => ({
@@ -268,7 +235,7 @@ export default function StoryBuilderPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchLayout("story");
+        const { data } = await getLayout("story");
         const comps = data?.components ?? [];
 
         if (!comps.length) {
@@ -277,7 +244,7 @@ export default function StoryBuilderPage() {
         }
         setArticles((a) => {
           for (const c of comps) {
-            const config = c.config;
+            const config = c.config as Article;
             const index = a.findIndex((x) => x.id === config.id);
             if (index) {
               a.slice(index, 1);
@@ -286,24 +253,24 @@ export default function StoryBuilderPage() {
           return a;
         });
         setCenter({
-          hero: comps.find((c: ComponentConfig) => c.type === "HERO")?.config ?? null,
+          hero: (comps.find((c) => c.type === "HERO")?.config as Article) ?? null,
           small: comps
-            .filter((c: ComponentConfig) => c.type === "SMALL")
-            .map((c: ComponentConfig) => c.config),
+            .filter((c) => c.type === "SMALL")
+            .map((c) => c.config as Article),
           list: comps
-            .filter((c: ComponentConfig) => c.type === "LIST")
-            .map((c: ComponentConfig) => c.config),
+            .filter((c) => c.type === "LIST")
+            .map((c) => c.config as Article),
         });
 
         setLeft(
           comps
-            .filter((c: ComponentConfig) => c.type === "INSIGHT")
-            .map((c: ComponentConfig) => c.config),
+            .filter((c) => c.type === "INSIGHT")
+            .map((c) => c.config as Article),
         );
         setRight(
           comps
-            .filter((c: ComponentConfig) => c.type === "HEADLINE")
-            .map((c: ComponentConfig) => c.config),
+            .filter((c) => c.type === "HEADLINE")
+            .map((c) => c.config as Article),
         );
       } finally {
         setLoading(false);
@@ -375,7 +342,12 @@ export default function StoryBuilderPage() {
   };
 
   const handleSave = async () => {
-    await saveLayout("story", buildPayload());
+    const { error } = await saveLayout("story", buildPayload());
+    if (error) {
+      toast.error(error, "Save Failed");
+    } else {
+      toast.success("Successfully saved layout", "Success");
+    }
   };
 
   /* ================= ADD (SAFE FIX ONLY) ================= */

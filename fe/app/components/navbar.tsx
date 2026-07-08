@@ -13,6 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { PrismLoader } from "./loadingScreen";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 const STATIC_LINKS = [
   { name: "Stories", href: "/stories", desc: "Live intelligence streams" },
   { name: "Explore", href: "/explore", desc: "Narrative and bias analysis" },
@@ -44,34 +45,33 @@ export function Navbar() {
   useEffect(() => {
     const t = window.localStorage.getItem("token");
     if (t) {
-      fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
+      fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${t}`,
         },
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          setUserImage(res.profileImageUrl);
-          setIsAdmin(res.role === "ADMIN");
-          if (res.role === "ADMIN") {
-            setLinks((prevLinks) => {
-              if (prevLinks.some((l) => l.href === "/dashboard"))
-                return prevLinks;
-              return [
-                ...prevLinks,
-                {
-                  name: "Dashboard",
-                  href: "/dashboard",
-                  desc: "The admin dashboard",
-                },
-              ];
-            });
-          }
-        })
-        .catch((e) => {
-          console.log(e);
-        });
+      }).then(({ data, error }) => {
+        if (error) { toast.error(error, "Auth Failed"); return; }
+        if (!data) return;
+        const res = data as { profileImageUrl: string; role: string };
+        setUserImage(res.profileImageUrl);
+        setIsAdmin(res.role === "ADMIN");
+        if (res.role === "ADMIN") {
+          setLinks((prevLinks) => {
+            if (prevLinks.some((l) => l.href === "/dashboard"))
+              return prevLinks;
+            return [
+              ...prevLinks,
+              {
+                name: "Dashboard",
+                href: "/dashboard",
+                desc: "The admin dashboard",
+              },
+            ];
+          });
+        }
+      }).catch((e) => {
+        console.log(e);
+      });
     }
   }, []);
   useEffect(() => {

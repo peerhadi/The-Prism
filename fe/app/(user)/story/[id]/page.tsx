@@ -7,6 +7,8 @@ import { HeadlineCard } from "../../components/HeadlineCard";
 import { useParams } from "next/navigation";
 import { Article } from "@/lib/api/articles/types";
 import React from "react";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 export default function ForensicSpecimenPage() {
   const { id } = useParams();
@@ -15,13 +17,19 @@ export default function ForensicSpecimenPage() {
   const [articles, setArticles] = React.useState<Article[]>();
 
   React.useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`)
-      .then((res) => res.json())
-      .then(setArticle);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${id}`).then(
+      ({ data, error }) => {
+        if (error) { toast.error(error, "Load Failed"); return; }
+        if (data) setArticle(data as Article);
+      },
+    );
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`)
-      .then((res) => res.json())
-      .then(setArticles);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`).then(
+      ({ data, error }) => {
+        if (error) { toast.error(error, "Load Failed"); return; }
+        if (data) setArticles(data as Article[]);
+      },
+    );
   }, [id]);
 
   if (!article || !articles) {

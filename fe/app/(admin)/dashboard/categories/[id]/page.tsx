@@ -7,6 +7,7 @@ import { Tags, Activity } from "lucide-react";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 export default function EditCategory() {
   const { id } = useParams();
@@ -20,9 +21,12 @@ export default function EditCategory() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`)
-      .then((r) => r.json())
-      .then(setForm);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`).then(
+      ({ data, error }) => {
+        if (error) { toast.error(error, "Load Failed"); return; }
+        if (data) setForm(data as { name: string; averageBias: string });
+      },
+    );
   }, [id]);
 
   const update = (k: string, v: string) => {
@@ -33,25 +37,22 @@ export default function EditCategory() {
     if (!form) return;
 
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/categories/${id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({
+          body: {
             ...form,
             averageBias: parseInt(form.averageBias || "0"),
-          }),
+          },
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to update category");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully modified category", "Success");

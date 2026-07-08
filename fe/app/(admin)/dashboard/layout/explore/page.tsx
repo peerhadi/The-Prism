@@ -33,6 +33,7 @@ import Breadcrumbs from "@/app/components/Breadcrumb";
 import StickyInsight from "@/app/(user)/components/TickerCard";
 import { Trash2 } from "lucide-react";
 import { toast } from "@/lib/toast/toast";
+import { getLayout, saveLayout } from "@/lib/api/layout";
 
 const BREADCRUMBS = [
   { label: "Layout", href: "/dashboard/layout" },
@@ -120,51 +121,6 @@ function Draggable({
   );
 }
 
-/* ---------------- HELPERS ---------------- */
-async function fetchLayout() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/explore`,
-  );
-  return res.json();
-}
-
-async function saveLayout(type: string, components: { type: string; config: Article; position: string }[]) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/${type}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ components }),
-      },
-    );
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(data?.message || "Failed to save layout");
-    }
-
-    toast.success("Successfully saved layout", "Success");
-
-    return data;
-  } catch (error) {
-    toast.error(
-      error instanceof Error ? error.message : "Failed to save layout",
-      "Save Failed",
-    );
-
-    throw error;
-  }
-}
-
-type ComponentConfig = {
-  type: string;
-  config: Article;
-};
-
 const safeId = (prefix: string, id: string) =>
   `${prefix}-${id}-${crypto.randomUUID()}`;
 
@@ -185,7 +141,7 @@ export default function ExploreBuilderPage() {
   /* ---------------- LOAD ---------------- */
   useEffect(() => {
     const load = async () => {
-      const data = await fetchLayout();
+      const { data } = await getLayout("explore");
       const comps = data?.components ?? [];
 
       if (!comps.length) {
@@ -203,30 +159,30 @@ export default function ExploreBuilderPage() {
       }
 
       setCenter({
-        hero: comps.find((c: ComponentConfig) => c.type === "HERO")?.config ?? null,
+        hero: (comps.find((c) => c.type === "HERO")?.config as Article) ?? null,
         small: comps
-          .filter((c: ComponentConfig) => c.type === "SMALL")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "SMALL")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
         list: comps
-          .filter((c: ComponentConfig) => c.type === "LIST")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "LIST")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       });
 
       setRight(
         comps
-          .filter((c: ComponentConfig) => c.type === "INSIGHT")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "INSIGHT")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
       setLeft(
         comps
-          .filter((c: ComponentConfig) => c.type === "HEADLINE")
-          .flatMap((c: ComponentConfig) =>
+          .filter((c) => c.type === "HEADLINE")
+          .flatMap((c) =>
             Array.isArray(c.config) ? c.config : [c.config],
           ),
       );
@@ -360,7 +316,7 @@ export default function ExploreBuilderPage() {
 
   /* ---------------- SAVE ---------------- */
   const handleSave = async () => {
-    await saveLayout("explore", [
+    const { error } = await saveLayout("explore", [
       ...left.map((i) => ({
         type: "HEADLINE",
         config: i,
@@ -392,6 +348,12 @@ export default function ExploreBuilderPage() {
         position: "RIGHT",
       })),
     ]);
+
+    if (error) {
+      toast.error(error, "Save Failed");
+    } else {
+      toast.success("Successfully saved layout", "Success");
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -400,7 +362,7 @@ export default function ExploreBuilderPage() {
 
     setCenter((p) => ({
       ...p,
-      hero: p.hero?.id === id ? null : p.hero,
+      hero: p.hero?.id === null ? null : p.hero,
       small: p.small.filter((x) => x.id !== id),
       list: p.list.filter((x) => x.id !== id),
     }));

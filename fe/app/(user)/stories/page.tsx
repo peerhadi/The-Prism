@@ -12,6 +12,8 @@ import { PrismLoader } from "@/app/components/loadingScreen";
 import HeroCard from "../components/HeroCard";
 import { getBiasColor } from "@/app/utils/getbiascolor";
 import StoryRightPanel from "@/app/components/crud/story/StoryRightPanel";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 interface Topic {
   id: string;
@@ -53,25 +55,36 @@ export default function StoriesPage() {
   useEffect(() => {
     const load = async () => {
       const [catRes, persRes, artRes, layoutRes] = await Promise.all([
-        fetch(`${API}/api/categories`).then((r) => r.json()),
-        fetch(`${API}/api/perspectives`).then((r) => r.json()),
-        fetch(`${API}/api/articles`).then((r) => r.json()),
-        fetch(`${API}/api/layout/story`).then((r) => r.json()),
+        fetcher<any[]>(`${API}/api/categories`),
+        fetcher<any[]>(`${API}/api/perspectives`),
+        fetcher<any[]>(`${API}/api/articles`),
+        fetcher<{ components: any[] }>(`${API}/api/layout/story`),
       ]);
 
-      setTopics(
-        catRes.map((c: Topic) => ({
-          id: c.id,
-          name: c.name,
-          averageBias: c.averageBias,
-          label: c.name,
-          color: getBiasColor(c.averageBias),
-        })),
-      );
+      const errors = [catRes, persRes, artRes, layoutRes].map(r => r.error).filter(Boolean);
+      if (errors.length) { toast.error(errors.join(", "), "Load Error"); return; }
 
-      setPerspectives(persRes);
+      const cats = catRes.data;
+      const pers = persRes.data;
+      const arts = artRes.data;
+      const layout = layoutRes.data;
 
-      const clean = artRes
+      if (cats) {
+        setTopics(
+          cats.map((c: Topic) => ({
+            id: c.id,
+            name: c.name,
+            averageBias: c.averageBias,
+            label: c.name,
+            color: getBiasColor(c.averageBias),
+          })),
+        );
+      }
+
+      if (pers) setPerspectives(pers);
+
+      const raw = arts ?? [];
+      const clean = raw
         .filter((x: Article) => x.title && x.description && x.imageUrl)
         .sort(
           (a: Article, b: Article) =>
@@ -80,7 +93,7 @@ export default function StoriesPage() {
 
       setArticles(clean);
 
-      const components = layoutRes?.components ?? [];
+      const components = layout?.components ?? [];
 
       let cursor = 0;
 

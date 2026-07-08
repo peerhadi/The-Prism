@@ -27,6 +27,7 @@ import Breadcrumbs from "@/app/components/Breadcrumb";
 import { Trash2 } from "lucide-react";
 import AddSplitComponentButton from "./add-button";
 import { toast } from "@/lib/toast/toast";
+import { getLayout, saveLayout } from "@/lib/api/layout";
 
 /* ================= BREADCRUMBS ================= */
 const BREADCRUMBS = [
@@ -109,42 +110,6 @@ function DraggableItem({
   );
 }
 
-/* ================= API ================= */
-async function fetchLayout() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`,
-  );
-  return res.json();
-}
-
-async function saveLayout(components: { type: string; position: string; order: number; config: { id: string; imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } } }[]) {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ components }),
-      },
-    );
-
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(data?.message || "Failed to save layout");
-    }
-
-    toast.success("Successfully saved layout", "Success");
-
-    return data;
-  } catch (error) {
-    toast.error(
-      error instanceof Error ? error.message : "Failed to save layout",
-      "Save Failed",
-    );
-  }
-}
-
 /* ================= HYDRATE / SERIALIZE ================= */
 function hydrateLayout(components: { id: string; type: string; order: number; config: { id: string; imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } } }[]) {
   return components
@@ -180,7 +145,7 @@ export default function Page() {
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchLayout();
+        const { data } = await getLayout("split");
         const comps = data?.components ?? [];
 
         if (!comps.length) {
@@ -188,7 +153,7 @@ export default function Page() {
           return;
         }
 
-        setEvents(hydrateLayout(comps));
+        setEvents(hydrateLayout(comps as Parameters<typeof hydrateLayout>[0]));
       } catch {
         setEvents(mockEvents);
       }
@@ -213,7 +178,12 @@ export default function Page() {
 
   /* ================= SAVE ================= */
   const handleSave = async () => {
-    await saveLayout(serializeLayout(events));
+    const { error } = await saveLayout("split", serializeLayout(events));
+    if (error) {
+      toast.error(error, "Save Failed");
+    } else {
+      toast.success("Successfully saved layout", "Success");
+    }
   };
 
   const handleDelete = (id: string) => {

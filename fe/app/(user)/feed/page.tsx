@@ -81,6 +81,8 @@ import NarrativePopup from "../components/features/NarrativeButton";
 import SourcesPopup from "../components/features/SourcesPopup";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 export function FeedCard({ article }: { article: Article }) {
   const [openNarrative, setOpenNarrative] = React.useState(false);
@@ -183,22 +185,22 @@ export default function FeedPage() {
       const t = window.localStorage.getItem("token");
       if (!t) redirect("/login");
 
-      fetch(`${API}/api/auth/me`, {
+      fetcher(`${API}/api/auth/me`, {
         headers: {
           Authorization: `Bearer ${t}`,
         },
-      })
-        .then((r) => r.json())
-        .then((r) => {
-          setSources(r.sources);
-        });
+      }).then(({ data, error }) => {
+        if (error) { toast.error(error, "Auth Failed"); return; }
+        if (data) setSources((data as { sources: string[] }).sources);
+      });
     }
   }, []);
 
   useEffect(() => {
     const load = async () => {
-      const res = await fetch(`${API}/api/articles`);
-      const data = await res.json();
+      const { data, error } = await fetcher<any[]>(`${API}/api/articles`);
+      if (error) { toast.error(error, "Load Failed"); return; }
+      if (!data) return;
 
       const clean = data
         .filter((a: Article) => a.title && a.description)

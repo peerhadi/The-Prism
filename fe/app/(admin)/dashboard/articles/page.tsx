@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { Sparkles } from "lucide-react";
 import { toast as fetchToast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 type Article = {
   id: string;
   title: string;
@@ -25,17 +26,17 @@ export default function ArticlesPage() {
   );
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`)
-      .then((r) => r.json())
-      .then((data) => {
-        console.log(data);
-        setArticles(data);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/articles`).then(
+      ({ data, error }) => {
+        if (error) return;
+        if (data) setArticles(data as Article[]);
         setToast(true);
-      });
+      },
+    );
   }, []);
   const generateFeed = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/articles/rss/sync`,
         {
           method: "POST",
@@ -45,10 +46,8 @@ export default function ArticlesPage() {
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to generate feed");
+      if (error) {
+        throw new Error(error);
       }
 
       fetchToast.success(

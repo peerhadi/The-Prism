@@ -6,6 +6,8 @@ import { PrismLoader } from "@/app/components/loadingScreen";
 import SplitHero from "@/app/components/crud/split/SplitHero";
 import SplitSection from "@/app/components/crud/split/SplitSection";
 import ConflictCTA from "@/app/components/crud/split/ConflictCTA";
+import { fetcher } from "@/lib/api/fetcher";
+import { toast } from "@/lib/toast/toast";
 
 /* ================= PAGE ================= */
 export default function NarrativeSplitPage() {
@@ -16,15 +18,14 @@ export default function NarrativeSplitPage() {
     const load = async () => {
       try {
         const [layoutRes, perspectivesRes] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`).then(
-            (r) => r.json(),
-          ),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`).then(
-            (r) => r.json(),
-          ),
+          fetcher<{ components: any[] }>(`${process.env.NEXT_PUBLIC_API_URL}/api/layout/split`),
+          fetcher<any[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`),
         ]);
 
-        const layout = layoutRes?.components ?? [];
+        const errors = [layoutRes, perspectivesRes].map(r => r.error).filter(Boolean);
+        if (errors.length) { toast.error(errors.join(", "), "Load Error"); throw new Error("load failed"); }
+
+        const layout = layoutRes.data?.components ?? [];
 
         // -------------------------------
         // NO CONFIG: ONLY TYPE COUNTS
@@ -38,7 +39,7 @@ export default function NarrativeSplitPage() {
         };
 
         // fallback dataset (always real API data)
-        const clean = perspectivesRes
+        const clean = (perspectivesRes.data ?? [])
           .filter(
             (x: { neutral?: { title?: string }; extreme?: { title?: string }; imageUrl?: string }) =>
               x?.neutral?.title && x?.extreme?.title && x?.imageUrl?.length,
@@ -54,12 +55,13 @@ export default function NarrativeSplitPage() {
 
         setEvents(final);
       } catch {
-        const res = await fetch(
+        const { data: raw, error: fallbackErr } = await fetcher<any[]>(
           `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives`,
         );
-        const raw = await res.json();
+        if (fallbackErr) { toast.error(fallbackErr, "Fallback Load Failed"); setLoading(false); return; }
+        const perspectives = raw ?? [];
 
-        const clean = raw
+        const clean = perspectives
           .filter(
             (x: { neutral?: { title?: string }; extreme?: { title?: string }; imageUrl?: string }) =>
               x?.neutral?.title && x?.extreme?.title && x?.imageUrl?.length,

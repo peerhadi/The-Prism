@@ -8,6 +8,7 @@ import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 
 import { toast } from "@/lib/toast/toast";
+import { fetcher } from "@/lib/api/fetcher";
 
 const BREADCRUMBS = [
   { label: "Perspectives", href: "/dashboard/perspectives" },
@@ -60,29 +61,29 @@ export default function EditPerspective() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`)
-      .then((r) => r.json())
-      .then(setForm);
+    fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`).then(
+      ({ data, error }) => {
+        if (error) { toast.error(error, "Load Failed"); return; }
+        if (data) setForm(data as Record<string, unknown>);
+      },
+    );
   }, [id]);
 
   const save = async () => {
     try {
-      const response = await fetch(
+      const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/${id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
             Authorization: `Bearer ${window.localStorage.getItem("token")}`,
           },
-          body: JSON.stringify(form),
+          body: form,
         },
       );
 
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.message || "Failed to update perspective");
+      if (error) {
+        throw new Error(error);
       }
 
       toast.success("Successfully modified perspective", "Success");
