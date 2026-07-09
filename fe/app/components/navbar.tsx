@@ -2,14 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  Menu,
-  X,
-  ChevronRight,
-  User,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { Menu, X, ChevronRight, User, Settings, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { PrismLoader } from "./loadingScreen";
 import { toast } from "@/lib/toast/toast";
@@ -29,7 +22,9 @@ const STATIC_LINKS = [
 ];
 export function Navbar() {
   const [open, setOpen] = useState(false);
-  const [authenticated, setAuthenticated] = useState<boolean | null>(() => typeof window !== "undefined" ? !!localStorage.getItem("token") : null);
+  const [authenticated, setAuthenticated] = useState<boolean | null>(() =>
+    typeof window !== "undefined" ? !!localStorage.getItem("token") : null,
+  );
   const [profileOpen, setProfileOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(() => {
     if (typeof window !== "undefined") {
@@ -49,29 +44,34 @@ export function Navbar() {
         headers: {
           Authorization: `Bearer ${t}`,
         },
-      }).then(({ data, error }) => {
-        if (error) { toast.error(error, "Auth Failed"); return; }
-        if (!data) return;
-        const res = data as { profileImageUrl: string; role: string };
-        setUserImage(res.profileImageUrl);
-        setIsAdmin(res.role === "ADMIN");
-        if (res.role === "ADMIN") {
-          setLinks((prevLinks) => {
-            if (prevLinks.some((l) => l.href === "/dashboard"))
-              return prevLinks;
-            return [
-              ...prevLinks,
-              {
-                name: "Dashboard",
-                href: "/dashboard",
-                desc: "The admin dashboard",
-              },
-            ];
-          });
-        }
-      }).catch((e) => {
-        console.log(e);
-      });
+      })
+        .then(({ data, error }) => {
+          if (error) {
+            toast.error(error, "Auth Failed");
+            return;
+          }
+          if (!data) return;
+          const res = data as { profileImageUrl: string; role: string };
+          setUserImage(res.profileImageUrl);
+          setIsAdmin(res.role === "ADMIN");
+          if (res.role === "ADMIN") {
+            setLinks((prevLinks) => {
+              if (prevLinks.some((l) => l.href === "/dashboard"))
+                return prevLinks;
+              return [
+                ...prevLinks,
+                {
+                  name: "Dashboard",
+                  href: "/dashboard",
+                  desc: "The admin dashboard",
+                },
+              ];
+            });
+          }
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     }
   }, []);
   useEffect(() => {

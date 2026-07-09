@@ -13,13 +13,12 @@ import {
 
 import {
   SortableContext,
-  useSortable,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
-import { CSS } from "@dnd-kit/utilities";
+import Draggable from "@/app/components/dashboard/Draggable";
+import RightHeadlineItem from "@/app/components/dashboard/RightHeadlineItem";
 
-/* REAL COMPONENTS (UNCHANGED) */
 import HeroCard from "@/app/(user)/components/HeroCard";
 import ShortCard from "@/app/(user)/components/SmallCard";
 import ListCard from "@/app/(user)/components/ListCard";
@@ -31,94 +30,9 @@ import ArchiveLogs from "@/app/components/crud/archive/ArchiveLogs";
 import ArchiveCategoryIndex from "@/app/components/crud/archive/ArchiveCategoryIndex";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import { PrismLoader } from "@/app/components/loadingScreen";
-import { Radio, Trash2 } from "lucide-react";
+import { Radio } from "lucide-react";
 import { toast } from "@/lib/toast/toast";
 import { getLayout, saveLayout } from "@/lib/api/layout";
-
-function RightHeadlineItem({
-  item,
-  handleDelete,
-}: {
-  item: { id: string; title: string; tag: string; time: string; variant?: string };
-  handleDelete: (id: string) => void;
-}) {
-  const { setNodeRef, attributes, listeners, transform, transition } =
-    useSortable({ id: item.id });
-
-  const variant = item.variant ?? "cyan";
-
-  return (
-    <div className="flex w-full items-center justify-between">
-      <div
-        ref={setNodeRef}
-        {...attributes}
-        {...listeners}
-        style={{
-          transform: CSS.Transform.toString(transform),
-          transition,
-        }}
-        className="group relative cursor-grab overflow-hidden rounded-xl pb-5 last:border-0 active:cursor-grabbing"
-      >
-        <div
-          className="absolute inset-0 opacity-20 blur-[40px] transition-all group-hover:opacity-40"
-          style={{
-            background:
-              variant === "cyan"
-                ? "var(--primary-soft)"
-                : variant === "purple"
-                  ? "var(--secondary-soft)"
-                  : variant === "red"
-                    ? "var(--danger-soft)"
-                    : "var(--success-soft)",
-          }}
-        />
-
-        <div className="relative z-10 flex items-center justify-between">
-          <span
-            className="rounded px-2 py-0.5 text-[9px] uppercase"
-            style={{
-              background:
-                variant === "cyan"
-                  ? "var(--primary-soft)"
-                  : variant === "purple"
-                    ? "var(--secondary-soft)"
-                    : variant === "red"
-                      ? "var(--danger-soft)"
-                      : "var(--success-soft)",
-              color:
-                variant === "cyan"
-                  ? "var(--primary)"
-                  : variant === "purple"
-                    ? "var(--secondary)"
-                    : variant === "red"
-                      ? "var(--danger)"
-                      : "var(--success)",
-            }}
-          >
-            {item.tag}
-          </span>
-
-          <span className="text-[9px] font-bold tracking-widest text-[var(--text-faint)]">
-            {item.time}
-          </span>
-        </div>
-
-        <h4 className="relative z-10 mt-1 text-[14px] font-bold leading-snug text-[var(--text-primary)] drop-shadow-[0_0_6px_var(--primary-glow)]">
-          {item.title}
-        </h4>
-      </div>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDelete(item.id);
-        }}
-        className="z-50 opacity-100 group-hover:opacity-100 transition pointer-events-auto p-2"
-      >
-        <Trash2 className="h-6 w-6 text-[var(--danger)]" />
-      </button>
-    </div>
-  );
-}
 /* ================= BREADCRUMBS ================= */
 const BREADCRUMBS = [
   { label: "Layout", href: "/dashboard/layout" },
@@ -155,58 +69,6 @@ const mockArticles = Array.from({ length: 20 }, (_, i) => ({
   imageUrl: `https://picsum.photos/800/600?random=${i}`,
   sources: [],
 }));
-
-/* ================= DRAG WRAPPER ================= */
-const TrashButton = ({
-  id,
-  handleDelete,
-}: {
-  id: string;
-  handleDelete: (id: string) => void;
-}) => (
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDelete(id);
-    }}
-    className="absolute top-4 right-4 z-50 opacity-100 group-hover:opacity-100 transition pointer-events-auto p-2"
-  >
-    <Trash2 className="h-6 w-6 text-[var(--danger)]" />
-  </button>
-);
-function Draggable({
-  id,
-  children,
-  handleDelete,
-}: {
-  id: string;
-  children: React.ReactNode;
-  handleDelete: (id: string) => void;
-}) {
-  const { setNodeRef, listeners, transform, transition } =
-    useSortable({ id });
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
-      className="relative group isolate"
-    >
-      <TrashButton id={id} handleDelete={handleDelete} />
-      <div {...listeners} className="cursor-grab isolate">
-        {children}
-      </div>
-    </div>
-  );
-}
-
-type ComponentConfig = {
-  type: string;
-  config: Article;
-};
 
 const safeId = (prefix: string, id: string) =>
   `${prefix}-${id}-${crypto.randomUUID()}`;
@@ -291,7 +153,7 @@ export default function ArchivePage() {
 
     switch (type) {
       case "INSIGHT":
-        setRight((p) => [...p, article]);
+        setLeft((p) => [...p, article]);
         break;
       case "HEADLINE":
         setRight((p) => [...p, article]);

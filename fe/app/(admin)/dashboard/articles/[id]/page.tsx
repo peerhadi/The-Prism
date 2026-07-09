@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { redirect, useParams } from "next/navigation";
 import { FileText, Type, AlignLeft, Layers } from "lucide-react";
 
-import BreadcrumbWrapper from "@/app/components/dashboard/BreadCrumbWrapper";
-import SnackbarWrapper from "@/app/components/dashboard/SnackbarWrapper";
+import Breadcrumbs from "@/app/components/Breadcrumb";
+import Snackbar from "@/app/components/Snackbar";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 import { toast as fetchToast } from "@/lib/toast/toast";
 import { fetcher } from "@/lib/api/fetcher";
@@ -37,7 +37,6 @@ export default function EditArticle() {
   };
 
   const save = async () => {
-    let isSuccessful = false;
     try {
       if (!form) return;
       const { error } = await fetcher(
@@ -53,19 +52,16 @@ export default function EditArticle() {
           },
         },
       );
-      isSuccessful = true;
 
       if (error) {
         throw new Error(error);
       }
 
       fetchToast.success("Successfully modified article", "Success");
+      redirect("/dashboard/articles");
     } catch (error) {
       console.log(error);
       fetchToast.error("Failed to update article", "Update Failed");
-    }
-    if (isSuccessful) {
-      redirect("/dashboard/articles");
     }
   };
 
@@ -84,14 +80,14 @@ export default function EditArticle() {
         color: "var(--text-primary)",
       }}
     >
-      <BreadcrumbWrapper
+      <Breadcrumbs
         items={[
           { label: "Articles", href: "/dashboard/articles" },
-          { label: "Edit", href: "#" },
+          { label: "Edit" },
         ]}
       />
 
-      <SnackbarWrapper
+      <Snackbar
         open={toast}
         message="Signal updated"
         onClose={() => setToast(false)}

@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/api/fetcher";
 import type { Article } from "./types";
 
-const BASE_URL = "/api/articles";
+const BASE_URL = "http://localhost:8080/api/articles";
 
 /**
  * GET all articles

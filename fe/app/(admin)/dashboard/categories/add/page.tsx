@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Tags, Activity } from "lucide-react";
 
 import Breadcrumbs from "@/app/components/Breadcrumb";
+import FormCard from "@/app/components/dashboard/FormCard";
 import FieldInput from "@/app/components/dashboard/FieldInput";
 import { toast } from "@/lib/toast/toast";
 import { fetcher } from "@/lib/api/fetcher";
@@ -71,22 +72,7 @@ export default function AddCategory() {
         ]}
       />
 
-      <div
-        className="w-full max-w-2xl p-10 rounded-2xl border backdrop-blur-xl"
-        style={{
-          background: "var(--card)",
-          borderColor: "var(--card-border)",
-        }}
-      >
-        <h1
-          className="text-center text-3xl font-black mb-10"
-          style={{
-            color: "var(--primary)",
-          }}
-        >
-          CREATE CATEGORY NODE
-        </h1>
-
+      <FormCard title="CREATE CATEGORY NODE">
         <div className="space-y-6">
           <FieldInput
             label="Category Name"
@@ -104,16 +90,17 @@ export default function AddCategory() {
 
           <button
             onClick={submit}
-            className="w-full mt-4 p-4 font-black transition rounded-lg"
+            className="w-full mt-4 rounded-lg p-4 font-black transition"
             style={{
               background: "var(--primary)",
               color: "var(--primary-foreground)",
+              border: "1px solid var(--primary-border)",
             }}
           >
             TRANSMIT NODE
           </button>
         </div>
-      </div>
+      </FormCard>
     </div>
   );
 }

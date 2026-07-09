@@ -103,7 +103,7 @@ export default function ArticlesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="p-6 transition"
+            className="rounded-2xl p-6 transition"
             style={{
               background: "var(--card)",
               border: "1px solid var(--card-border)",
