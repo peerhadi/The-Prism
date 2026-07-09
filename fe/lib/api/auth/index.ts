@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/api/fetcher";
 import type { AuthResponse, AuthUser } from "./types";
 
-const BASE_URL = "/api";
+const BASE_URL = "http://localhost:8080/api";
 
 /**
  * REGISTER

@@ -69,10 +69,10 @@ export default function UsersPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.03 }}
-            className="p-6 transition"
+            className="rounded-2xl p-6 transition"
             style={{
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
+              border: "1px solid var(--card-border)",
+              background: "var(--card)",
             }}
           >
             <div className="flex justify-between items-center">

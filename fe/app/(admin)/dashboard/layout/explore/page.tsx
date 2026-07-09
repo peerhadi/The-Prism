@@ -11,15 +11,10 @@ import {
   closestCenter,
 } from "@dnd-kit/core";
 
-import {
-  SortableContext,
-  useSortable,
-  rectSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, rectSortingStrategy } from "@dnd-kit/sortable";
 
-import { CSS } from "@dnd-kit/utilities";
+import Draggable from "@/app/components/dashboard/Draggable";
 
-/* UI */
 import HeroCard from "@/app/(user)/components/HeroCard";
 import ShortCard from "@/app/(user)/components/SmallCard";
 import ListCard from "@/app/(user)/components/ListCard";
@@ -31,7 +26,6 @@ import TrendingPanel from "@/app/components/crud/explore/TrendingPanel";
 import AddComponentButton from "../pallette";
 import Breadcrumbs from "@/app/components/Breadcrumb";
 import StickyInsight from "@/app/(user)/components/TickerCard";
-import { Trash2 } from "lucide-react";
 import { toast } from "@/lib/toast/toast";
 import { getLayout, saveLayout } from "@/lib/api/layout";
 
@@ -74,53 +68,6 @@ const mockArticles = Array.from({ length: 30 }, (_, i) => ({
   categoryId: `cat-${i % 5}`,
 }));
 
-/* ---------------- DRAG WRAPPER ---------------- */
-const TrashButton = ({
-  id,
-  handleDelete,
-}: {
-  id: string;
-  handleDelete: (id: string) => void;
-}) => (
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDelete(id);
-    }}
-    className="absolute top-4 right-4 z-50 opacity-100 group-hover:opacity-100 transition pointer-events-auto p-2"
-  >
-    <Trash2 className="h-6 w-6 text-[var(--danger)]" />
-  </button>
-);
-function Draggable({
-  id,
-  children,
-  handleDelete,
-}: {
-  id: string;
-  children: React.ReactNode;
-  handleDelete: (id: string) => void;
-}) {
-  const { setNodeRef, listeners, transform, transition } =
-    useSortable({ id });
-
-  return (
-    <div
-      ref={setNodeRef}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
-      className="relative group isolate"
-    >
-      <TrashButton id={id} handleDelete={handleDelete} />
-      <div {...listeners} className="cursor-grab isolate">
-        {children}
-      </div>
-    </div>
-  );
-}
-
 const safeId = (prefix: string, id: string) =>
   `${prefix}-${id}-${crypto.randomUUID()}`;
 
@@ -162,29 +109,21 @@ export default function ExploreBuilderPage() {
         hero: (comps.find((c) => c.type === "HERO")?.config as Article) ?? null,
         small: comps
           .filter((c) => c.type === "SMALL")
-          .flatMap((c) =>
-            Array.isArray(c.config) ? c.config : [c.config],
-          ),
+          .flatMap((c) => (Array.isArray(c.config) ? c.config : [c.config])),
         list: comps
           .filter((c) => c.type === "LIST")
-          .flatMap((c) =>
-            Array.isArray(c.config) ? c.config : [c.config],
-          ),
+          .flatMap((c) => (Array.isArray(c.config) ? c.config : [c.config])),
       });
 
       setRight(
         comps
           .filter((c) => c.type === "INSIGHT")
-          .flatMap((c) =>
-            Array.isArray(c.config) ? c.config : [c.config],
-          ),
+          .flatMap((c) => (Array.isArray(c.config) ? c.config : [c.config])),
       );
       setLeft(
         comps
           .filter((c) => c.type === "HEADLINE")
-          .flatMap((c) =>
-            Array.isArray(c.config) ? c.config : [c.config],
-          ),
+          .flatMap((c) => (Array.isArray(c.config) ? c.config : [c.config])),
       );
     };
 
@@ -418,7 +357,7 @@ export default function ExploreBuilderPage() {
                       >
                         <div className="p-4 rounded-2xl border border-white/10">
                           <h4 className="text-sm font-bold">{item.title}</h4>
-                          <p className="text-xs opacity-70">
+                          <p className="text-xs opacity-70 max-w-[270px]">
                             {item.description}
                           </p>
                         </div>
@@ -438,7 +377,9 @@ export default function ExploreBuilderPage() {
                   createdAt={center.hero.createdAt}
                   title={center.hero.title}
                   description={center.hero.description}
-                  sources={(center.hero.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
+                  sources={(center.hero.sources as string[]).map(
+                    (s: string) => ({ source: s, title: s, url: s }),
+                  )}
                   status="LIVE"
                   imageUrl={center.hero.imageUrl}
                 />
@@ -484,7 +425,9 @@ export default function ExploreBuilderPage() {
                         title={item.title}
                         description={item.description}
                         imageUrl={item.imageUrl}
-                        sources={(item.sources as string[]).map((s: string) => ({ source: s, title: s, url: s }))}
+                        sources={(item.sources as string[]).map(
+                          (s: string) => ({ source: s, title: s, url: s }),
+                        )}
                       />
                     </Draggable>
                   ))}
@@ -507,7 +450,13 @@ export default function ExploreBuilderPage() {
                       handleDelete={handleDelete}
                     >
                       <StickyInsight
-                        variant={(item.variant ?? "cyan") as "cyan" | "amber" | "purple" | "red"}
+                        variant={
+                          (item.variant ?? "cyan") as
+                            | "cyan"
+                            | "amber"
+                            | "purple"
+                            | "red"
+                        }
                         title={item.title}
                         content={item.summary}
                       />

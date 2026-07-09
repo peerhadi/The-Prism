@@ -55,9 +55,9 @@ export default function CategoriesPage() {
 
         <Link
           href="/dashboard/categories/add"
-          className="px-5 py-2 border transition font-bold"
+          className="px-5 py-2 font-bold transition"
           style={{
-            borderColor: "var(--primary-border)",
+            border: "1px solid var(--primary-border)",
             background: "var(--primary-soft)",
             color: "var(--primary)",
           }}
@@ -73,10 +73,10 @@ export default function CategoriesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="p-6 border transition"
+            className="rounded-2xl p-6 transition"
             style={{
               background: "var(--card)",
-              borderColor: "var(--card-border)",
+              border: "1px solid var(--card-border)",
             }}
           >
             <div className="flex justify-between">

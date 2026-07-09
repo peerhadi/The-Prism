@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/api/fetcher";
 import type { Category } from "./types";
 
-const BASE_URL = "/api/categories";
+const BASE_URL = "http://localhost:8080/api/categories";
 
 /**
  * GET all categories

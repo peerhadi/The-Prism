@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/api/fetcher";
 import type { Archived } from "./types";
 
-const BASE_URL = "/api/archived";
+const BASE_URL = "http://localhost:8080/api/archived";
 
 /**
  * GET all archived items

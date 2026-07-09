@@ -18,14 +18,6 @@ type Perspective = {
 
 const BREADCRUMBS = [{ label: "Perspectives" }];
 
-const PAGE = {
-  title: "PERSPECTIVES GRID",
-  toast: "Perspective field synced",
-  createHref: "/dashboard/perspectives/add",
-  createLabel: "Generate Perspectives",
-  subtitle: "neutral • extreme data layers",
-};
-
 export default function PerspectivesPage() {
   const [items, setItems] = useState<Perspective[]>([]);
   const [showToast, setShowToast] = useState(false);
@@ -82,13 +74,13 @@ export default function PerspectivesPage() {
 
       <Snackbar
         open={showToast}
-        message={PAGE.toast}
+        message="Perspective field synced"
         onClose={() => setShowToast(false)}
       />
 
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-4xl font-black" style={{ color: "var(--primary)" }}>
-          {PAGE.title}
+          PERSPECTIVES GRID
         </h1>
 
         <div
@@ -101,7 +93,7 @@ export default function PerspectivesPage() {
           }}
         >
           <Eye />
-          {PAGE.createLabel}
+          Generate Perspectives
         </div>
       </div>
 
@@ -112,10 +104,10 @@ export default function PerspectivesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.03 }}
-            className="p-6 transition rounded-xl"
+            className="rounded-2xl p-6 transition"
             style={{
-              border: "1px solid var(--border)",
-              background: "var(--surface)",
+              border: "1px solid var(--card-border)",
+              background: "var(--card)",
             }}
           >
             <div className="flex justify-between items-center">
@@ -128,7 +120,7 @@ export default function PerspectivesPage() {
                 </h2>
 
                 <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-                  {PAGE.subtitle}
+                  neutral • extreme data layers
                 </p>
               </div>
 

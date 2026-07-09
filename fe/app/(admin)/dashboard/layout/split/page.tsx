@@ -23,8 +23,8 @@ import { CSS } from "@dnd-kit/utilities";
 import SplitHero from "@/app/components/crud/split/SplitHero";
 import SplitSection from "@/app/components/crud/split/SplitSection";
 import ConflictCTA from "@/app/components/crud/split/ConflictCTA";
+import TrashButton from "@/app/components/dashboard/TrashButton";
 import Breadcrumbs from "@/app/components/Breadcrumb";
-import { Trash2 } from "lucide-react";
 import AddSplitComponentButton from "./add-button";
 import { toast } from "@/lib/toast/toast";
 import { getLayout, saveLayout } from "@/lib/api/layout";
@@ -63,25 +63,6 @@ const mockEvents = [
   },
 ];
 
-/* ================= DRAG ITEM ================= */
-const TrashButton = ({
-  id,
-  handleDelete,
-}: {
-  id: string;
-  handleDelete: (id: string) => void;
-}) => (
-  <button
-    onClick={(e) => {
-      e.stopPropagation();
-      handleDelete(id);
-    }}
-    className="absolute top-4 right-4 z-50 opacity-0 group-hover:opacity-100 transition pointer-events-auto p-2"
-  >
-    <Trash2 className="h-12 w-12 text-[var(--danger)]" />
-  </button>
-);
-
 function DraggableItem({
   item,
   handleDelete,
@@ -103,7 +84,7 @@ function DraggableItem({
       className="relative w-full isolate group"
     >
       <TrashButton id={item.id} handleDelete={handleDelete} />
-      <div {...listeners} className="cursor-grab isolate">
+      <div {...listeners} className="cursor-grab isolate" style={{ touchAction: "none" }}>
         <SplitSection event={item} />
       </div>
     </div>

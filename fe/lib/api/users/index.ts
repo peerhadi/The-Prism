@@ -1,7 +1,7 @@
 import { fetcher } from "@/lib/api/fetcher";
 import type { User } from "./types";
 
-const BASE_URL = "/api/users";
+const BASE_URL = "http://localhost:8080/api/users";
 
 /**
  * GET all users
