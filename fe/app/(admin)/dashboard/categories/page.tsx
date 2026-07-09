@@ -18,13 +18,13 @@ export default function CategoriesPage() {
   const [toast, setToast] = useState(false);
 
   useEffect(() => {
-    fetcher<Category[]>(`${process.env.NEXT_PUBLIC_API_URL}/api/categories`).then(
-      ({ data, error }) => {
-        if (error) return;
-        if (data) setCategories(data);
-        setToast(true);
-      },
-    );
+    fetcher<Category[]>(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/categories`,
+    ).then(({ data, error }) => {
+      if (error) return;
+      if (data) setCategories(data);
+      setToast(true);
+    });
   }, []);
 
   return (
