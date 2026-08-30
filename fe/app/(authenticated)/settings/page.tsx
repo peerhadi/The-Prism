@@ -18,7 +18,11 @@ export default function SettingsPage() {
   const router = useRouter();
   const [sources, setSources] = useState<string[]>([]);
   const [newSource, setNewSource] = useState("");
-  const [token] = useState(() => typeof window !== "undefined" ? window.localStorage.getItem("token") || "" : "");
+  const [token] = useState(() =>
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("token") || ""
+      : "",
+  );
 
   const [privacySettings, setPrivacySettings] = useState<{ id: string }>({
     id: "",
@@ -44,7 +48,11 @@ export default function SettingsPage() {
     isVerified: true,
   });
 
-  const [theme, setTheme] = useState<"dark" | "light">(() => (typeof window !== "undefined" ? (window.localStorage.getItem("theme") as "dark" | "light") || "dark" : "dark"));
+  const [theme, setTheme] = useState<"dark" | "light">(() =>
+    typeof window !== "undefined"
+      ? (window.localStorage.getItem("theme") as "dark" | "light") || "light"
+      : "light",
+  );
 
   /* ---------------- FETCH USER ---------------- */
   useEffect(() => {
@@ -53,7 +61,10 @@ export default function SettingsPage() {
     fetcher(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/me`, {
       headers: { Authorization: "Bearer " + token },
     }).then(({ data, error }) => {
-      if (error) { toast.error(error, "Load Failed"); return; }
+      if (error) {
+        toast.error(error, "Load Failed");
+        return;
+      }
       if (data) {
         const res = data as { sources: string[]; id: string };
         setSources(res.sources);
@@ -134,7 +145,10 @@ export default function SettingsPage() {
       );
     }
   };
-  const changePassword = async (currentPassword: string, newPassword: string) => {
+  const changePassword = async (
+    currentPassword: string,
+    newPassword: string,
+  ) => {
     try {
       const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/users/${privacySettings.id}/change-password`,
