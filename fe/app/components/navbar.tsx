@@ -18,7 +18,6 @@ const STATIC_LINKS = [
   { name: "AI Chat", href: "/ai-chat", desc: "Interact with Prism AI" },
   { name: "Archive", href: "/archive", desc: "Historical signal database" },
   { name: "About", href: "/about", desc: "Inside the intelligence framework" },
-  { name: "Feed", href: "/feed", desc: "View your own personalised feed" },
 ];
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -65,6 +64,12 @@ export function Navbar() {
                   href: "/dashboard",
                   desc: "The admin dashboard",
                 },
+
+                {
+                  name: "Feed",
+                  href: "/feed",
+                  desc: "View your own personalised feed",
+                },
               ];
             });
           }
@@ -107,6 +112,11 @@ export function Navbar() {
     router.push("/login");
     window.location.reload();
   };
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   return (
     <>
       {/* NAVBAR */}
@@ -128,7 +138,7 @@ export function Navbar() {
             </button>
 
             <Link
-              href={authenticated ? "/stories" : "/"}
+              href={authenticated && mounted ? "/stories" : "/"}
               className="flex items-center gap-3 font-black"
             >
               <img
@@ -154,7 +164,10 @@ export function Navbar() {
             {[
               ["Stories", "/stories"],
               ["Explore", "/explore"],
-              ["Feed", "/feed"],
+              [
+                authenticated && mounted ? "Feed" : "Archive",
+                authenticated && mounted ? "/feed" : "/archive",
+              ],
               ["Narrative Split", "/narrative-split"],
             ].map(([name, href]) => (
               <Link
@@ -170,7 +183,7 @@ export function Navbar() {
           {/* RIGHT */}
           {/* RIGHT */}
           <div className="flex items-center gap-3">
-            {!authenticated ? (
+            {!authenticated && mounted ? (
               <>
                 <Link
                   href="/login"

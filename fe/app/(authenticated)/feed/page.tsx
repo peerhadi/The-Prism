@@ -77,8 +77,8 @@ function StickyCard({ article, i }: { article: Article; i: number }) {
    CENTER CHAIN FEED CARD (WITH IMAGE)
 ========================================================= */
 
-import NarrativePopup from "../components/features/NarrativeButton";
-import SourcesPopup from "../components/features/SourcesPopup";
+import NarrativePopup from "../../(user)/components/features/NarrativeButton";
+import SourcesPopup from "../../(user)/components/features/SourcesPopup";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { fetcher } from "@/lib/api/fetcher";
@@ -244,7 +244,7 @@ export default function FeedPage() {
 
   if (!articles.length) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center px-6">
+      <div className="flex min-h-[70vh] items-center justify-center px-6 bg-[var(--background)]">
         <div className="max-w-lg text-center">
           {/* Icon */}
           <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-[var(--primary-border)] bg-[var(--primary-soft)]">
