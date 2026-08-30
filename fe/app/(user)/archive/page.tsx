@@ -39,8 +39,13 @@ export default function ArchivePage() {
         fetcher<{ components: any[] }>(`${API}/api/layout/archive`),
       ]);
 
-      const errors = [catRes, artRes, layoutRes].map(r => r.error).filter(Boolean);
-      if (errors.length) { toast.error(errors.join(", "), "Load Error"); return; }
+      const errors = [catRes, artRes, layoutRes]
+        .map((r) => r.error)
+        .filter(Boolean);
+      if (errors.length) {
+        toast.error(errors.join(", "), "Load Error");
+        return;
+      }
 
       const cats = catRes.data;
       const arts = artRes.data;
@@ -55,7 +60,6 @@ export default function ArchivePage() {
           (a: Article, b: Article) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
-
       setArticles(clean);
 
       const components = layout?.components ?? [];
@@ -63,18 +67,21 @@ export default function ArchivePage() {
       let cursor = 0;
       const next = (n: number) => clean.slice(cursor, (cursor += n));
 
-      const heroCount = components.filter((c: { type: string }) => c.type === "HERO").length;
+      const heroCount = components.filter(
+        (c: { type: string }) => c.type === "HERO",
+      ).length;
       const smallCount = components.filter(
         (c: { type: string }) => c.type === "SMALL",
       ).length;
-      const listCount = components.filter((c: { type: string }) => c.type === "LIST").length;
+      const listCount = components.filter(
+        (c: { type: string }) => c.type === "LIST",
+      ).length;
       const insightCount = components.filter(
         (c: { type: string }) => c.type === "INSIGHT",
       ).length;
       const headlineCount = components.filter(
         (c: { type: string }) => c.type === "HEADLINE",
       ).length;
-
       setHeroStory(heroCount ? next(1)[0] : null);
       setFeatured(next(smallCount));
       setStream(next(listCount));
@@ -109,7 +116,11 @@ export default function ArchivePage() {
           createdAt={heroStory.createdAt ?? ""}
           title={heroStory.title}
           description={heroStory.summary ?? heroStory.description}
-          sources={heroStory.sources.map((s) => ({ source: s, title: s, url: s }))}
+          sources={heroStory.sources.map((s) => ({
+            source: s,
+            title: s,
+            url: s,
+          }))}
           status="ARCHIVED"
           imageUrl={heroStory.imageUrl ?? ""}
         />
@@ -136,7 +147,11 @@ export default function ArchivePage() {
             title={stream[0].title}
             description={stream[0].description}
             imageUrl={stream[0].imageUrl ?? ""}
-            sources={stream[0].sources.map((s) => ({ source: s, title: s, url: s }))}
+            sources={stream[0].sources.map((s) => ({
+              source: s,
+              title: s,
+              url: s,
+            }))}
           />
         )}
         {stream[1] && (
@@ -145,7 +160,11 @@ export default function ArchivePage() {
             title={stream[1].title}
             description={stream[1].description}
             imageUrl={stream[1].imageUrl ?? ""}
-            sources={stream[1].sources.map((s) => ({ source: s, title: s, url: s }))}
+            sources={stream[1].sources.map((s) => ({
+              source: s,
+              title: s,
+              url: s,
+            }))}
           />
         )}
       </div>

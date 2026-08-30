@@ -21,7 +21,6 @@ export default async function layoutRoutes(app: FastifyInstance) {
     const body = request.body as {
       components: any[];
     };
-    console.log("SAVE BODY:", request.body);
     const layout = await layoutController.save(params.type, body.components);
 
     return reply.send(layout);

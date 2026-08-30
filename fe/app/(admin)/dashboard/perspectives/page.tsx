@@ -41,7 +41,6 @@ export default function PerspectivesPage() {
       const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/perspectives/rss/sync`,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -85,7 +84,7 @@ export default function PerspectivesPage() {
 
         <div
           onClick={generateFeed}
-          className="px-5 py-2 font-bold transition rounded-lg flex gap-2"
+          className="px-5 py-2 font-bold transition rounded-lg flex gap-2 cursor-pointer"
           style={{
             border: "1px solid var(--primary-border)",
             background: "var(--primary-soft)",

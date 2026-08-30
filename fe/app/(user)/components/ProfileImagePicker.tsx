@@ -95,7 +95,13 @@ function CropModal({
   );
 }
 
-export default function ProfileImagePicker({ id, profileImageUrl }: { id: number; profileImageUrl?: string }) {
+export default function ProfileImagePicker({
+  id,
+  profileImageUrl,
+}: {
+  id: number;
+  profileImageUrl?: string;
+}) {
   console.log(profileImageUrl);
   const inputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
@@ -210,6 +216,11 @@ export default function ProfileImagePicker({ id, profileImageUrl }: { id: number
             {avatar ? (
               <img
                 src={avatar}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    "https://picsum.photos/800/450?random=45";
+                }}
                 alt="Profile"
                 className="h-full w-full object-cover"
               />
@@ -259,6 +270,11 @@ export default function ProfileImagePicker({ id, profileImageUrl }: { id: number
               <img
                 ref={imageRef}
                 src={sourceImage}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    "https://picsum.photos/800/450?random=45";
+                }}
                 alt="Crop"
                 className="max-h-[70vh] max-w-full rounded-xl"
                 onLoad={(e) => {

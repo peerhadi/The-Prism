@@ -41,6 +41,10 @@ export const AnomalyCard = ({
       <div className="absolute inset-0">
         <img
           src={img}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+          }}
           alt={title}
           className="h-full w-full object-cover opacity-40 grayscale transition-all duration-700 group-hover:scale-105 group-hover:opacity-60 group-hover:grayscale-0"
         />

@@ -39,7 +39,6 @@ export default function ArticlesPage() {
       const { error } = await fetcher(
         `${process.env.NEXT_PUBLIC_API_URL}/api/articles/rss/sync`,
         {
-          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },

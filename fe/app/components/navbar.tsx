@@ -107,9 +107,6 @@ export function Navbar() {
     router.push("/login");
     window.location.reload();
   };
-  if (authenticated === null || isAdmin === null) {
-    return <PrismLoader />;
-  }
   return (
     <>
       {/* NAVBAR */}
@@ -202,6 +199,11 @@ export function Navbar() {
                   {userImage?.length ? (
                     <img
                       src={userImage}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src =
+                          "https://picsum.photos/800/450?random=45";
+                      }}
                       alt="User Profile"
                       className="h-11 w-12 rounded-4xl object-cover"
                     />

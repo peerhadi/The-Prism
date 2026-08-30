@@ -81,21 +81,21 @@ export function Footer() {
               {[
                 {
                   icon: Activity,
-                  label: "Deep Scan",
-                  value: "ACTIVE",
+                  label: "Articles",
+                  value: "1000+",
                   color: "text-[var(--success)]",
                 },
                 {
                   icon: Globe,
-                  label: "Global Nodes",
-                  value: "142",
-                  color: "text-[var(--text-primary)]",
+                  label: "Perspectives",
+                  value: "50+",
+                  color: "text-[var(--success)]",
                 },
                 {
                   icon: Shield,
-                  label: "Threat Level",
-                  value: "HIGH",
-                  color: "text-[var(--danger)]",
+                  label: "Categories",
+                  value: "10+",
+                  color: "text-[var(--success)]",
                 },
               ].map((item, i) => (
                 <div

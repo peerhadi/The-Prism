@@ -22,8 +22,18 @@ export default function PrivacyCard({
   changePassword,
   deleteAccount,
 }: {
-  passwordForm: { currentPassword: string; newPassword: string; confirmPassword: string };
-  setPasswordForm: React.Dispatch<React.SetStateAction<{ currentPassword: string; newPassword: string; confirmPassword: string }>>;
+  passwordForm: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  };
+  setPasswordForm: React.Dispatch<
+    React.SetStateAction<{
+      currentPassword: string;
+      newPassword: string;
+      confirmPassword: string;
+    }>
+  >;
   changePassword: (current: string, newPwd: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
 }) {
@@ -207,7 +217,7 @@ export default function PrivacyCard({
                 </AlertDialogDescription>
               </AlertDialogHeader>
 
-              <AlertDialogFooter className="mt-6">
+              <AlertDialogFooter className="mt-6 border-0">
                 <AlertDialogCancel
                   style={{
                     background: "var(--surface)",

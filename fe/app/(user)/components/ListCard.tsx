@@ -79,6 +79,10 @@ export default function ListCard<T extends ListCardProps>({
           <div className="relative h-[120px] w-full shrink-0 overflow-hidden rounded-[16px] border border-[var(--border)] md:h-[160px] md:w-[220px]">
             <img
               src={imageUrl}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+              }}
               alt={title}
               className="h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:scale-110 group-hover:opacity-100 group-hover:rotate-2"
             />

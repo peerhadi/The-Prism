@@ -102,32 +102,36 @@ function safeParse(text: string) {
 
 async function callGroq(prompt: string, data: any) {
   console.log(prompt, data);
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: prompt }],
+        },
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: JSON.stringify(data) }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 16384,
+        },
+      }),
     },
-    body: JSON.stringify({
-      model: "meta-llama/llama-4-scout-17b-16e-instruct",
-      temperature: 0,
-      messages: [
-        {
-          role: "system",
-          content: prompt,
-        },
-        {
-          role: "user",
-          content: JSON.stringify(data),
-        },
-      ],
-    }),
-  });
+  );
 
   const json = await res.json();
   console.log(json);
 
-  return json?.choices[0]?.message?.content || "";
+  return json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
 export async function generatePerspectives(articles: any[]) {

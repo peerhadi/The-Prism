@@ -51,6 +51,10 @@ export default function HeroCard({
       >
         <img
           src={imageUrl}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+          }}
           alt={title}
           className="h-full w-full object-cover opacity-70 transition-transform duration-500 hover:scale-105"
         />

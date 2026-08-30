@@ -2,7 +2,15 @@
 
 import { Split } from "lucide-react";
 
-export default function SplitSection({ event }: { event: { imageUrl: string; neutral: { title: string; description: string }; extreme: { title: string; description: string } } }) {
+export default function SplitSection({
+  event,
+}: {
+  event: {
+    imageUrl: string;
+    neutral: { title: string; description: string };
+    extreme: { title: string; description: string };
+  };
+}) {
   return (
     <section className="relative overflow-hidden border border-[var(--border)] bg-[var(--glass-bg)] backdrop-blur-2xl">
       {/* LABEL */}
@@ -30,6 +38,10 @@ export default function SplitSection({ event }: { event: { imageUrl: string; neu
         <div className="group relative flex items-end overflow-hidden">
           <img
             src={event.imageUrl}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+            }}
             alt=""
             className="
               absolute inset-0 h-full w-full object-cover
@@ -63,6 +75,10 @@ export default function SplitSection({ event }: { event: { imageUrl: string; neu
         <div className="group relative flex items-end overflow-hidden border-t border-[var(--border)] lg:border-l lg:border-t-0">
           <img
             src={event.imageUrl}
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+            }}
             alt=""
             className="
               absolute inset-0 h-full w-full object-cover
