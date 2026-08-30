@@ -3,7 +3,7 @@
 import React, { useMemo } from "react";
 import { createPortal } from "react-dom";
 import { X, Globe } from "lucide-react";
-
+import getCleanSiteName from "@/app/utils/getcleansitename";
 type Source = {
   source: string;
   title: string;
@@ -101,7 +101,7 @@ export default function SourcesPopup({ open, setOpen, sources, id }: Props) {
 
                   {/* TITLE ONLY */}
                   <div className="text-sm text-[var(--text-secondary)] group-hover:text-[var(--primary)] transition">
-                    {item.source}
+                    {getCleanSiteName(item.source)}
                   </div>
                 </a>
               );

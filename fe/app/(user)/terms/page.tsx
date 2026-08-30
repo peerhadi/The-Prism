@@ -62,11 +62,6 @@ export default function TermsPage() {
       content:
         "These terms shall be governed by and construed in accordance with the laws of the jurisdiction in which The Prism operates, without regard to its conflict of law provisions. Any disputes arising from these terms or your use of the platform shall be resolved through binding arbitration or in the competent courts of that jurisdiction. You waive the right to participate in class action lawsuits against The Prism.",
     },
-    {
-      title: "Contact Information",
-      content:
-        "For questions about these terms, please contact us at legal@theprism.io. You may also reach us by mail at the registered address of The Prism. We aim to respond to all legal inquiries within 14 business days. For urgent matters regarding terms violations or abuse reports, please use the report feature within the platform.",
-    },
   ];
 
   return (

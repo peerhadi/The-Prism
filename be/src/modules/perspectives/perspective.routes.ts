@@ -15,7 +15,7 @@ export async function perspectiveRoutes(app: FastifyInstance) {
   app.patch("/:id", controller.update);
 
   app.delete("/:id", controller.delete);
-  app.post("/rss/sync", async (_, reply) => {
+  app.get("/rss/sync", async (_, reply) => {
     await syncPerspectives();
 
     return reply.code(200).send({ success: true });

@@ -5,7 +5,6 @@ import { generatePerspectives } from "../../shared/rss/rss.perspectives.js";
 
 export async function syncPerspectives() {
   const articles = await fetchRSS();
-  console.log(articles);
   let generated = await generatePerspectives(articles);
   generated = generated.filter((x) => {
     if (

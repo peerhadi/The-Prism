@@ -17,6 +17,10 @@ export default function ForensicHero({
     >
       <img
         src={imageUrl}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+        }}
         className="absolute inset-0 h-full w-full object-cover opacity-15"
         alt=""
       />

@@ -102,6 +102,11 @@ export function FeedCard({ article }: { article: Article }) {
             <div className="relative mb-4 h-[190px] w-full overflow-hidden rounded-[18px] border border-[var(--border)]">
               <img
                 src={article.imageUrl}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src =
+                    "https://picsum.photos/800/450?random=45";
+                }}
                 alt={article.title}
                 className="h-full w-full object-cover opacity-80 transition-transform duration-500 hover:scale-105"
               />
@@ -164,7 +169,11 @@ export function FeedCard({ article }: { article: Article }) {
         id={article.id}
         open={openSources}
         setOpen={setOpenSources}
-        sources={article.sources.map((s) => ({ source: s.url, title: s.url, url: s.url }))}
+        sources={article.sources.map((s) => ({
+          source: s.url,
+          title: s.url,
+          url: s.url,
+        }))}
       />
     </div>
   );
@@ -190,7 +199,10 @@ export default function FeedPage() {
           Authorization: `Bearer ${t}`,
         },
       }).then(({ data, error }) => {
-        if (error) { toast.error(error, "Auth Failed"); return; }
+        if (error) {
+          toast.error(error, "Auth Failed");
+          return;
+        }
         if (data) setSources((data as { sources: string[] }).sources);
       });
     }
@@ -199,7 +211,10 @@ export default function FeedPage() {
   useEffect(() => {
     const load = async () => {
       const { data, error } = await fetcher<any[]>(`${API}/api/articles`);
-      if (error) { toast.error(error, "Load Failed"); return; }
+      if (error) {
+        toast.error(error, "Load Failed");
+        return;
+      }
       if (!data) return;
 
       const clean = data
@@ -211,11 +226,12 @@ export default function FeedPage() {
       const uniqueByTitle = Array.from(
         new Map(clean.map((a: Article) => [a.title, a])).values(),
       ) as Article[];
-      const filtered = uniqueByTitle.filter((x: Article) =>
-        !!sources.find((y: string) => {
-          console.log(x.sources[0].url, y, x.sources[0].url.startsWith(y));
-          return x.sources[0].url.startsWith(y);
-        }),
+      const filtered = uniqueByTitle.filter(
+        (x: Article) =>
+          !!sources.find((y: string) => {
+            console.log(x.sources[0].url, y, x.sources[0].url.startsWith(y));
+            return x.sources[0].url.startsWith(y);
+          }),
       );
       setArticles(filtered);
       console.log(sources);

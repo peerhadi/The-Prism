@@ -27,7 +27,6 @@ export async function userRoutes(app: FastifyInstance) {
       newPassword: string;
     };
 
-    console.log(request.body, body);
     const user = await prisma.user.findUnique({
       where: {
         id: params.id,
@@ -80,7 +79,6 @@ export async function userRoutes(app: FastifyInstance) {
     };
 
     const body = request.body as any;
-    console.log(body);
 
     return prisma.user.update({
       where: {

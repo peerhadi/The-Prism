@@ -38,6 +38,10 @@ export const NarrativeSplitCard = ({
           <div className="relative aspect-[16/9] overflow-hidden">
             <img
               src={getRandomImage(`${seedId}-alpha`)}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+              }}
               className="h-full w-full object-cover opacity-30 grayscale transition-all duration-1000 group-hover/sideA:opacity-80 group-hover/sideA:grayscale-0"
               alt="Alpha Perspective"
             />
@@ -67,6 +71,10 @@ export const NarrativeSplitCard = ({
           <div className="relative aspect-[16/9] overflow-hidden">
             <img
               src={getRandomImage(`${seedId}-omega`)}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+              }}
               className="h-full w-full object-cover opacity-30 grayscale transition-all duration-1000 group-hover/sideB:opacity-80 group-hover/sideB:grayscale-0"
               alt="Omega Perspective"
             />

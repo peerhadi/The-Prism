@@ -6,27 +6,39 @@ import { classifyArticles } from "../../shared/rss/rss.classifier.js";
 export async function syncArticles() {
   const rssItems = await fetchRSS();
 
-  const groups = await classifyArticles(rssItems);
+  const categories = await prisma.category.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 
-  for (let articles of Object.values(groups)) {
-    console.log("THE ARTICLES", groups, articles);
-    articles = articles.filter((x) => {
-      if (
-        x.title === undefined ||
-        x.description === undefined ||
-        x.summary === undefined ||
-        x.biasLevel === undefined ||
-        x.imageUrl === undefined ||
-        x.sources === undefined ||
-        x.type === undefined
-      ) {
-        return false;
-      }
+  const groups = await classifyArticles(
+    rssItems,
+    categories.map((c) => c.name),
+  );
 
-      return true;
+  const categoryMap = new Map(
+    categories.map((c) => [c.name.toLowerCase(), c.id]),
+  );
+
+  for (let articles of Object.values(groups) as any[]) {
+    articles = articles.filter((x: any) => {
+      return (
+        x.title !== undefined &&
+        x.description !== undefined &&
+        x.summary !== undefined &&
+        x.biasLevel !== undefined &&
+        x.imageUrl !== undefined &&
+        x.sources !== undefined &&
+        x.type !== undefined &&
+        x.category !== undefined
+      );
     });
-    for (const article of articles as any[]) {
-      console.log(article);
+
+    for (const article of articles) {
+      const categoryId = categoryMap.get(article.category.toLowerCase());
+
       await prisma.article.create({
         data: {
           title: article.title,
@@ -35,7 +47,8 @@ export async function syncArticles() {
           biasLevel: article.biasLevel,
           imageUrl: article.imageUrl,
           sources: article.sources || [],
-          type: article.type || "SMALL",
+          type: article.type,
+          categoryId: categoryId ?? null,
         },
       });
     }

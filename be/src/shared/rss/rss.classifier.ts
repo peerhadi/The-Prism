@@ -1,69 +1,101 @@
 import { jsonrepair } from "jsonrepair";
 
-const CLASSIFY_PROMPT = `
-You are an expert news editor. Your task is to filter a list of news articles based on strict content safety guidelines, and then organize the allowed articles into specific UI categories in a strict JSON format.
+function createClassifyPrompt(categories: string[]) {
+  const categoryList = categories.map((c) => `- ${c}`).join("\n");
+
+  return `
+You are an expert news editor. Your task is to filter a list of news articles based on strict content safety guidelines, organize them into UI sections, and assign each article to one of the provided categories.
 
 ---
 
 ### 1. CONTENT SAFETY FILTER (Strictly 13+ Family-Friendly)
-Evaluate the title, description, and summary of every article. EXCLUDE any article that contains even a minor reference to:
+
+Evaluate the title, description, and summary of every article.
+
+EXCLUDE any article that contains even a minor reference to:
 - Explicit sexual content, sexual misconduct, abuse allegations, or adult entertainment.
 - Graphic violence, murder, domestic abuse, explosions/fires with casualties, or detailed crimes.
 - Suicide or self-harm.
 - Explicit drug use or trafficking.
 
-*Self-Correction Note:* If an article is borderline or mentions any sensitive keyword, drop it immediately. Informative over sensational.
+If an article is borderline or contains sensitive keywords, exclude it.
 
 ---
 
-### 2. SLOT FILLING & DUPLICATION RULES
-Because the final output requires specific quantities for each array, you MUST reuse the allowed (safe) articles to fill the numbers if the original list is too small.
+### 2. ARTICLE CATEGORY
 
-- Do not use articles that failed the Content Safety Filter.
-- Fill the exact counts required below. If you run out of unique safe articles, cycle back and repeat the safe articles until the exact structure is fully populated.
+Assign EVERY article exactly ONE category.
 
----
+You MUST choose ONLY from this list:
 
-### 3. OUTPUT STRUCTURE REQUIREMENTS
-Generate a strict JSON object with these exact keys and array lengths:
+${categoryList}
 
-- "major_stories": Exactly 2 items (type: "HERO")
-- "majorish_stories": Exactly 6 items (type: "SMALL")
-- "good_headlines": Exactly 4 items (type: "SHORT")
-- "minor_interesting": Exactly 2 items (type: "SHORT")
-- "trending": Exactly 8 items (type: "LIST")
-- "eye_catching": Exactly 5 items (type: "SMALL")
-- "controversial": Exactly 1 item (type: "LIST")
-
-Total items in JSON must equal exactly 28.
+Rules:
+- Never invent categories.
+- Never use synonyms.
+- Preserve the category name exactly as written.
+- Every article must contain a "category" field.
 
 ---
 
-### 4. JSON SCHEMA PER ITEM
-Every item inside the arrays must follow this schema exactly. No fields can be missing or null:
+### 3. SLOT FILLING & DUPLICATION RULES
+
+The final JSON must always contain exactly 28 articles.
+
+If there are not enough safe articles:
+- Reuse safe articles.
+- Never reuse unsafe articles.
+- Cycle through the safe articles until every slot is filled.
+
+---
+
+### 4. OUTPUT STRUCTURE
+
+Return a JSON object containing exactly:
+
+- "major_stories": 2 items (type: HERO)
+- "majorish_stories": 6 items (type: SMALL)
+- "good_headlines": 4 items (type: SHORT)
+- "minor_interesting": 2 items (type: SHORT)
+- "trending": 8 items (type: LIST)
+- "eye_catching": 5 items (type: SMALL)
+- "controversial": 1 item (type: LIST)
+
+Exactly 28 articles total.
+
+---
+
+### 5. JSON SCHEMA
+
+Every article MUST contain every field.
 
 {
   "title": "Preserve original title exactly",
-  "description": "Preserve original description exactly (or empty string if original was empty)",
-  "summary": "A short, strictly neutral 1-sentence summary",
-  "biasLevel": 0.0, 
-  "imageUrl": "Must be a valid string URL. Never null or empty.",
-  "sources": [    
+  "description": "Preserve original description exactly (or empty string if missing)",
+  "summary": "A short, neutral one-sentence summary",
+  "category": "One of the provided categories",
+  "biasLevel": 0.0,
+  "imageUrl": "Must be a valid non-empty URL",
+  "sources": [
     {
       "source": "Source Name",
       "url": "Source URL"
     }
   ],
-  "type": "Must match the layout type specified in section 3 (HERO, SMALL, SHORT, or LIST)"
+  "type": "HERO | SMALL | SHORT | LIST"
 }
 
 ---
 
-### 5. EXECUTION GUARDRAIL
-- Return STRICT JSON ONLY. 
-- Do not wrap the JSON in markdown code blocks (no \`\`\`json). 
-- Do not include conversational text, notes, or explanations before or after the JSON payload.
+### 6. EXECUTION GUARDRAILS
+
+- Return STRICT JSON ONLY.
+- Do NOT wrap in markdown.
+- Do NOT explain anything.
+- Do NOT include notes.
+- Do NOT include conversational text.
 `;
+}
 
 function safeParse(text: string) {
   try {
@@ -78,38 +110,50 @@ function safeParse(text: string) {
 }
 
 async function callGroq(prompt: string, data: any) {
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+  console.log(prompt, data);
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        systemInstruction: {
+          parts: [{ text: prompt }],
+        },
+        contents: [
+          {
+            role: "user",
+            parts: [{ text: JSON.stringify(data) }],
+          },
+        ],
+        generationConfig: {
+          temperature: 0,
+          maxOutputTokens: 16384,
+        },
+      }),
     },
-    body: JSON.stringify({
-      model: "meta-llama/llama-4-scout-17b-16e-instruct",
-      temperature: 0,
-      messages: [
-        {
-          role: "system",
-          content: prompt,
-        },
-        {
-          role: "user",
-          content: JSON.stringify(data),
-        },
-      ],
-    }),
-  });
+  );
+
   const json = await res.json();
-  return json?.choices[0]?.message?.content || "";
+  console.log(json);
+
+  return json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 }
 
-export async function classifyArticles(items: any[]) {
-  const raw = await callGroq(CLASSIFY_PROMPT, items);
+export async function classifyArticles(items: any[], categories: string[]) {
+  const prompt = createClassifyPrompt(categories);
+
+  const raw = await callGroq(prompt, items);
+
   console.log(raw);
+
   const parsed = safeParse(raw);
 
   if (!parsed) {
-    console.log("Classification Error: ", raw);
+    console.log("Classification Error:", raw);
   }
 
   return parsed;

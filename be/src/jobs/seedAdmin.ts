@@ -22,6 +22,4 @@ export async function seedAdmin() {
       role: "ADMIN",
     },
   });
-
-  console.log("Admin account created");
 }
