@@ -40,7 +40,7 @@ export default function SplitSection({
             src={event.imageUrl}
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+              e.currentTarget.src = "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
             }}
             alt=""
             className="
@@ -77,7 +77,7 @@ export default function SplitSection({
             src={event.imageUrl}
             onError={(e) => {
               e.currentTarget.onerror = null;
-              e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+              e.currentTarget.src = "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
             }}
             alt=""
             className="

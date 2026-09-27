@@ -5,7 +5,7 @@ import { Split, GitBranch, Activity } from "lucide-react";
 
 // Dynamic Image Helper
 const getRandomImage = (seed: string) =>
-  `https://picsum.photos/seed/${seed}/800/500`;
+  `https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop`;
 
 interface Narrative {
   label: string;
@@ -24,6 +24,38 @@ export const NarrativeSplitCard = ({
   versionA,
   versionB,
 }: NarrativeSplitProps) => {
+  const [src, setSrc] = React.useState(getRandomImage(`seed-${seedId}`));
+
+  React.useEffect(() => {
+    let done = false;
+
+    const img = new Image();
+    const imageUrl = getRandomImage(`seed-${seedId}`);
+    const fallback = () => {
+      if (!done) {
+        done = true;
+        setSrc("https://picsum.photos/800/450?random=1");
+      }
+    };
+
+    img.onload = () => {
+      if (!done) {
+        done = true;
+        setSrc(imageUrl);
+      }
+    };
+
+    img.onerror = fallback;
+
+    const timeout = setTimeout(fallback, 1500);
+
+    img.src = imageUrl;
+
+    return () => {
+      done = true;
+      clearTimeout(timeout);
+    };
+  }, []);
   return (
     <div
       className="group relative w-full overflow-hidden border border-[var(--border-subtle)] bg-[var(--surface)] transition-colors hover:border-[var(--border)]"
@@ -37,10 +69,11 @@ export const NarrativeSplitCard = ({
         <div className="group/sideA relative flex flex-col bg-[var(--surface)]">
           <div className="relative aspect-[16/9] overflow-hidden">
             <img
-              src={getRandomImage(`${seedId}-alpha`)}
+              src={getRandomImage(`${seedId}-omega`)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+                e.currentTarget.src =
+                  "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
               }}
               className="h-full w-full object-cover opacity-30 grayscale transition-all duration-1000 group-hover/sideA:opacity-80 group-hover/sideA:grayscale-0"
               alt="Alpha Perspective"
@@ -73,7 +106,8 @@ export const NarrativeSplitCard = ({
               src={getRandomImage(`${seedId}-omega`)}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+                e.currentTarget.src =
+                  "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
               }}
               className="h-full w-full object-cover opacity-30 grayscale transition-all duration-1000 group-hover/sideB:opacity-80 group-hover/sideB:grayscale-0"
               alt="Omega Perspective"

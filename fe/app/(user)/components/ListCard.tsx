@@ -81,7 +81,7 @@ export default function ListCard<T extends ListCardProps>({
               src={imageUrl}
               onError={(e) => {
                 e.currentTarget.onerror = null;
-                e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+                e.currentTarget.src = "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
               }}
               alt={title}
               className="h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:scale-110 group-hover:opacity-100 group-hover:rotate-2"

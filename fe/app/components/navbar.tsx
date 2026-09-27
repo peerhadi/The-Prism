@@ -215,7 +215,7 @@ export function Navbar() {
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src =
-                          "https://picsum.photos/800/450?random=45";
+                          "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
                       }}
                       alt="User Profile"
                       className="h-11 w-12 rounded-4xl object-cover"

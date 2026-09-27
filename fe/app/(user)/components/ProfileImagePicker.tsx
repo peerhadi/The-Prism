@@ -219,7 +219,7 @@ export default function ProfileImagePicker({
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src =
-                    "https://picsum.photos/800/450?random=45";
+                    "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
                 }}
                 alt="Profile"
                 className="h-full w-full object-cover"
@@ -273,7 +273,7 @@ export default function ProfileImagePicker({
                 onError={(e) => {
                   e.currentTarget.onerror = null;
                   e.currentTarget.src =
-                    "https://picsum.photos/800/450?random=45";
+                    "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
                 }}
                 alt="Crop"
                 className="max-h-[70vh] max-w-full rounded-xl"

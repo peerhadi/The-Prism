@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { ArrowUpRight, Sparkles } from "lucide-react";
 import NarrativeOverlay from "./features/NarrativeButton";
@@ -26,15 +26,46 @@ export default function ShortCard<T extends ShortStoryCardProps>({
 }: T) {
   const [sourceOpen, setSourceOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [src, setSrc] = useState(imageUrl);
+
+  useEffect(() => {
+    let done = false;
+
+    const img = new Image();
+
+    const fallback = () => {
+      if (!done) {
+        done = true;
+        setSrc(
+          "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop",
+        );
+      }
+    };
+
+    img.onload = () => {
+      if (!done) {
+        done = true;
+        setSrc(imageUrl);
+      }
+    };
+
+    img.onerror = fallback;
+
+    const timeout = setTimeout(fallback, 1500);
+
+    img.src = imageUrl;
+
+    return () => {
+      done = true;
+      clearTimeout(timeout);
+    };
+  }, [imageUrl]);
   return (
     <div className="w-full" data-testid="small-card">
       <Card className="group relative aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-[24px] bg-[var(--surface)] transition-all duration-500 hover:rotate-1 hover:scale-[1.03] py-0">
         {/* BACKGROUND IMAGE */}
         <img
-          src={imageUrl}
-          onError={(e) => {
-            e.currentTarget.src = "https://picsum.photos/800/600?random=100";
-          }}
+          src={src}
           className="h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
           alt="A descriptive anchor text for accessibility"
         />
@@ -93,7 +124,11 @@ export default function ShortCard<T extends ShortStoryCardProps>({
           id={id}
           open={sourceOpen}
           setOpen={setSourceOpen}
-          sources={sources.map((s: string) => ({ source: s, title: s, url: s }))}
+          sources={sources.map((s: string) => ({
+            source: s,
+            title: s,
+            url: s,
+          }))}
         />
       </Card>
     </div>

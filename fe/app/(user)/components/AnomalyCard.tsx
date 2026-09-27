@@ -43,7 +43,7 @@ export const AnomalyCard = ({
           src={img}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+            e.currentTarget.src = "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
           }}
           alt={title}
           className="h-full w-full object-cover opacity-40 grayscale transition-all duration-700 group-hover:scale-105 group-hover:opacity-60 group-hover:grayscale-0"

@@ -63,7 +63,7 @@ const mockArticles = Array.from({ length: 30 }, (_, i) => ({
     "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt.",
   createdAt: "2026-06-09",
   type: "NEWS",
-  imageUrl: `https://picsum.photos/800/600?random=${i}`,
+  imageUrl: `https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop?random=${i}`,
   sources: [{ id: 1 }],
   categoryId: `cat-${i % 5}`,
 }));

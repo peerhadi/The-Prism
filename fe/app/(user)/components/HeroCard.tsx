@@ -53,7 +53,7 @@ export default function HeroCard({
           src={imageUrl}
           onError={(e) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = "https://picsum.photos/800/450?random=45";
+            e.currentTarget.src = "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800&h=450&fit=crop";
           }}
           alt={title}
           className="h-full w-full object-cover opacity-70 transition-transform duration-500 hover:scale-105"
